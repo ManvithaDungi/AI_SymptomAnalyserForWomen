@@ -1,194 +1,77 @@
-
-
-# 🌸 AI-Powered Symptom Analyzer & Anonymous Peer Support Community
-
-### Women’s Health Empowerment Platform for Tamil Nadu
-
----
-
-## 🚀 Overview
-
-This is a **privacy-first mobile/web application** designed to empower women in India by addressing prevalent women’s health challenges such as:
-
-* **Anemia** (affecting 50–60% of reproductive-age women in India, with high rural burdens)
-* **PCOS** (prevalence up to 18–20% in southern India)
-* Cultural taboos around menstrual health
-* Stigma limiting open discussion and access to care
-
-The platform combines **Explainable AI + Community Support** to promote awareness, safe conversations, and culturally sensitive health education — without replacing medical professionals.
-
-> ⚠️ This application does NOT provide medical diagnosis. It is an awareness and support tool.
-
----
-
-## 💡 Problem Statement
-
-Women in Tamil Nadu often face:
-
-* Limited access to reliable health information
-* Cultural stigma around menstrual and reproductive health
-* Isolation due to lack of safe discussion spaces
-* Delayed diagnosis of common conditions like anemia and PCOS
-
-This app bridges the gap between **AI-driven awareness tools and peer emotional support**, while maintaining privacy and inclusivity.
-
----
-
-## 🧠 Core Features
-
-### 1️⃣ AI Symptom Analyzer
-
-Users can input symptoms via:
-
-* ✍️ Text (Tamil / English)
-* 🎙 Voice (Web Speech API – `ta-IN` support)
-
-A lightweight ML model (TensorFlow.js classifier trained on Indian-relevant symptom patterns) provides:
-
-* Probable common condition (e.g., PCOS, Iron Deficiency Anemia)
-* Probability score
-* Explainable reasoning (top contributing symptoms)
-* Culturally sensitive self-care tips
-* Doctor referral suggestions via Google Maps integration
-
----
-
-### 2️⃣ Anonymous Peer Support Community
-
-To combat stigma and isolation, the platform includes:
-
-* Topic-based discussion forums:
-
-  * “Coping with PCOS Fatigue”
-  * “Menstrual Health Myths”
-  * “Iron-Rich Diet Tips”
-* Anonymous posting (Firebase Anonymous Auth)
-* Experience-sharing threads
-* Safe, moderated interactions
-
-No identity is revealed at any stage.
-
----
-
-### 3️⃣ AI-Powered Moderation
-
-To ensure positivity and safety:
-
-* Hugging Face NLP sentiment analysis
-* Toxicity detection
-* Harmful content flagging
-* Encouragement of supportive discussions
-
-This creates a safe digital environment for women to share without fear.
-
----
-
-### 4️⃣ Symptom Journal & Pattern Tracking
-
-Users can:
-
-* Track recurring symptoms
-* Detect cycle-related fatigue patterns
-* Monitor wellness trends over time
-
-Helps promote proactive health awareness.
-
----
-
-### 5️⃣ Home Remedy Validator
-
-Users can input traditional remedies.
-
-AI system:
-
-* Uses rule-based checks + Gemini prompts
-* Assesses safety
-* Flags myths
-* Provides educational insights
-
-Promotes informed cultural practices.
-
----
-
-### 6️⃣ Simple Period Health Risk Screener
-
-* Wellness score
-* Anemia risk indicator
-* Alerts for persistent symptoms
-
-Encourages early awareness and consultation.
-
----
-
-## 🏗️ Tech Stack
-
-### Frontend
-
-* Flutter (Web & Mobile)
-* Web Speech API (`ta-IN`)
-* TensorFlow.js
-
-### Backend / AI
-
-* TensorFlow.js Symptom Classifier
-* Hugging Face NLP Moderation
-* Gemini (for remedy validation prompts)
-
-### Database & Auth
-
-* Firebase Firestore
-* Firebase Anonymous Authentication
-
-### APIs
-
-* Google Maps API (Doctor Referral)
-
----
-
-## 🔐 Privacy-First Architecture
-
-* No mandatory personal information
-* Anonymous authentication
-* Secure Firebase storage
-* No diagnostic claims
-* Ethical AI moderation
-
----
-
-## 🎯 Impact
-
-This platform:
-
-* Reduces stigma around women’s health discussions
-* Encourages early awareness of anemia and PCOS
-* Provides culturally sensitive education
-* Builds safe digital solidarity
-* Bridges technology with grassroots empowerment
-
-Designed specifically for Indian women, starting with Tamil Nadu.
-
----
-
-## 🌍 Future Scope
-
-* Doctor-verified responses
-* NGO integration
-* Teleconsultation partnerships
-* Government scheme integration
-* Rural SMS-based access
-
----
-
-## Built For
-
-Hackathon Track: **Tech for Good – Women Empowerment & Healthcare**
-
----
-
-## Disclaimer
-
-This platform provides awareness and educational guidance only.
-It is not a substitute for professional medical diagnosis or treatment.
-Users are encouraged to consult licensed healthcare professionals.
-
----
+# Sahachari / Vaazhvu (Women's Health Companion) 💜
+
+A safe, AI-powered space for women's health, privacy, and community. Built for the Google AI Hackathon.
+
+## ✨ Key Features
+
+### 🌸 AI Symptom Checker & Remedies
+- **Private Analysis:** Describe symptoms in plain English (or Tamil/Hindi) and get immediate AI-driven insights.
+- **Home Remedies:** Curated, safe home remedies for common issues like PCOS, Anemia, and Menstrual cramps.
+- **Emergency Detection:** Intelligent flagging of urgent symptoms (e.g., severe pain, heavy bleeding).
+
+### 💬 Safe Community Circle (Forum)
+- **Anonymous & Supportive:** Share experiences without revealing your identity ("Anon#1234").
+- **AI Moderation:** Double-layer safety check (Hugging Face + Gemini) to prevent hate speech, misinformation, and unsafe content *before* it's posted.
+- **Topic Channels:** Dedicated spaces for PCOS, Anemia, Menstrual Health, and Wellness.
+- **Gentle Interactions:** "Support", "Me Too", and "Helpful" reactions instead of toxic "Likes".
+
+### 🩺 Doctor Connect & Q&A
+- **Verified Directory:** Find trusted gynecologists and nutritionists near you.
+- **Private Q&A:** Ask questions anonymously and get answers from verified experts.
+
+### 📔 Wellness Journal
+- **Daily Tracking:** Log mood, symptoms, water intake, and sleep.
+- **Cycle Insights:** Visual tracking of health patterns over time.
+
+### 🔒 Privacy First
+- **Anonymous by Design:** No real names required for community participation.
+- **Local-First Storage:** Sensitive logs kept private where possible.
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React, Vite, Tailwind CSS (Glassmorphism UI)
+- **Backend:** Firebase (Auth, Firestore)
+- **AI Models:** 
+  - **Google Gemini 1.5 Flash:** For symptom analysis and deep content moderation.
+  - **Hugging Face (Roberta):** For real-time sentiment analysis latency checks.
+- **Language:** English (Multi-language support architecture ready).
+
+## 🚀 Getting Started
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/ManvithaDungi/AI_SymptomAnalyserForWomen.git
+   cd AI_SymptomAnalyserForWomen
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_GEMINI_API_KEY=your_gemini_key
+   VITE_HF_TOKEN=your_hugging_face_token
+   ```
+
+4. **Run Locally**
+   ```bash
+   npm run dev
+   ```
+
+5. **Seed Database (First Time Only)**
+    - Navigate to `/admin-seed` in your browser.
+    - Click **"Seed Database"** to populate initial topics, remedies, and doctors.
+
+## 📱 Screenshots
+
+_(Add screenshots of Home, Symptom Checker, and Forum here)_
+
+## 🤝 Contributing
+
+Built with love for women's health. Issues and PRs welcome!

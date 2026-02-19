@@ -1,57 +1,104 @@
-// TODO: Replace mock data with real Gemini API calls when ready
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
-export const analyzeSymptoms = async (symptoms) => {
-  // TODO: Implement real Gemini API call here
-  // const response = await fetch(...);
+const callGemini = async (prompt) => {
+  if (!API_KEY) throw new Error("Missing Gemini API Key in .env");
 
-  // Mock response for now
-  return {
-    possible_conditions: [
-      {
-        name: "PCOS",
-        probability: "High",
-        description: "Polycystic Ovary Syndrome is a hormonal disorder common among women of reproductive age. It may cause irregular periods, weight gain, and hormonal imbalances."
-      },
-      {
-        name: "Anemia",
-        probability: "Medium",
-        description: "A condition where you lack enough healthy red blood cells to carry adequate oxygen to body tissues, often causing fatigue and dizziness."
-      }
-    ],
-    self_care_tips: [
-      "Sleep 8 hours daily",
-      "Eat iron-rich foods",
-      "Regular light exercise",
-      "Stay hydrated"
-    ],
-    local_foods: [
-      "Ragi",
-      "Drumstick leaves",
-      "Kollu"
-    ],
-    see_doctor_urgency: "Within a week",
-    disclaimer: "This is not a medical diagnosis. Please consult a healthcare professional."
-  };
+  try {
+    const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Gemini API Error Details:", errorData);
+      throw new Error(`Gemini API Error: ${response.status} ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) throw new Error("No response generated");
+
+    // Clean up potential markdown code blocks if the model wraps JSON
+    const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleanText);
+  } catch (error) {
+    console.error("Gemini AI Error:", error);
+    throw error;
+  }
 };
 
-export const validateRemedy = async (remedy) => {
-  // TODO: Implement real Gemini API call here
-  // const response = await fetch(...);
+export const analyzeSymptoms = async (symptoms, additionalNotes = "") => {
+  const symptomList = Array.isArray(symptoms) ? symptoms.join(", ") : symptoms;
 
-  // Mock response for now
-  return {
-    verdict: "Partially Safe",
-    explanation: "Jeera water may help with digestion and bloating, which can be beneficial during menstrual discomfort. However, it should not replace prescribed medication.",
-    scientific_backing: "Partially Supported",
-    tip: "Safe to try but don't replace prescribed medication. Consult your doctor if symptoms persist."
-  };
+  const prompt = `
+    You are a compassionate, expert women's health assistant for the Indian context.
+    The user is experiencing these symptoms: ${symptomList}.
+    Additional details: "${additionalNotes}".
+
+    Analyze these symptoms carefully. Consider common conditions like PCOS, Anemia, Thyroid issues, PMS, Endometriosis, etc.
+    Provide a JSON response with the following structure:
+    {
+      "possible_conditions": [
+        { "name": "Condition Name", "probability": "High/Medium/Low", "description": "Brief explanation in simple terms." }
+      ],
+      "see_doctor_urgency": "Immediately" | "Within a week" | "Monitor symptoms",
+      "self_care_tips": ["Tip 1", "Tip 2", "Tip 3"],
+      "local_foods": ["Food 1 (e.g. Ragi)", "Food 2 (e.g. Amla)"],
+      "disclaimer": "Standard medical disclaimer."
+    }
+    Strictly output ONLY valid JSON.
+  `;
+  return callGemini(prompt);
+};
+
+export const generateWeeklySummary = async (entries) => {
+  if (!entries || entries.length === 0) return null;
+
+  const entryText = entries.map(e =>
+    `Date: ${e.date}, Mood: ${e.mood}, Period: ${e.period}, Symptoms: ${e.notes || 'None'}, Fatigue: ${e.fatigue}/5`
+  ).join("\n");
+
+  const prompt = `
+    Analyze this user's weekly health log (journal entries):
+    ${entryText}
+
+    Identify patterns related to their menstrual cycle, mood, or energy.
+    Provide a JSON response with:
+    {
+      "summary": "2-3 sentence summary of their week.",
+      "pattern": "Any noticeable pattern (e.g., 'Mood drops 2 days before period').",
+      "suggestion": "One actionable wellness tip.",
+      "anemia_risk": "Low" | "Moderate" | "High",
+      "anemia_reason": "Why you think so (e.g., fatigue consistently high)."
+    }
+    Strictly output ONLY valid JSON.
+  `;
+  return callGemini(prompt);
+};
+
+export const validateRemedy = async (remedyName) => {
+  const prompt = `
+    Evaluate the safety of this home remedy: "${remedyName}" for women's health.
+    Context: Indian home remedies.
+    Provide a JSON response with:
+    {
+      "verdict": "Safe" | "Caution" | "Unsafe",
+      "explanation": "Why?",
+      "scientific_backing": "Supported" | "Mixed Evidence" | "Folklore",
+      "tip": "How to use safely."
+    }
+    Strictly output ONLY valid JSON.
+  `;
+  return callGemini(prompt);
 };
 
 export const detectPattern = async (logs) => {
-  // TODO: Implement real Gemini API call here
-  // const response = await fetch(...);
-
-  // Mock response for now
-  return "Based on your logs, you may want to track your symptoms more regularly with a calendar to identify patterns.";
+  // Placeholder for complex pattern detection
+  return "Keep logging to unlock detailed patterns!";
 };

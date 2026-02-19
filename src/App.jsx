@@ -8,10 +8,13 @@ import HomeScreen from './screens/HomeScreen';
 import SymptomScreen from './screens/SymptomScreen';
 import ResultsScreen from './screens/ResultsScreen';
 import ForumScreen from './screens/ForumScreen';
+import ThreadScreen from './screens/ThreadScreen';
+import NewPostScreen from './screens/NewPostScreen';
 import RemedyScreen from './screens/RemedyScreen';
 import JournalScreen from './screens/JournalScreen';
 import { auth } from './services/firebaseService'; // Import auth instance
-import AdminSeedScreen from './screens/AdminSeedScreen'; // Import AdminSeedScreen
+import AdminSeedScreen from './screens/AdminSeedScreen';
+import NearbyHelpScreen from './screens/NearbyHelpScreen';
 
 export default function App() {
   const [language, setLanguage] = useState('EN');
@@ -51,10 +54,13 @@ export default function App() {
             {/* Protected Routes */}
             <Route path="/home" element={user ? <HomeScreen /> : <Navigate to="/" />} />
             <Route path="/forum" element={user ? <ForumScreen /> : <Navigate to="/" />} />
+            <Route path="/forum/new" element={user ? <NewPostScreen /> : <Navigate to="/" />} />
+            <Route path="/forum/:postId" element={user ? <ThreadScreen /> : <Navigate to="/" />} />
             <Route path="/symptoms" element={user ? <SymptomScreen /> : <Navigate to="/" />} />
             <Route path="/results" element={user ? <ResultsScreen /> : <Navigate to="/" />} />
             <Route path="/remedy" element={user ? <RemedyScreen /> : <Navigate to="/" />} />
             <Route path="/journal" element={user ? <JournalScreen /> : <Navigate to="/" />} />
+            <Route path="/nearby" element={user ? <NearbyHelpScreen /> : <Navigate to="/" />} />
             <Route path="/admin-seed" element={<AdminSeedScreen />} /> {/* Temporary Route */}
           </Routes>
         </main>

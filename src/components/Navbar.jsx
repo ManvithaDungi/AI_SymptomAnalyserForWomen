@@ -20,7 +20,8 @@ export default function Navbar({ language, setLanguage }) {
     { name: 'Community Forum', path: '/forum' },
     { name: 'Check Symptoms', path: '/symptoms' },
     { name: 'Home Remedies', path: '/remedy' },
-    { name: 'Journal', path: '/journal' }
+    { name: 'Journal', path: '/journal' },
+    { name: 'Nearby Help', path: '/nearby' }
   ];
 
   return (

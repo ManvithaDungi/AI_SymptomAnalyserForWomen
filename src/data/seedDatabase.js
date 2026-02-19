@@ -4,46 +4,46 @@ import { remediesData } from './remediesData';
 
 const forumTopics = [
    {
-      id: "pcos-support",
-      title: "PCOS Support",
-      titleTamil: "பிசிஓஎஸ் ஆதரவு",
-      description: "Share your PCOS journey and tips",
+      id: "PCOS",
+      title: "PCOS",
+      titleTamil: "பிசிஓஎஸ்",
+      description: "Gentle space for PCOS experiences",
       icon: "🌸",
       color: "rgba(109,91,208,0.12)",
       postCount: 0
    },
    {
-      id: "anemia-diet",
-      title: "Anemia & Diet",
-      titleTamil: "இரத்த சோகை & உணவு",
-      description: "Iron-rich foods, fatigue management and more",
+      id: "Anemia",
+      title: "Anemia",
+      titleTamil: "இரத்த சோகை",
+      description: "Iron support, fatigue, and nourishment",
       icon: "🥗",
       color: "rgba(184,212,190,0.2)",
       postCount: 0
    },
    {
-      id: "menstrual-health",
+      id: "Menstrual Health",
       title: "Menstrual Health",
       titleTamil: "மாதவிடாய் ஆரோக்கியம்",
-      description: "Safe space to discuss periods openly",
+      description: "Open, stigma-free period care",
       icon: "🌙",
       color: "rgba(155,142,196,0.15)",
       postCount: 0
    },
    {
-      id: "home-remedies",
+      id: "Home Remedies",
       title: "Home Remedies",
       titleTamil: "வீட்டு வைத்தியம்",
-      description: "Traditional remedies — what works, what doesn't",
+      description: "Cultural remedies with care",
       icon: "🌿",
       color: "rgba(184,212,190,0.25)",
       postCount: 0
    },
    {
-      id: "general-wellness",
+      id: "General Wellness",
       title: "General Wellness",
       titleTamil: "பொது ஆரோக்கியம்",
-      description: "Lifestyle, mental health, and everyday wellbeing",
+      description: "Everyday wellbeing and emotional balance",
       icon: "💫",
       color: "rgba(196,149,106,0.1)",
       postCount: 0
@@ -52,132 +52,373 @@ const forumTopics = [
 
 const forumPosts = [
    {
-      username: "Anon#2847",
-      topic: "pcos-support",
-      topicLabel: "PCOS Support",
+      userId: "seed-user",
+      anonName: "Anon#2847",
+      topic: "PCOS",
+      type: "question",
+      title: "Inositol experiences?",
       content: "Has anyone tried inositol supplements for PCOS? My doctor mentioned it and I wanted to hear real experiences before starting.",
-      likes: 14,
+      imageUrl: null,
+      upvotes: 14,
+      upvotedBy: [],
+      commentCount: 2,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "neutral",
+         safetyScore: 78,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: true,
+      isExpertAnswered: false,
       daysAgo: 3
    },
    {
-      username: "Anon#5631",
-      topic: "pcos-support",
-      topicLabel: "PCOS Support",
-      content: "I was diagnosed with PCOS last year and felt so alone. Finding this community helped me realize how common it is. You are not alone, sisters 💜",
-      likes: 32,
+      userId: "seed-user",
+      anonName: "Anon#5631",
+      topic: "PCOS",
+      type: "text",
+      title: "Feeling less alone",
+      content: "I was diagnosed with PCOS last year and felt so alone. Finding this community helped me realize how common it is. You are not alone.",
+      imageUrl: null,
+      upvotes: 32,
+      upvotedBy: [],
+      commentCount: 1,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 92,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 5
    },
    {
-      username: "Dr. Priya Verified",
-      topic: "pcos-support",
-      topicLabel: "PCOS Support",
-      content: "For PCOS management, lifestyle changes are as important as medication. Regular walking (30 min/day), reducing refined sugar, and managing stress through yoga can significantly improve symptoms over 3-6 months. Always work with your doctor for personalized care.",
-      likes: 67,
+      userId: "seed-user",
+      anonName: "Anon#9012",
+      topic: "PCOS",
+      type: "text",
+      title: "Gentle lifestyle changes",
+      content: "Small shifts helped me: slow walks, reducing refined sugar, and calming routines. Always work with your doctor for personal care.",
+      imageUrl: null,
+      upvotes: 67,
+      upvotedBy: [],
+      commentCount: 3,
       approved: true,
-      isVerified: true,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 94,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: true,
       daysAgo: 7
    },
    {
-      username: "Anon#9134",
-      topic: "anemia-diet",
-      topicLabel: "Anemia & Diet",
-      content: "My hemoglobin was 8.2 and I felt exhausted constantly. Started eating ragi every morning and drumstick leaves curry 3x a week. After 2 months it went up to 10.5. Small changes really do help!",
-      likes: 45,
+      userId: "seed-user",
+      anonName: "Anon#9134",
+      topic: "Anemia",
+      type: "text",
+      title: "Ragi helped me",
+      content: "My hemoglobin was 8.2 and I felt exhausted constantly. Started eating ragi every morning and drumstick leaves curry 3x a week. After 2 months it went up to 10.5.",
+      imageUrl: null,
+      upvotes: 45,
+      upvotedBy: [],
+      commentCount: 0,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 90,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 2
    },
    {
-      username: "Anon#3372",
-      topic: "anemia-diet",
-      topicLabel: "Anemia & Diet",
-      content: "Does anyone know if eating iron-rich food with vitamin C really helps absorption? I heard you should eat amla or lemon alongside iron foods. Is this true?",
-      likes: 19,
+      userId: "seed-user",
+      anonName: "Anon#3372",
+      topic: "Anemia",
+      type: "question",
+      title: "Vitamin C with iron?",
+      content: "Does eating iron-rich food with vitamin C help absorption? I heard you should eat amla or lemon alongside iron foods.",
+      imageUrl: null,
+      upvotes: 19,
+      upvotedBy: [],
+      commentCount: 2,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "neutral",
+         safetyScore: 78,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 1
    },
    {
-      username: "Dr. Meena Verified",
-      topic: "anemia-diet",
-      topicLabel: "Anemia & Diet",
-      content: "Yes, Vitamin C absolutely enhances iron absorption! Squeeze lemon on your greens, eat amla chutney with your meals, or drink a small glass of orange juice alongside iron-rich foods. Also avoid tea/coffee immediately after meals as tannins reduce absorption.",
-      likes: 89,
+      userId: "seed-user",
+      anonName: "Anon#6755",
+      topic: "Anemia",
+      type: "text",
+      title: "Absorption tips",
+      content: "Vitamin C can help. Squeeze lemon on greens, eat amla chutney, and avoid tea/coffee right after meals.",
+      imageUrl: null,
+      upvotes: 89,
+      upvotedBy: [],
+      commentCount: 1,
       approved: true,
-      isVerified: true,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 93,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: true,
       daysAgo: 1
    },
    {
-      username: "Anon#7821",
-      topic: "menstrual-health",
-      topicLabel: "Menstrual Health",
-      content: "I used to think severe cramps were normal and just had to be tolerated. Turns out I had endometriosis. Please don't ignore very painful periods — it is okay to seek help. Your pain is valid.",
-      likes: 78,
+      userId: "seed-user",
+      anonName: "Anon#7821",
+      topic: "Menstrual Health",
+      type: "text",
+      title: "Your pain is valid",
+      content: "I used to think severe cramps were normal. Turns out I had endometriosis. Please don’t ignore very painful periods — it is okay to seek help.",
+      imageUrl: null,
+      upvotes: 78,
+      upvotedBy: [],
+      commentCount: 2,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "neutral",
+         safetyScore: 86,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 4
    },
    {
-      username: "Anon#4409",
-      topic: "menstrual-health",
-      topicLabel: "Menstrual Health",
-      content: "Does anyone else struggle with mood swings a week before periods? I feel like a completely different person. Would love to know how others manage this.",
-      likes: 23,
+      userId: "seed-user",
+      anonName: "Anon#4409",
+      topic: "Menstrual Health",
+      type: "question",
+      title: "Mood swings before periods",
+      content: "Does anyone else struggle with mood swings a week before periods? I feel like a completely different person.",
+      imageUrl: null,
+      upvotes: 23,
+      upvotedBy: [],
+      commentCount: 0,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "neutral",
+         safetyScore: 78,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       hoursAgo: 6
    },
    {
-      username: "Anon#1156",
-      topic: "home-remedies",
-      topicLabel: "Home Remedies",
-      content: "My grandmother swore by methi (fenugreek) seeds soaked overnight for irregular periods. I tried it for 2 months and my cycle became more regular. Has anyone else tried this?",
-      likes: 31,
+      userId: "seed-user",
+      anonName: "Anon#1156",
+      topic: "Home Remedies",
+      type: "text",
+      title: "Methi seeds and cycles",
+      content: "My grandmother swore by methi seeds soaked overnight for irregular periods. I tried it for 2 months and my cycle felt more regular.",
+      imageUrl: null,
+      upvotes: 31,
+      upvotedBy: [],
+      commentCount: 1,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 88,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 8
    },
    {
-      username: "Anon#6683",
-      topic: "home-remedies",
-      topicLabel: "Home Remedies",
-      content: "Please be careful with home remedies during pregnancy. Some herbs that are fine normally can be harmful during pregnancy. Always tell your doctor what you are taking, even if it seems natural.",
-      likes: 54,
+      userId: "seed-user",
+      anonName: "Anon#6683",
+      topic: "Home Remedies",
+      type: "text",
+      title: "Pregnancy caution",
+      content: "Please be careful with home remedies during pregnancy. Some herbs that are fine normally can be harmful. Always tell your doctor what you are taking.",
+      imageUrl: null,
+      upvotes: 54,
+      upvotedBy: [],
+      commentCount: 0,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "neutral",
+         safetyScore: 84,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 3
    },
    {
-      username: "Anon#8847",
-      topic: "general-wellness",
-      topicLabel: "General Wellness",
-      content: "Started tracking my sleep, water intake, and mood alongside my cycle using this app's journal. The patterns it showed me were eye-opening. I never realized how much my energy dips 2 days before my period starts.",
-      likes: 41,
+      userId: "seed-user",
+      anonName: "Anon#8847",
+      topic: "General Wellness",
+      type: "text",
+      title: "Tracking patterns",
+      content: "Started tracking my sleep, water intake, and mood alongside my cycle. The patterns were eye-opening, especially two days before my period.",
+      imageUrl: null,
+      upvotes: 41,
+      upvotedBy: [],
+      commentCount: 0,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 90,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 2
    },
    {
-      username: "Anon#3301",
-      topic: "general-wellness",
-      topicLabel: "General Wellness",
-      content: "Mental health is also women's health. I want to normalize talking about anxiety and stress in this community. We carry so much. It is okay to not be okay sometimes 💜",
-      likes: 96,
+      userId: "seed-user",
+      anonName: "Anon#3301",
+      topic: "General Wellness",
+      type: "text",
+      title: "It is okay to not be okay",
+      content: "Mental health is also women's health. It is okay to not be okay sometimes. You are seen here.",
+      imageUrl: null,
+      upvotes: 96,
+      upvotedBy: [],
+      commentCount: 0,
       approved: true,
-      isVerified: false,
+      moderation: {
+         sentiment: "positive",
+         safetyScore: 92,
+         flags: ["safe"],
+         geminiCheck: false
+      },
+      isPinned: false,
+      isExpertAnswered: false,
       daysAgo: 10
    }
 ];
+
+const doctorsData = [
+   {
+      id: "dr_anjali",
+      name: "Dr. Anjali Desai",
+      specialty: "Gynecologist",
+      location: { latitude: 13.0827, longitude: 80.2707 }, // Chennai
+      address: "Anna Nagar, Chennai",
+      phone: "+91 98765 43210",
+      rating: 4.8,
+      isVerified: true,
+      availableForQA: true,
+      image: "https://randomuser.me/api/portraits/women/68.jpg"
+   },
+   {
+      id: "dr_priya",
+      name: "Dr. Priya Sharma",
+      specialty: "Reproductive Endocrinologist",
+      location: { latitude: 12.9716, longitude: 77.5946 }, // Bangalore
+      address: "Indiranagar, Bangalore",
+      phone: "+91 91234 56789",
+      rating: 4.9,
+      isVerified: true,
+      availableForQA: true,
+      image: "https://randomuser.me/api/portraits/women/44.jpg"
+   },
+   {
+      id: "dr_lakshmi",
+      name: "Dr. Lakshmi Iyer",
+      specialty: "Nutritionist",
+      location: { latitude: 19.0760, longitude: 72.8777 }, // Mumbai
+      address: "Bandra West, Mumbai",
+      phone: "+91 99887 76655",
+      rating: 4.7,
+      isVerified: true,
+      availableForQA: false,
+      image: "https://randomuser.me/api/portraits/women/33.jpg"
+   }
+];
+
+const sampleJournalEntries = [
+   {
+      userId: "seed-user",
+      date: new Date().toISOString().split('T')[0], // Today
+      mood: "Neutral",
+      symptoms: ["Mild Cramps", "Fatigue"],
+      energyLevel: 5,
+      waterIntake: 4,
+      sleepHours: 7,
+      notes: "Felt a bit tired today, maybe due to upcoming cycle.",
+      createdAt: new Date()
+   },
+   {
+      userId: "seed-user",
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
+      mood: "Happy",
+      symptoms: [],
+      energyLevel: 8,
+      waterIntake: 8,
+      sleepHours: 8,
+      notes: "Great yoga session in the morning!",
+      createdAt: new Date(Date.now() - 86400000)
+   }
+];
+
+const sampleQA = [
+   {
+      userId: "seed-user",
+      doctorId: "dr_anjali",
+      question: "Is it normal to have irregular periods in my 20s?",
+      answer: "While some variation is normal, consistent irregularity (cycles < 21 or > 35 days) should be checked. It could be stress, or conditions like PCOS.",
+      status: "answered",
+      isPublic: true,
+      createdAt: new Date(Date.now() - 172800000), // 2 days ago
+      answeredAt: new Date(Date.now() - 86400000)
+   },
+   {
+      userId: "seed-user",
+      doctorId: "dr_priya",
+      question: "What diet is best for Anemia?",
+      answer: null,
+      status: "open",
+      isPublic: true,
+      createdAt: new Date(),
+      answeredAt: null
+   }
+];
+
+import { auth } from '../firebase/firebaseConfig';
+import { signInAnonymously } from 'firebase/auth';
 
 export const seedFirestore = async () => {
    console.log('🌱 Starting seeding process...');
    const logs = [];
 
    try {
+      // 0. Ensure Authentication
+      if (!auth.currentUser) {
+         logs.push('🔑 Signing in anonymously for permissions...');
+         await signInAnonymously(auth);
+         logs.push('✅ Signed in.');
+      }
+
       // 1. Seed Forum Topics
       const topicsRef = collection(db, 'forum_topics');
       const topicsSnapshot = await getDocs(topicsRef);
@@ -186,12 +427,14 @@ export const seedFirestore = async () => {
          console.log('Seeding forum topics...');
          logs.push('Seeding forum topics...');
 
-         for (const topic of forumTopics) {
-            await setDoc(doc(db, 'forum_topics', topic.id), {
+         const topicPromises = forumTopics.map(topic =>
+            setDoc(doc(db, 'forum_topics', topic.id), {
                ...topic,
                createdAt: serverTimestamp()
-            });
-         }
+            })
+         );
+         await Promise.all(topicPromises);
+
          console.log('✅ Forum topics seeded.');
          logs.push('✅ Forum topics seeded.');
       } else {
@@ -207,18 +450,29 @@ export const seedFirestore = async () => {
          console.log('Seeding forum posts...');
          logs.push('Seeding forum posts...');
 
-         for (const post of forumPosts) {
-            const timestamp = post.hoursAgo
-               ? Timestamp.fromMillis(Date.now() - post.hoursAgo * 60 * 60 * 1000)
-               : Timestamp.fromMillis(Date.now() - (post.daysAgo || 0) * 24 * 60 * 60 * 1000);
+         const postPromises = forumPosts.map(post => {
+            const timestamp = post.daysAgo
+               ? new Date(Date.now() - post.daysAgo * 24 * 60 * 60 * 1000)
+               : new Date(Date.now() - (post.hoursAgo || 0) * 60 * 60 * 1000);
 
-            const { daysAgo, hoursAgo, ...postData } = post;
-
-            await addDoc(collection(db, 'forum_posts'), {
-               ...postData,
-               createdAt: timestamp
+            return addDoc(collection(db, 'forum_posts'), {
+               ...post,
+               topic: post.topic,
+               moderation: {
+                  sentiment: post.moderation?.sentiment || 'neutral',
+                  safetyScore: post.moderation?.safetyScore || 80,
+                  flags: post.moderation?.flags || ['safe'],
+                  geminiCheck: false,
+                  moderatedAt: timestamp
+               },
+               createdAt: timestamp,
+               approved: true,
+               upvotes: post.upvotes || 0,
+               commentCount: post.commentCount || 0
             });
-         }
+         });
+         await Promise.all(postPromises);
+
          console.log('✅ Forum posts seeded.');
          logs.push('✅ Forum posts seeded.');
       } else {
@@ -234,17 +488,79 @@ export const seedFirestore = async () => {
          console.log('Seeding remedies...');
          logs.push('Seeding remedies...');
 
-         for (const remedy of remediesData) {
-            await addDoc(collection(db, 'remedies'), {
+         // Batch remedies if array is large
+         const remedyPromises = remediesData.map(remedy =>
+            addDoc(collection(db, 'remedies'), {
                ...remedy,
                createdAt: serverTimestamp()
-            });
-         }
+            })
+         );
+         await Promise.all(remedyPromises);
+
          console.log('✅ Remedies seeded.');
          logs.push('✅ Remedies seeded.');
       } else {
          console.log('Skipping remedies (already exist).');
          logs.push('Skipping remedies (already exist).');
+      }
+
+      // 4. Seed Doctors (New)
+      const doctorsRef = collection(db, 'doctors');
+      const doctorsSnapshot = await getDocs(doctorsRef);
+
+      if (doctorsSnapshot.empty) {
+         console.log('Seeding doctors...');
+         logs.push('Seeding doctors...');
+         const doctorPromises = doctorsData.map(docData => {
+            // Create a proper geopoint if needed, but for now simple object is fine 
+            // unless using GeoFire directly. Storing as map is safer for basic display.
+            return setDoc(doc(db, 'doctors', docData.id), {
+               ...docData,
+               createdAt: serverTimestamp()
+            });
+         });
+         await Promise.all(doctorPromises);
+         console.log('✅ Doctors seeded.');
+         logs.push('✅ Doctors seeded.');
+      } else {
+         console.log('Skipping doctors (already exist).');
+      }
+
+      // 5. Seed Journal Entries (New)
+      const journalRef = collection(db, 'journal_entries');
+      const journalSnapshot = await getDocs(journalRef);
+
+      if (journalSnapshot.empty) {
+         console.log('Seeding journal entries...');
+         logs.push('Seeding journal entries...');
+         const journalPromises = sampleJournalEntries.map(entry =>
+            addDoc(collection(db, 'journal_entries'), {
+               ...entry,
+               createdAt: serverTimestamp() // convert Date to Timestamp
+            })
+         );
+         await Promise.all(journalPromises);
+         console.log('✅ Journal entries seeded.');
+         logs.push('✅ Journal entries seeded.');
+      }
+
+      // 6. Seed QA (New)
+      const qaRef = collection(db, 'doctor_qa');
+      const qaSnapshot = await getDocs(qaRef);
+
+      if (qaSnapshot.empty) {
+         console.log('Seeding QA...');
+         logs.push('Seeding QA...');
+         const qaPromises = sampleQA.map(qa =>
+            addDoc(collection(db, 'doctor_qa'), {
+               ...qa,
+               createdAt: serverTimestamp(),
+               answeredAt: qa.answeredAt ? serverTimestamp() : null
+            })
+         );
+         await Promise.all(qaPromises);
+         console.log('✅ Doctor QA seeded.');
+         logs.push('✅ Doctor QA seeded.');
       }
 
       console.log('🎉 Database seeding completed!');
@@ -253,6 +569,7 @@ export const seedFirestore = async () => {
 
    } catch (error) {
       console.error('Error seeding database:', error);
-      return { success: false, error: error.message };
+      logs.push(`❌ Error: ${error.message}`);
+      return { success: false, error: error.message, logs };
    }
 };

@@ -1,150 +1,116 @@
+
 import { useState, useEffect } from 'react';
-import ForumPostCard from '../components/ForumPostCard';
-import DisclaimerBanner from '../components/DisclaimerBanner';
-import { getForumPosts, saveForumPost, getUserId } from '../services/firebaseService';
+import { useNavigate } from 'react-router-dom';
+import TopicFilter from '../components/forum/TopicFilter';
+import PostCard from '../components/forum/PostCard';
+import { getForumPosts, togglePostUpvote, getUserId } from '../services/firebaseService';
 
 export default function ForumScreen() {
+  const navigate = useNavigate();
+  const [activeTopic, setActiveTopic] = useState('all');
   const [posts, setPosts] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState('All');
-  const [showComposer, setShowComposer] = useState(false);
-  const [newPost, setNewPost] = useState('');
-  const [newTopic, setNewTopic] = useState('PCOS');
   const [loading, setLoading] = useState(true);
-
-  const topics = ['All', 'PCOS', 'Anemia', 'Menstrual Health', 'Remedies'];
 
   useEffect(() => {
     fetchPosts();
-  }, [selectedTopic]);
+  }, [activeTopic]);
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const data = await getForumPosts(selectedTopic);
-      setPosts(data);
+      const fetchedPosts = await getForumPosts(activeTopic === 'all' ? null : activeTopic);
+      setPosts(fetchedPosts);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Failed to load forum posts", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePostSubmit = async () => {
-    if (!newPost.trim()) {
-      alert('Please write something');
-      return;
-    }
-
-    try {
-      const userId = getUserId();
-      await saveForumPost(userId, newPost, newTopic);
-      setNewPost('');
-      setShowComposer(false);
-      fetchPosts();
-    } catch (error) {
-      console.error('Error posting:', error);
-      alert('Error posting. Please try again.');
-    }
-  };
+  const currentUserId = getUserId() || 'anon';
+  const affirmations = [
+    "You are not alone here.",
+    "Your voice is welcome.",
+    "Softness is a strength.",
+    "Share only what feels safe."
+  ];
+  const randomAffirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
 
   return (
-    <div className="min-h-full pb-20 pt-8 animate-fade-in relative">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="mb-8">
-          <h2 className="text-3xl font-extrabold text-text-primary mb-2 tracking-tight">Community Support</h2>
-          <p className="text-text-secondary text-lg">Connect anonymously with other women.</p>
+    <div className="min-h-screen bg-[#F8F7FF] pb-24 font-sans animate-fade-in relative">
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-primary tracking-tight">Community Circle</h1>
+            <p className="text-sm text-text-secondary mt-1">A private, gentle space to share and listen</p>
+          </div>
+          <button
+            onClick={() => navigate('/forum/new')}
+            className="bg-primary text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#5A4AB8] transition-all hover:scale-105 active:scale-95 text-sm font-semibold"
+          >
+            New Reflection
+          </button>
         </div>
 
-        <DisclaimerBanner />
-
-        {/* Topic Filter Tabs */}
-        <div className="flex overflow-x-auto gap-3 mb-8 pb-2 no-scrollbar">
-          {topics.map(topic => (
-            <button
-              key={topic}
-              onClick={() => setSelectedTopic(topic)}
-              className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-200 border ${selectedTopic === topic
-                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
-                : 'bg-white/50 text-text-secondary border-primary/10 hover:border-primary/40 hover:bg-white'
-                }`}
-            >
-              {topic}
-            </button>
-          ))}
+        <div className="glass-card p-4 mb-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <p className="text-xs text-text-secondary uppercase tracking-wide">Circle tone</p>
+              <p className="text-sm text-text-primary font-semibold">Soft, supportive, anonymous</p>
+            </div>
+            <div className="text-xs text-text-secondary/80">{randomAffirmation}</div>
+          </div>
         </div>
 
-        {/* Posts List */}
-        <div className="mb-24">
+        <div className="sticky top-[64px] z-30 bg-[#F8F7FF]/95 backdrop-blur-sm pt-2 pb-4 -mx-4 px-4 mb-2">
+          <TopicFilter activeTopic={activeTopic} setActiveTopic={setActiveTopic} />
+        </div>
+
+        <div className="space-y-4">
           {loading ? (
-            <div className="text-center py-12">
-              <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-text-secondary animate-pulse">Loading conversations...</p>
+            <div className="flex flex-col gap-4 mt-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-40 bg-white/50 rounded-2xl animate-pulse"></div>
+              ))}
             </div>
-          ) : posts.length === 0 ? (
-            <div className="glass-card p-12 text-center">
-              <span className="text-4xl mb-4 block">💬</span>
-              <p className="text-text-primary font-bold text-lg mb-2">No posts yet</p>
-              <p className="text-text-secondary">Be the first to share your experience!</p>
-            </div>
-          ) : (
-            posts.map(post => (
-              <ForumPostCard key={post.id} post={post} />
+          ) : posts.length > 0 ? (
+            posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                currentUserId={currentUserId}
+                onReact={async (id, liked) => {
+                  setPosts((prev) =>
+                    prev.map((item) => {
+                      if (item.id !== id) return item;
+                      const nextUpvotedBy = liked
+                        ? [...(item.upvotedBy || []), currentUserId]
+                        : (item.upvotedBy || []).filter((entry) => entry !== currentUserId);
+                      return {
+                        ...item,
+                        upvotes: (item.upvotes || 0) + (liked ? 1 : -1),
+                        upvotedBy: nextUpvotedBy
+                      };
+                    })
+                  );
+                  await togglePostUpvote(id, currentUserId);
+                }}
+              />
             ))
+          ) : (
+            <div className="text-center py-20 opacity-70">
+              <div className="text-4xl mb-4">🌿</div>
+              <h3 className="font-semibold text-text-primary mb-2">No reflections yet</h3>
+              <p className="text-sm text-text-secondary">Be the first to share in {activeTopic === 'all' ? 'the circle' : activeTopic}</p>
+              <button
+                onClick={() => navigate('/forum/new')}
+                className="mt-6 text-primary border border-primary/30 px-6 py-2 rounded-full text-sm font-medium hover:bg-primary/5 transition-colors"
+              >
+                Share gently
+              </button>
+            </div>
           )}
         </div>
-
-        {/* Post Composer Modal */}
-        {showComposer && (
-          <div className="fixed inset-0 bg-text-primary/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-[#F8F7FF]/95 backdrop-blur-xl w-full max-w-lg rounded-3xl p-6 shadow-2xl animate-fade-in border border-white/50 relative">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-text-primary">New Post</h3>
-                <button
-                  onClick={() => setShowComposer(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-surface hover:bg-danger/10 text-text-secondary hover:text-danger transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <textarea
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="Share your experience or ask a question..."
-                className="w-full px-5 py-4 bg-white border border-primary/10 rounded-2xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all resize-none mb-6 text-text-primary placeholder:text-text-secondary/50 min-h-[160px]"
-              />
-
-              <div className="flex gap-4 items-center">
-                <select
-                  value={newTopic}
-                  onChange={(e) => setNewTopic(e.target.value)}
-                  className="px-4 py-3 bg-white border border-primary/10 rounded-xl focus:outline-none focus:border-primary text-text-primary font-medium flex-1 cursor-pointer appearance-none"
-                >
-                  {topics.slice(1).map(topic => (
-                    <option key={topic} value={topic}>
-                      {topic}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  onClick={handlePostSubmit}
-                  className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-[#5A4AB8] transition-all shadow-lg shadow-primary/25 hover:translate-y-[-2px] active:scale-95"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Floating Action Button */}
-        <button
-          onClick={() => setShowComposer(true)}
-          className="fixed bottom-24 right-6 md:bottom-12 md:right-12 bg-primary text-white w-14 h-14 rounded-full shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center text-3xl z-40"
-        >
-          <span className="mb-1">+</span>
-        </button>
       </div>
     </div>
   );

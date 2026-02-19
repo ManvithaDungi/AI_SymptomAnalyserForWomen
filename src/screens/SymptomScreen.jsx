@@ -1,94 +1,103 @@
+// src/screens/SymptomScreen.jsx
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DisclaimerBanner from '../components/DisclaimerBanner';
+
+const SYMPTOMS = [
+  'Fatigue', 'Irregular Periods', 'Hair Loss', 'Weight Gain',
+  'Bloating', 'Headache', 'Mood Swings', 'Cramps',
+  'Nausea', 'Acne', 'Back Pain', 'Dizziness',
+  'Heavy Bleeding', 'Breast Tenderness', 'Insomnia', 'Anxiety',
+];
 
 export default function SymptomScreen() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState([]);
   const [additional, setAdditional] = useState('');
   const [isListening, setIsListening] = useState(false);
-  const textareaRef = useRef(null);
-
-  const symptoms = [
-    'Fatigue',
-    'Irregular Periods',
-    'Hair Loss',
-    'Weight Gain',
-    'Bloating',
-    'Headache',
-    'Mood Swings',
-    'Cramps',
-    'Nausea',
-    'Acne',
-    'Back Pain',
-    'Dizziness'
-  ];
+  const [langMode, setLangMode] = useState('en-IN'); // 'en-IN' or 'te-IN' or 'ta-IN'
+  const recognitionRef = useRef(null);
 
   const toggleSymptom = (symptom) => {
     setSelected(prev =>
-      prev.includes(symptom)
-        ? prev.filter(s => s !== symptom)
-        : [...prev, symptom]
+      prev.includes(symptom) ? prev.filter(s => s !== symptom) : [...prev, symptom]
     );
   };
 
   const startVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Speech Recognition not supported in your browser');
+      alert('Speech recognition is not supported in this browser. Try Chrome.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
       return;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'te-IN';
+    recognition.lang = langMode;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
 
     recognition.onresult = (event) => {
-      let transcript = '';
+      let finalTranscript = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript + ' ';
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        }
       }
-      setAdditional(prev => prev + ' ' + transcript);
+      if (finalTranscript) {
+        setAdditional(prev => (prev + ' ' + finalTranscript).trim());
+      }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (e) => {
       setIsListening(false);
-      alert('Error in speech recognition');
+      if (e.error !== 'aborted') alert(`Voice error: ${e.error}. Please try again.`);
     };
 
+    recognitionRef.current = recognition;
     recognition.start();
   };
 
   const handleAnalyze = () => {
     if (selected.length === 0 && additional.trim() === '') {
-      alert('Please select symptoms or describe your condition');
+      alert('Please select at least one symptom or describe your condition.');
       return;
     }
-
-    navigate('/results', {
-      state: { symptoms: selected, additional }
-    });
+    navigate('/results', { state: { symptoms: selected, additional } });
   };
 
   return (
-    <div className="min-h-full pb-20 pt-8 animate-fade-in">
+    <div className="min-h-full pb-24 pt-8 animate-fade-in">
       <div className="max-w-2xl mx-auto px-4">
-        <h2 className="text-3xl font-extrabold text-text-primary mb-2 tracking-tight">How are you feeling?</h2>
-        <p className="text-text-secondary mb-8 text-lg">Select symptoms you're experiencing today.</p>
+        <h2 className="text-3xl font-extrabold text-text-primary mb-1 tracking-tight">
+          How are you feeling?
+        </h2>
+        <p className="text-text-secondary mb-6 text-lg">
+          Select symptoms you're experiencing today.
+        </p>
 
         <DisclaimerBanner />
 
         {/* Symptom Chips */}
-        <div className="glass-card p-8 mb-8 mt-8">
+        <div className="glass-card p-6 mb-6 mt-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-4">
+            Common Symptoms — tap to select
+          </p>
           <div className="flex flex-wrap gap-3">
-            {symptoms.map(symptom => (
+            {SYMPTOMS.map(symptom => (
               <button
                 key={symptom}
                 onClick={() => toggleSymptom(symptom)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 border ${selected.includes(symptom)
-                  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.02]'
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${selected.includes(symptom)
+                  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.04]'
                   : 'bg-white text-text-secondary border-primary/20 hover:border-primary hover:text-primary'
                   }`}
               >
@@ -96,48 +105,71 @@ export default function SymptomScreen() {
               </button>
             ))}
           </div>
+          {selected.length > 0 && (
+            <p className="text-xs text-primary font-semibold mt-4">
+              ✓ {selected.length} symptom{selected.length > 1 ? 's' : ''} selected
+            </p>
+          )}
         </div>
 
-        {/* Text Area */}
-        <div className="glass-card p-6 mb-8">
-          <label className="block text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">
-            Additional Details (Optional)
-          </label>
+        {/* Voice Input Language Toggle */}
+        <div className="glass-card p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-sm font-semibold text-text-primary uppercase tracking-wide">
+              Describe in your words
+            </label>
+            <div className="flex gap-1 bg-primary/10 rounded-full p-1">
+              {[
+                { code: 'en-IN', label: 'EN' },
+                { code: 'te-IN', label: 'TE' },
+                { code: 'ta-IN', label: 'TA' },
+              ].map(l => (
+                <button
+                  key={l.code}
+                  onClick={() => setLangMode(l.code)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${langMode === l.code
+                    ? 'bg-primary text-white shadow'
+                    : 'text-text-secondary hover:text-primary'
+                    }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <textarea
-            ref={textareaRef}
             value={additional}
-            onChange={(e) => setAdditional(e.target.value)}
-            placeholder="Describe anything else you're experiencing..."
-            className="w-full px-4 py-3 bg-white/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white/80 transition-all resize-none text-text-primary placeholder:text-text-secondary/50"
-            rows="4"
+            onChange={e => setAdditional(e.target.value)}
+            placeholder="Describe anything else you're experiencing... (voice input appends here)"
+            className="w-full px-4 py-3 bg-white/60 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white/90 transition-all resize-none text-text-primary placeholder:text-text-secondary/50 text-sm"
+            rows="3"
           />
         </div>
 
-        {/* Action Area */}
-        <div className="flex items-center gap-6">
-          {/* Voice Input Button */}
-          <div className="flex flex-col items-center">
+        {/* Action Buttons */}
+        <div className="flex items-center gap-4">
+          {/* Voice Button */}
+          <div className="flex flex-col items-center gap-1">
             <button
               onClick={startVoiceInput}
-              disabled={isListening}
               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${isListening
-                ? 'bg-red-500 shadow-[0_0_0_8px_rgba(239,68,68,0.2)] animate-pulse'
-                : 'bg-primary text-white hover:bg-[#5A4AB8] shadow-lg shadow-primary/30 hover:scale-105'
+                ? 'bg-red-500 shadow-[0_0_0_10px_rgba(239,68,68,0.15)] animate-pulse'
+                : 'bg-primary text-white hover:bg-primary/80 shadow-lg shadow-primary/30 hover:scale-105'
                 }`}
             >
-              <span className="text-2xl">{isListening ? '🎙️' : '🎤'}</span>
+              <span className="text-xl">{isListening ? '⏹' : '🎤'}</span>
             </button>
-            <span className="text-xs font-medium text-text-secondary mt-2">
-              {isListening ? 'Listening...' : 'Telugu Voice'}
+            <span className="text-[10px] font-semibold text-text-secondary text-center leading-tight">
+              {isListening ? 'Tap to stop' : `Voice (${langMode.split('-')[0].toUpperCase()})`}
             </span>
           </div>
 
           {/* Analyze Button */}
           <button
             onClick={handleAnalyze}
-            className="flex-1 py-4 bg-primary text-white font-bold rounded-full text-lg shadow-lg shadow-primary/25 hover:bg-[#5A4AB8] hover:shadow-xl hover:translate-y-[-2px] active:scale-[0.98] transition-all"
+            className="flex-1 py-4 bg-primary text-white font-bold rounded-full text-lg shadow-lg shadow-primary/25 hover:bg-primary/80 hover:shadow-xl hover:translate-y-[-2px] active:scale-[0.98] transition-all"
           >
-            Analyze Symptoms
+            Analyze Symptoms →
           </button>
         </div>
       </div>
