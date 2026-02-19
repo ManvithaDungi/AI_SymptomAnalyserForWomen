@@ -1,97 +1,101 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-const PlaceCard = ({ place, distance }) => {
-   const [isSaved, setIsSaved] = useState(false);
+const PlaceCard = ({ place, index, isSelected, onClick, onDirections, onCall }) => {
+   const { name, rating, types, address, isOpen, distance, photo, phoneNumber } = place;
 
-   useEffect(() => {
-      // Check if place is already saved
-      const savedPlaces = JSON.parse(localStorage.getItem('vaazhvu_saved_places') || '[]');
-      setIsSaved(savedPlaces.some(p => p.id === place.id));
-   }, [place.id]);
+   // Determine type label and emoji
+   let typeLabel = 'Place';
+   if (types.includes('pharmacy')) typeLabel = 'Pharmacy';
+   else if (types.includes('dentist')) typeLabel = 'Dentist';
+   else if (types.includes('hospital')) typeLabel = 'Hospital';
+   else if (types.includes('doctor')) typeLabel = 'Doctor';
+   else if (types.includes('spa')) typeLabel = 'Wellness';
 
-   const handleSave = () => {
-      const savedPlaces = JSON.parse(localStorage.getItem('vaazhvu_saved_places') || '[]');
-      if (isSaved) {
-         // Remove from saved
-         const updated = savedPlaces.filter(p => p.id !== place.id);
-         localStorage.setItem('vaazhvu_saved_places', JSON.stringify(updated));
-         setIsSaved(false);
-      } else {
-         // Add to saved
-         savedPlaces.push({
-            id: place.id,
-            name: place.name,
-            address: place.address,
-            location: place.location // Save coordinates for future map use
-         });
-         localStorage.setItem('vaazhvu_saved_places', JSON.stringify(savedPlaces));
-         setIsSaved(true);
-      }
-   };
-
-   const getOpenStatus = () => {
-      if (place.isOpen === true) return <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full text-xs font-medium border border-green-100">Open now</span>;
-      if (place.isOpen === false) return <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full text-xs font-medium border border-red-100">Closed</span>;
-      return <span className="text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-100 text-[10px]">Hours unknown</span>;
-   };
-
-   const getDirectionsUrl = () => {
-      const query = encodeURIComponent(place.name);
-      return `https://www.google.com/maps/dir/?api=1&destination=${query}&destination_place_id=${place.placeId}`;
-   };
+   // Format open status
+   const openStatus = isOpen === true ? (
+      <span className="text-green-600 font-medium text-xs">🟢 Open now</span>
+   ) : isOpen === false ? (
+      <span className="text-red-400 font-medium text-xs">🔴 Closed</span>
+   ) : null;
 
    return (
-      <div className="glass-card mb-3 p-4 rounded-2xl border-l-[3px] border-l-primary hover:bg-white/80 transition-all duration-300">
-         <div className="flex justify-between items-start mb-2">
-            <h3 className="font-semibold text-text-primary text-sm leading-tight flex-1 mr-2 truncate">
-               {place.name}
-            </h3>
-            {distance && (
-               <span className="text-[10px] font-medium text-primary bg-primary/5 px-2 py-1 rounded-full whitespace-nowrap">
-                  {distance} km
+      <div
+         className={`
+        relative overflow-hidden transition-all duration-200 cursor-pointer
+        rounded-2xl border px-4 py-4 mb-3 select-none
+        ${isSelected
+               ? 'bg-primary/5 border-primary shadow-sm'
+               : 'bg-white/70 backdrop-blur-sm border-primary/10 hover:border-primary/30 hover:bg-white/80'}
+      `}
+         onClick={onClick}
+      >
+         {/* Top Row: Badge + Name + Rating */}
+         <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2 overflow-hidden">
+               <div className="flex-shrink-0 w-[22px] h-[22px] rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
+                  {index + 1}
+               </div>
+               <h3 className="text-sm font-semibold text-text-primary truncate" title={name}>
+                  {name}
+               </h3>
+            </div>
+            {rating && (
+               <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
+                  ⭐ {rating}
                </span>
             )}
          </div>
 
-         <p className="text-xs text-text-secondary truncate mb-2 opacity-80">
-            📍 {place.address}
-         </p>
-
-         <div className="flex items-center gap-2 mb-3">
-            {place.rating && (
-               <div className="flex items-center text-xs text-amber-500 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100">
-                  <span className="mr-1">⭐</span>
-                  <span className="font-medium">{place.rating}</span>
-                  <span className="text-text-secondary opacity-60 ml-1 font-normal">({place.totalRatings})</span>
-               </div>
+         {/* Second Row: Type + Distance */}
+         <div className="flex items-center gap-2 mb-2 pl-[30px]">
+            <span className="bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide">
+               {typeLabel}
+            </span>
+            {distance && (
+               <span className="text-xs text-text-secondary">• {distance} km away</span>
             )}
-            {getOpenStatus()}
          </div>
 
-         <div className="flex gap-2 mt-auto">
-            <a
-               href={getDirectionsUrl()}
-               target="_blank"
-               rel="noopener noreferrer"
-               className="flex-1 bg-white border border-primary/20 hover:bg-primary/5 text-primary text-xs font-medium py-2 rounded-full flex items-center justify-center transition-colors"
-            >
-               ➡️ Directions
-            </a>
+         {/* Address */}
+         <div className="flex items-start gap-1.5 pl-[30px] mb-2">
+            <span className="text-text-secondary text-xs mt-0.5">📍</span>
+            <p className="text-xs text-text-secondary line-clamp-2 leading-snug">
+               {address}
+            </p>
+         </div>
 
-            {/* Only show call button if we had phone number, but Places Search results don't always have phone.
-            We'd need Place Details API for that which costs extra. 
-            So we omit it unless we have it from somewhere else. */}
+         {/* Open Status & Buttons */}
+         <div className="flex items-center justify-between pl-[30px] mt-3">
+            <div className="flex-1">
+               {openStatus}
+            </div>
 
-            <button
-               onClick={handleSave}
-               className={`px-3 py-2 rounded-full border text-xs flex items-center justify-center transition-all ${isSaved
-                     ? 'bg-primary text-white border-primary'
-                     : 'bg-white border-gray-200 text-text-secondary hover:border-gray-300'
-                  }`}
-            >
-               {isSaved ? 'Via ✓' : '🔖'}
-            </button>
+            <div className="flex items-center gap-2">
+               {/* Directions Button */}
+               <button
+                  onClick={(e) => {
+                     e.stopPropagation();
+                     onDirections(place);
+                  }}
+                  className="flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-medium px-4 py-1.5 rounded-full transition-transform active:scale-95"
+               >
+                  <span>→</span> Directions
+               </button>
+
+               {/* Call Button (if phone expected, though cloud API usually returns it in details, we might not have it in listing) */}
+               {phoneNumber && (
+                  <button
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        onCall(phoneNumber);
+                     }}
+                     className="flex items-center gap-1.5 border border-primary text-primary hover:bg-primary/5 text-xs font-medium px-4 py-1.5 rounded-full transition-transform active:scale-95"
+                  >
+                     <span>📞</span> Call
+                  </button>
+               )}
+            </div>
          </div>
       </div>
    );

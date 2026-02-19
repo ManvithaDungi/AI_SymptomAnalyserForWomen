@@ -1,11 +1,13 @@
 import { signOut } from 'firebase/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { auth } from '../services/firebaseService';
+import LanguageSelector from './LanguageSelector';
 
-export default function Navbar({ language, setLanguage }) {
+export default function Navbar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const isForum = location.pathname === '/';
 
   const handleLogout = async () => {
     try {
@@ -17,11 +19,11 @@ export default function Navbar({ language, setLanguage }) {
   };
 
   const navLinks = [
-    { name: 'Community Forum', path: '/forum' },
-    { name: 'Check Symptoms', path: '/symptoms' },
-    { name: 'Home Remedies', path: '/remedy' },
-    { name: 'Journal', path: '/journal' },
-    { name: 'Nearby Help', path: '/nearby' }
+    { name: t('home.community'), path: '/forum' },
+    { name: t('home.check_symptoms'), path: '/symptoms' },
+    { name: t('home.remedies'), path: '/remedy' },
+    { name: t('home.journal'), path: '/journal' },
+    { name: t('home.nearby'), path: '/nearby' }
   ];
 
   return (
@@ -51,22 +53,18 @@ export default function Navbar({ language, setLanguage }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setLanguage(language === 'EN' ? 'TE' : 'EN')}
-            className="px-4 py-1.5 rounded-full border border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-all duration-200"
-          >
-            {language}
-          </button>
+          <LanguageSelector />
 
           <button
             onClick={handleLogout}
             className="text-text-secondary hover:text-danger p-2 transition-colors text-sm font-medium"
-            title="Sign Out"
+            title={t('common.logout')}
           >
-            Log Out
+            {t('common.logout')}
           </button>
         </div>
       </div>
     </nav>
   );
 }
+

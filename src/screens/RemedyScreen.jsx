@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DisclaimerBanner from '../components/DisclaimerBanner';
 import { validateRemedy } from '../services/geminiService';
 
 export default function RemedyScreen() {
+  const { t } = useTranslation();
   const [remedy, setRemedy] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const exampleRemedies = [
-    'Jeera water for PCOS',
-    'Turmeric milk for cramps',
-    'Sesame seeds for periods'
+    t('remedy.example1'),
+    t('remedy.example2'),
+    t('remedy.example3')
   ];
 
   const getVerdictColor = (verdict) => {
@@ -47,8 +49,8 @@ export default function RemedyScreen() {
     <div className="min-h-full pb-20 pt-8 animate-fade-in">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-extrabold text-text-primary mb-3 text-center">Home Remedy Checker</h2>
-          <p className="text-text-secondary text-lg">Science-backed verification for traditional wisdom.</p>
+          <h2 className="text-3xl font-extrabold text-text-primary mb-3 text-center">{t('remedy.title')}</h2>
+          <p className="text-text-secondary text-lg">{t('remedy.subtitle')}</p>
         </div>
 
         <DisclaimerBanner />
@@ -56,14 +58,14 @@ export default function RemedyScreen() {
         {/* Remedy Input */}
         <div className="glass-card p-8 mb-8 mt-8">
           <label className="block text-sm font-bold text-text-primary mb-4 uppercase tracking-wide">
-            Enter a remedy to verify
+            {t('remedy.enter_remedy')}
           </label>
           <div className="relative">
             <input
               type="text"
               value={remedy}
               onChange={(e) => setRemedy(e.target.value)}
-              placeholder="e.g., Ginger tea for nausea"
+              placeholder={t('remedy.placeholder')}
               className="w-full px-5 py-4 bg-white/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white/90 transition-all font-medium text-lg placeholder:text-text-secondary/50"
             />
             <button
@@ -71,14 +73,14 @@ export default function RemedyScreen() {
               disabled={loading}
               className="absolute right-2 top-2 bottom-2 bg-primary text-white px-6 rounded-lg font-bold hover:bg-[#5A4AB8] transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-md"
             >
-              {loading ? 'Checking...' : 'Check'}
+              {loading ? t('remedy.checking') : t('remedy.check')}
             </button>
           </div>
         </div>
 
         {/* Example Suggestions */}
         <div className="mb-10 text-center">
-          <p className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">Popular Searches</p>
+          <p className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">{t('remedy.popular')}</p>
           <div className="flex flex-wrap justify-center gap-3">
             {exampleRemedies.map(suggestion => (
               <button
@@ -96,7 +98,7 @@ export default function RemedyScreen() {
         {result && (
           <div className="glass-card p-8 animate-fade-in border-l-4 border-l-primary">
             <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-text-primary">Verdict</h3>
+              <h3 className="text-2xl font-bold text-text-primary">{t('remedy.verdict')}</h3>
               <span className={`px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wide border ${getVerdictColor(result.verdict)}`}>
                 {result.verdict}
               </span>
@@ -105,14 +107,14 @@ export default function RemedyScreen() {
             <div className="space-y-6">
               <div>
                 <h4 className="font-bold text-text-primary mb-2 flex items-center gap-2">
-                  <span className="text-lg">🧐</span> Explanation
+                  <span className="text-lg">🧐</span> {t('remedy.explanation')}
                 </h4>
                 <p className="text-text-secondary leading-relaxed bg-white/40 p-4 rounded-xl">{result.explanation}</p>
               </div>
 
               <div>
                 <h4 className="font-bold text-text-primary mb-2 flex items-center gap-2">
-                  <span className="text-lg">🔬</span> Scientific Backing
+                  <span className="text-lg">🔬</span> {t('remedy.scientific')}
                 </h4>
                 <p className="text-text-secondary leading-relaxed bg-white/40 p-4 rounded-xl">{result.scientific_backing}</p>
               </div>
@@ -120,7 +122,7 @@ export default function RemedyScreen() {
               <div className="bg-primary/5 border border-primary/10 p-5 rounded-xl flex gap-4 items-start">
                 <span className="text-2xl">💡</span>
                 <div>
-                  <h4 className="font-bold text-primary mb-1">Health Tip</h4>
+                  <h4 className="font-bold text-primary mb-1">{t('remedy.tip')}</h4>
                   <p className="text-text-secondary text-sm">{result.tip}</p>
                 </div>
               </div>
@@ -131,7 +133,7 @@ export default function RemedyScreen() {
         {loading && (
           <div className="text-center py-12">
             <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-text-secondary animate-pulse">Consulting medical database...</p>
+            <p className="text-text-secondary animate-pulse">{t('remedy.consulting')}</p>
           </div>
         )}
       </div>

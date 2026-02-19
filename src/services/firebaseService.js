@@ -14,6 +14,7 @@ import {
   getDoc,
   serverTimestamp,
   orderBy,
+  limit, // Added limit
   updateDoc,
   arrayUnion,
   arrayRemove,
@@ -87,33 +88,34 @@ export const saveSymptomLog = async (userId, symptoms, result) => {
   }
 };
 
-export const getForumPosts = async (topic = null) => {
+export const getForumPosts = async (topic = 'all', sortBy = 'recent', language = 'en') => {
   try {
     const base = collection(db, 'forum_posts');
-    // Fetch all posts first to avoid index issues during development
-    const querySnapshot = await getDocs(base);
 
-    let posts = querySnapshot.docs.map((snapshot) => ({
+    const constraints = [
+      where('approved', '==', true),
+      where('language', '==', language)
+    ];
+
+    if (topic && topic !== 'all' && topic !== 'All') {
+      constraints.push(where('topic', '==', topic));
+    }
+
+    if (sortBy === 'recent') {
+      constraints.push(orderBy('createdAt', 'desc'));
+    } else {
+      constraints.push(orderBy('upvotes', 'desc'));
+    }
+
+    constraints.push(limit(20));
+
+    const q = query(base, ...constraints);
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((snapshot) => ({
       id: snapshot.id,
       ...snapshot.data(),
     }));
-
-    // Client-side filtering
-    posts = posts.filter(post => post.approved === true);
-
-    // Client-side topic filtering
-    if (topic && topic !== 'All' && topic !== 'all') {
-      posts = posts.filter(post => post.topic === topic);
-    }
-
-    // Client-side sorting (handle both Firestore Timestamp and Date objects)
-    posts.sort((a, b) => {
-      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.createdAt || 0).getTime();
-      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.createdAt || 0).getTime();
-      return timeB - timeA; // Descending
-    });
-
-    return posts;
   } catch (error) {
     console.error('Error fetching forum posts:', error);
     throw error;
@@ -122,13 +124,15 @@ export const getForumPosts = async (topic = null) => {
 
 export const saveForumPost = async (postData) => {
   try {
+    const language = localStorage.getItem('language') || 'en';
     await addDoc(collection(db, 'forum_posts'), {
       ...postData,
+      language,
       createdAt: serverTimestamp(),
       upvotes: postData.upvotes ?? 0,
       upvotedBy: postData.upvotedBy ?? [],
       commentCount: postData.commentCount ?? 0,
-      approved: postData.approved ?? true,
+      approved: postData.approved ?? false, // Default to false for moderation as per request, but keeping flexible
       isPinned: postData.isPinned ?? false,
       isExpertAnswered: postData.isExpertAnswered ?? false,
     });
@@ -256,11 +260,13 @@ export const getJournalEntries = async (userId, monthKey) => {
     // Or better: Use string comparison on date field (YYYY-MM-DD startsWith YYYY-MM)
     const q = query(
       collection(db, 'journal_entries'),
-      where('userId', '==', userId),
-      orderBy('date', 'desc')
+      where('userId', '==', userId)
     );
     const snapshot = await getDocs(q);
     const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Sort manualy (descending date)
+    all.sort((a, b) => b.date.localeCompare(a.date));
 
     // Filter for specific month if provided
     if (monthKey) {

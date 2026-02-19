@@ -43,7 +43,7 @@ export const getLocationName = async (lat, lng) => {
 };
 
 // Search nearby places by category
-export const searchNearbyPlaces = (map, location, category) => {
+export const searchNearbyPlaces = (map, location, category, radiusVal = 3000) => {
    return new Promise((resolve, reject) => {
       if (!window.google || !window.google.maps) {
          reject(new Error('Google Maps not loaded'));
@@ -52,48 +52,31 @@ export const searchNearbyPlaces = (map, location, category) => {
 
       const service = new window.google.maps.places.PlacesService(map);
 
-      // Search configs per category
+      // Mappings based on user requirement
       const searchConfig = {
-         gynecologist: {
-            keyword: 'gynecologist women doctor hospital',
-            type: 'doctor',
-            radius: 5000
-         },
-         pharmacy: {
-            keyword: 'pharmacy medical store chemist',
-            type: 'pharmacy',
-            radius: 3000
-         },
-         hospital: {
-            keyword: 'women hospital maternity clinic',
-            type: 'hospital',
-            radius: 8000
-         },
-         ngo: {
-            keyword: 'women NGO sakhi one stop centre mahila helpline',
-            type: null,
-            radius: 10000
-         },
-         counseling: {
-            keyword: 'counseling mental health women support center',
-            type: null,
-            radius: 8000
-         }
+         'Gynecologist': { type: 'doctor', keyword: 'gynecologist' },
+         'Pharmacy': { type: 'pharmacy', keyword: 'pharmacy' },
+         'General Physician': { type: 'doctor', keyword: 'physician' },
+         'Diagnostic Lab': { type: 'hospital', keyword: 'diagnostic lab' },
+         'Women\'s Clinic': { type: 'hospital', keyword: 'women clinic' },
+         'Wellness Center': { type: 'spa', keyword: 'wellness' },
+         'Dentist': { type: 'dentist', keyword: 'dentist' },
+         'Eye Care': { type: 'doctor', keyword: 'ophthalmologist' }
       };
 
-      const config = searchConfig[category] || searchConfig.hospital;
+      const config = searchConfig[category] || searchConfig['Gynecologist'];
 
       const request = {
          location: new window.google.maps.LatLng(location.lat, location.lng),
-         radius: config.radius,
+         radius: radiusVal, // logic handled by caller or default
          keyword: config.keyword,
-         ...(config.type && { type: config.type })
+         type: config.type
       };
 
       service.nearbySearch(request, (results, status) => {
-         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+         if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
             // Format results to consistent shape
-            const formatted = results.slice(0, 10).map(place => ({
+            const formatted = results.map(place => ({
                id: place.place_id,
                name: place.name,
                address: place.vicinity,
@@ -105,14 +88,16 @@ export const searchNearbyPlaces = (map, location, category) => {
                   lng: place.geometry.location.lng()
                },
                types: place.types,
-               photo: place.photos?.[0]?.getUrl({ maxWidth: 200 }) || null,
+               photo: place.photos?.[0]?.getUrl({ maxWidth: 400 }) || null,
                placeId: place.place_id
             }));
             resolve(formatted);
          } else if (status === 'ZERO_RESULTS') {
             resolve([]);
          } else {
-            reject(new Error(`Places API error: ${status}`));
+            // resolving empty on error to prevent crash, but logging
+            console.warn(`Places API status: ${status}`);
+            resolve([]);
          }
       });
    });

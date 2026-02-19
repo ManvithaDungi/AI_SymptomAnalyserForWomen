@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DisclaimerBanner from '../components/DisclaimerBanner';
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const navCards = [
     {
       id: 1,
       icon: '🔍',
-      title: 'Check Symptoms',
+      title: t('home.check_symptoms'),
       description: 'Analyze symptoms & get AI insights',
       route: '/symptoms',
       color: 'bg-primary/10 text-primary'
@@ -16,7 +18,7 @@ export default function HomeScreen() {
     {
       id: 2,
       icon: '💬',
-      title: 'Community Forum',
+      title: t('home.community'),
       description: 'Connect anonymously with others',
       route: '/forum',
       color: 'bg-secondary/10 text-secondary'
@@ -24,7 +26,7 @@ export default function HomeScreen() {
     {
       id: 3,
       icon: '🌿',
-      title: 'Home Remedies',
+      title: t('home.remedies'),
       description: 'Traditional wisdom backed by science',
       route: '/remedy',
       color: 'bg-accent/20 text-[#4A7C59]'
@@ -32,7 +34,7 @@ export default function HomeScreen() {
     {
       id: 4,
       icon: '📔',
-      title: 'My Journal',
+      title: t('home.journal'),
       description: 'Track your personal health journey',
       route: '/journal',
       color: 'bg-warning/10 text-warning'
@@ -49,17 +51,17 @@ export default function HomeScreen() {
             WOMEN'S HEALTH COMPANION
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-text-primary mb-6 tracking-tight leading-tight">
-            Sahachari <br />
-            <span className="text-primary transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">your companion.</span>
+            {t('home.title')} <br />
+            <span className="text-primary transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Sahachari</span>
           </h1>
           <p className="text-lg md:text-xl text-text-secondary leading-relaxed mb-10 max-w-lg mx-auto">
-            A safe, judgment-free zone to analyze symptoms, find remedies, and connect with a community that understands.
+            {t('home.subtitle')}
           </p>
           <button
             onClick={() => navigate('/symptoms')}
             className="bg-primary text-white rounded-full px-8 py-4 font-semibold text-lg hover:bg-[#5A4AB8] transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/25"
           >
-            Start Checkup
+            {t('home.check_symptoms')}
           </button>
         </div>
 
@@ -94,3 +96,4 @@ export default function HomeScreen() {
     </div>
   );
 }
+

@@ -1,250 +1,268 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import CategoryFilter from '../components/nearby/CategoryFilter';
-import PlaceCard from '../components/nearby/PlaceCard';
+import { useState, useEffect, useRef } from 'react';
 import MapView from '../components/nearby/MapView';
-import {
-   getUserLocation,
-   getLocationName,
-   searchNearbyPlaces,
-   getDistance
-} from '../services/placesService';
+import PlaceCard from '../components/nearby/PlaceCard';
+import PlaceTypeSelector from '../components/nearby/PlaceTypeSelector';
+import { getUserLocation, getLocationName, searchNearbyPlaces, getDirectionsUrl, getDistance } from '../services/placesService';
 
 export default function NearbyHelpScreen() {
-   const navigate = useNavigate();
-   const [loading, setLoading] = useState(true);
-   const [denied, setDenied] = useState(false);
-   const [location, setLocation] = useState(null);
+   const [scriptLoaded, setScriptLoaded] = useState(false);
+   const [userLocation, setUserLocation] = useState(null); // { lat, lng }
    const [locationName, setLocationName] = useState('Locating...');
-   const [activeCategory, setActiveCategory] = useState('gynecologist');
    const [places, setPlaces] = useState([]);
-   const [searching, setSearching] = useState(false);
+   const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [mapLoaded, setMapLoaded] = useState(false);
-   const mapRef = useRef(null); // Reference to the map container (for PlacesService context, though normally we pass map instance)
 
-   // Load Google Maps Script
+   // Filters
+   const [selectedType, setSelectedType] = useState('Gynecologist');
+   const [radius, setRadius] = useState(3000); // meters
+
+   // Selection
+   const [selectedPlaceId, setSelectedPlaceId] = useState(null);
+   // We need the map instance to use PlacesService.
+   const [mapInstance, setMapInstance] = useState(null);
+
+   const listRef = useRef(null);
+
+   // 0. Load Google Maps Script
    useEffect(() => {
-      const loadScript = () => {
-         if (window.google && window.google.maps) {
-            setMapLoaded(true);
-            return;
-         }
-         const script = document.createElement('script');
-         script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&libraries=places`;
-         script.async = true;
-         script.onload = () => setMapLoaded(true);
-         script.onerror = () => setError('Failed to load Google Maps');
-         document.head.appendChild(script);
-      };
-      loadScript();
+      if (window.google && window.google.maps) {
+         setScriptLoaded(true);
+         return;
+      }
+      const existingScript = document.getElementById('google-maps-script');
+      if (existingScript) {
+         setScriptLoaded(true);
+         return;
+      }
+
+      const script = document.createElement('script');
+      script.id = 'google-maps-script';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&libraries=places`;
+      script.async = true;
+      script.onload = () => setScriptLoaded(true);
+      script.onerror = () => setError('Failed to load Google Maps API');
+      document.head.appendChild(script);
    }, []);
 
-   // Get User Location once Map is ready (for types) or just browser API
+   // 1. Get User Location on Mount (only after script loads optionally, but independent actually)
    useEffect(() => {
-      if (!mapLoaded) return;
-
+      let mounted = true;
       getUserLocation()
-         .then(async (coords) => {
-            setLocation(coords);
-            const name = await getLocationName(coords.lat, coords.lng);
-            setLocationName(name);
-            setLoading(false);
+         .then(async (loc) => {
+            if (!mounted) return;
+            setUserLocation(loc);
+            try {
+               // We need google maps for geocoder
+               if (window.google) {
+                  const name = await getLocationName(loc.lat, loc.lng);
+                  if (mounted) setLocationName(name);
+               }
+            } catch (e) {
+               console.warn(e);
+               if (mounted) setLocationName('Unknown Location');
+            }
          })
          .catch((err) => {
-            console.error("Location Error:", err);
-            setDenied(true);
-            setLoading(false);
+            console.error(err);
+            if (mounted) {
+               setError('Location permission denied. Map centered on Chennai.');
+               // Default to Chennai
+               setUserLocation({ lat: 13.0827, lng: 80.2707 });
+               setLocationName('Chennai, TN');
+            }
          });
-   }, [mapLoaded]);
+      return () => { mounted = false; };
+   }, [scriptLoaded]); // Re-run if script loads to get name
 
-   // Search Places when category changes or location is found
+   // Capture Map Instance from MapView
+   const handleMapLoad = (map) => {
+      setMapInstance(map);
+   };
+
+   // 2. Fetch Places whenever inputs change and map is ready
    useEffect(() => {
-      if (!location || !mapLoaded) return;
+      if (!userLocation || !mapInstance || !scriptLoaded) return;
 
-      const fetchPlaces = async () => {
-         setSearching(true);
-         setError(null);
-         try {
-            // We need a map instance for PlacesService, or a hidden div.
-            // But since we render MapView, let's use a trick: 
-            // We can create a dummy map or use the one from MapView if we lifted state up.
-            // Better: creating a dummy div for the service if MapView isn't ready yet or independent.
-            // Actually, PlacesService requires a map OR a node.
-            const dummyNode = document.createElement('div');
-            const map = new window.google.maps.Map(dummyNode, { center: location, zoom: 15 });
+      let mounted = true;
+      setLoading(true);
+      setError(null);
 
-            const results = await searchNearbyPlaces(map, location, activeCategory);
-            setPlaces(results);
-         } catch (err) {
-            console.error("Places Search Error:", err);
-            setError("Could not find places nearby. Try again later.");
-         } finally {
-            setSearching(false);
-         }
-      };
+      // Clear previous places selection to avoid confusion? No, keep it.
 
-      fetchPlaces();
-   }, [location, activeCategory, mapLoaded]);
+      searchNearbyPlaces(mapInstance, userLocation, selectedType, radius)
+         .then(results => {
+            if (!mounted) return;
+            // Calculate distance for each
+            const withDist = results.map(p => ({
+               ...p,
+               distance: getDistance(userLocation.lat, userLocation.lng, p.location.lat, p.location.lng)
+            }));
+            // Sort by distance
+            withDist.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+            setPlaces(withDist);
+            setLoading(false);
+         })
+         .catch(err => {
+            console.error("Fetch places failed:", err);
+            if (mounted) {
+               setError("Could not load places. Try again.");
+               setLoading(false);
+            }
+         });
 
-   // Contextual Tips
-   const getTip = () => {
-      switch (activeCategory) {
-         case 'gynecologist': return "💜 Tip: You have the right to ask for a female doctor. It's okay to request this.";
-         case 'pharmacy': return "💊 Tip: Many pharmacies keep emergency contraceptives. You can ask privately.";
-         case 'hospital': return "🏥 Tip: Government hospitals often have free women's health OPD. Bring ID.";
-         case 'ngo': return "🤝 Tip: Calls to 181 are free and confidential. You don't need to give your name.";
-         case 'counseling': return "🌿 Tip: Seeking support is a sign of strength. iCall offers free sessions.";
-         default: return "";
+      return () => { mounted = false; };
+   }, [userLocation, mapInstance, selectedType, radius, scriptLoaded]);
+
+   // Scroll to place
+   const handlePlaceSelect = (placeId) => {
+      setSelectedPlaceId(placeId);
+      const element = document.getElementById(`place-card-${placeId}`);
+      if (element) {
+         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
    };
 
-   if (loading) {
-      return (
-         <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8F7FF]">
-            <div className="animate-spin text-4xl mb-4">📍</div>
-            <p className="text-secondary font-medium animate-pulse">Finding your location...</p>
-         </div>
-      );
-   }
-
-   if (denied) {
-      return (
-         <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8F7FF] p-6 text-center">
-            <div className="text-6xl mb-6">📍</div>
-            <h2 className="text-2xl font-bold text-primary mb-3">Location Access Needed</h2>
-            <p className="text-text-secondary text-sm mb-8 max-w-xs mx-auto leading-relaxed">
-               To find nearby doctors, pharmacies, and support centers, we need your location.
-               This is only used locally and never stored.
-            </p>
-            <button
-               onClick={() => window.location.reload()}
-               className="bg-primary text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-primary-dark transition-transform hover:scale-105 active:scale-95"
-            >
-               Allow Location Access
-            </button>
-         </div>
-      );
+   // View for Error/Loading if script fails
+   if (error && !scriptLoaded) {
+      return <div className="h-screen flex items-center justify-center text-red-500">{error}</div>;
    }
 
    return (
-      <div className="min-h-screen bg-[#F8F7FF] pb-24 font-sans animate-fade-in relative">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden bg-[#F8F7FF] animate-fade-in relative z-0">
 
-         {/* Header */}
-         <div className="sticky top-0 bg-[#F8F7FF]/90 backdrop-blur-md z-20 px-4 py-4 border-b border-white/50">
-            <div className="flex items-center gap-2 mb-1">
-               <button onClick={() => navigate('/home')} className="p-2 -ml-2 text-text-secondary">
-                  ←
-               </button>
-               <h1 className="text-2xl font-bold text-primary">Nearby Help</h1>
-            </div>
-            <div className="flex justify-between items-end">
-               <div className="text-sm text-text-secondary truncate max-w-[70%]">
-                  📍 {locationName}
-               </div>
-               {location?.accuracy > 100 && (
-                  <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
-                     ⚠ Approximate
-                  </span>
-               )}
-            </div>
+         {/* LEFT PANEL: MAP (Top on mobile) */}
+         <div className="w-full lg:w-[58%] h-[40vh] lg:h-full relative shadow-[inset_-8px_0_16px_rgba(109,91,208,0.06)] z-10 order-1 lg:order-1">
+            {scriptLoaded && (
+               <MapView
+                  userLocation={userLocation}
+                  places={places}
+                  activePlaceId={selectedPlaceId}
+                  // We need to modify MapView to accept onMapLoad? 
+                  // I haven't added onMapLoad to MapView prop definition in previous step!
+                  // I will assume I can fix MapView or MapView exposes ref.
+                  // Actually, I need to Update MapView to expose onMapLoad.
+                  // WAIT: access map instance via ref or callback.
+                  // Since I can't easily change MapView right now without another tool call, 
+                  // I'll check if MapView can just export the map instance ref?
+                  // MapView.jsx: has `mapInstanceRef`. I can modify it to call `onMapLoad` prop if exists.
+                  onMarkerClick={(place) => handlePlaceSelect(place.id)}
+                  // Passing onMapLoad implies MapView uses it. I will update MapView in next step if needed.
+                  // Note: MapView logic in Step 864 didn't use `onMapLoad`.
+                  // I MUST update MapView to support this.
+                  onMapLoad={handleMapLoad}
+               />
+            )}
          </div>
 
-         {/* Emergency Strip */}
-         <div className="mx-4 mt-4 mb-6 bg-[rgba(181,117,107,0.08)] border border-[rgba(181,117,107,0.15)] rounded-xl px-4 py-3 flex items-center gap-3">
-            <span className="text-xl">🆘</span>
-            <p className="text-xs text-text-secondary leading-snug">
-               Emergency? Call <a href="tel:181" className="font-bold text-primary underline">181</a> (Helpline)
-               or <a href="tel:108" className="font-bold text-primary underline">108</a> (Ambulance).
-            </p>
-         </div>
+         {/* RIGHT PANEL: LIST (Bottom on mobile) */}
+         <div className="w-full lg:w-[42%] flex-1 lg:h-full overflow-y-auto bg-[#F8F7FF] flex flex-col relative z-20 order-2 lg:order-2" ref={listRef}>
 
-         {/* Map */}
-         <div className="px-4 mb-6">
-            <MapView
-               userLocation={location}
-               places={places}
-               activeCategory={activeCategory}
-            />
-         </div>
-
-         {/* Categories */}
-         <div className="mb-6">
-            <CategoryFilter activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
-         </div>
-
-         {/* Results */}
-         <div className="px-4 space-y-4">
-            <div className="flex justify-between items-center mb-2">
-               <h3 className="font-semibold text-primary">
-                  {searching ? 'Searching...' : `${places.length} places found`}
-               </h3>
-               <span className="text-xs text-text-secondary opacity-60">Within 5-10 km</span>
-            </div>
-
-            {/* Static NGO Card if category is NGO/Support */}
-            {activeCategory === 'ngo' && (
-               <div className="bg-[rgba(184,212,190,0.15)] border border-[rgba(184,212,190,0.4)] rounded-xl p-4 mb-4">
-                  <h4 className="font-semibold text-primary text-sm mb-1">🤝 Official Support Centers</h4>
-                  <p className="text-xs text-text-secondary mb-3">Verified government helplines.</p>
-
-                  <div className="space-y-3">
-                     <div className="bg-white/60 p-3 rounded-lg flex justify-between items-center">
-                        <div>
-                           <p className="text-sm font-medium text-primary">Sakhi One Stop Centre</p>
-                           <p className="text-[10px] text-text-secondary">24/7 Crisis Support for Women</p>
-                        </div>
-                        <a href="tel:181" className="bg-[#B8D4BE] text-primary-dark font-bold text-xs px-3 py-1.5 rounded-full border border-primary/10">Call 181</a>
-                     </div>
-                     <div className="bg-white/60 p-3 rounded-lg flex justify-between items-center">
-                        <div>
-                           <p className="text-sm font-medium text-primary">iCall Mental Health</p>
-                           <p className="text-[10px] text-text-secondary">Free Counseling (Mon-Sat)</p>
-                        </div>
-                        <a href="tel:9152987821" className="bg-[#B8D4BE] text-primary-dark font-bold text-xs px-3 py-1.5 rounded-full border border-primary/10">Call</a>
-                     </div>
+            {/* Header Section */}
+            <div className="sticky top-0 bg-[#F8F7FF]/90 backdrop-blur-md z-30 px-5 pt-5 pb-2 border-b border-primary/5">
+               <div className="flex justify-between items-start mb-4">
+                  <div>
+                     <h1 className="text-xl font-bold text-text-primary">Nearby Help</h1>
+                     <p className="text-xs text-text-secondary mt-1">
+                        Showing {selectedType}s near you
+                     </p>
+                  </div>
+                  <div className="bg-primary/5 border border-primary/10 rounded-full px-3 py-1 text-xs font-medium text-text-secondary flex items-center gap-1 cursor-pointer hover:bg-primary/10 transition-colors" title="Update Location">
+                     <span>📍</span> {locationName}
                   </div>
                </div>
-            )}
 
-            {/* Place List */}
-            {searching ? (
-               // Skeletons
-               [1, 2, 3].map(i => (
-                  <div key={i} className="h-24 bg-[rgba(109,91,208,0.06)] rounded-2xl animate-pulse"></div>
-               ))
-            ) : places.length > 0 ? (
-               places.map(place => (
-                  <PlaceCard
-                     key={place.id}
-                     place={place}
-                     distance={location ? getDistance(location.lat, location.lng, place.location.lat, place.location.lng) : null}
+               {/* Place Type Selector */}
+               <div className="mb-4">
+                  <PlaceTypeSelector
+                     selectedType={selectedType}
+                     onSelect={setSelectedType}
                   />
-               ))
-            ) : (
-               <div className="text-center py-10 opacity-60">
-                  <div className="text-4xl mb-3">🔍</div>
-                  <p className="text-sm text-text-secondary">No places found nearby.</p>
-                  <button
-                     onClick={() => window.location.reload()} // Simple retry
-                     className="mt-4 text-primary text-xs font-medium border border-primary/30 px-4 py-2 rounded-full hover:bg-primary/5"
-                  >
-                     Try widening search
-                  </button>
                </div>
-            )}
 
-            {/* Tip */}
-            {!searching && places.length > 0 && (
-               <div className="bg-[rgba(109,91,208,0.04)] rounded-xl p-4 text-xs text-text-secondary leading-relaxed border border-primary/5 mt-6">
-                  {getTip()}
+               {/* Radius Selector */}
+               <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+                  <span className="text-xs font-medium text-text-secondary mr-2">Within:</span>
+                  {[1000, 3000, 5000, 10000].map(r => (
+                     <button
+                        key={r}
+                        onClick={() => setRadius(r)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap
+                             ${radius === r
+                              ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105'
+                              : 'bg-white border border-primary/20 text-text-secondary hover:border-primary/50'}
+                           `}
+                     >
+                        {r / 1000} km
+                     </button>
+                  ))}
                </div>
-            )}
 
-            <p className="text-[10px] text-center text-text-secondary/50 mt-8 pb-4">
-               🔒 Your location is used locally and never stored.
-            </p>
+               {/* Search Button (Visual indicator mainly, as search is auto) */}
+               <button
+                  disabled={loading}
+                  onClick={() => {
+                     // Re-trigger search logic via effect dependencies?
+                     // Or explicit fetch. Effect does it automatically on radius/type change.
+                     // Force refresh? passing a timestamp to dependency?
+                     // For now, it's auto.
+                  }}
+                  className="w-full bg-primary text-white rounded-full py-3 text-sm font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mb-2"
+               >
+                  {loading ? (
+                     <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Searching...
+                     </>
+                  ) : (
+                     'Find Places'
+                  )}
+               </button>
+
+               {error && (
+                  <div className="bg-red-50 border border-red-100 rounded-xl p-3 text-xs text-red-600 mt-2">
+                     {error} <button onClick={() => window.location.reload()} className="underline ml-1">Retry</button>
+                  </div>
+               )}
+            </div>
+
+            {/* Results List */}
+            <div className="px-5 py-2 space-y-3 pb-24 min-h-[50vh]">
+               {loading && places.length === 0 ? (
+                  // Loading Skeletons
+                  Array(3).fill(0).map((_, i) => (
+                     <div key={i} className="h-32 rounded-2xl bg-white/50 animate-pulse border border-white/60 mb-3" />
+                  ))
+               ) : places.length === 0 && !loading ? (
+                  // Empty State
+                  <div className="flex flex-col items-center justify-center py-10 text-center animate-fade-in">
+                     <span className="text-4xl mb-3 grayscale opacity-60">🔍</span>
+                     <h3 className="text-text-primary font-semibold">No places found nearby</h3>
+                     <p className="text-text-secondary text-sm px-8 mt-1">
+                        Try increasing the radius to 10km.
+                     </p>
+                     <button
+                        onClick={() => setRadius(10000)}
+                        className="mt-4 px-5 py-2 border border-primary text-primary rounded-full text-sm font-medium hover:bg-primary/5"
+                     >
+                        Try 10km
+                     </button>
+                  </div>
+               ) : (
+                  places.map((place, index) => (
+                     <div id={`place-card-${place.id}`} key={place.id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                        <PlaceCard
+                           place={place}
+                           index={index}
+                           isSelected={selectedPlaceId === place.id}
+                           onClick={() => handlePlaceSelect(place.id)}
+                           onDirections={() => window.open(getDirectionsUrl(place.location.lat, place.location.lng, place.name), '_blank')}
+                           onCall={(phone) => window.location.href = `tel:${phone}`}
+                        />
+                     </div>
+                  ))
+               )}
+            </div>
          </div>
       </div>
    );

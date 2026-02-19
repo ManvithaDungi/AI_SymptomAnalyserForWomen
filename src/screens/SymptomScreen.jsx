@@ -1,22 +1,28 @@
 // src/screens/SymptomScreen.jsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DisclaimerBanner from '../components/DisclaimerBanner';
+import { analyzeSymptoms } from '../services/geminiService';
+import { extractEntities } from '../services/nlpService';
+import { saveSymptomLog, getUserId } from '../services/firebaseService';
+import VoiceInputButton from '../components/VoiceInputButton';
 
 const SYMPTOMS = [
-  'Fatigue', 'Irregular Periods', 'Hair Loss', 'Weight Gain',
-  'Bloating', 'Headache', 'Mood Swings', 'Cramps',
-  'Nausea', 'Acne', 'Back Pain', 'Dizziness',
-  'Heavy Bleeding', 'Breast Tenderness', 'Insomnia', 'Anxiety',
+  'Irregular Periods', 'Acne', 'Weight Gain',
+  'Hair Loss', 'Fatigue', 'Mood Swings',
+  'Pelvic Pain', 'Heavy Bleeding', 'Cramps',
+  'Headache', 'Nausea', 'Bloating', 'Back Pain', 'Dizziness',
+  'Breast Tenderness', 'Insomnia', 'Anxiety',
 ];
 
 export default function SymptomScreen() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [selected, setSelected] = useState([]);
   const [additional, setAdditional] = useState('');
-  const [isListening, setIsListening] = useState(false);
-  const [langMode, setLangMode] = useState('en-IN'); // 'en-IN' or 'te-IN' or 'ta-IN'
-  const recognitionRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [analyzingText, setAnalyzingText] = useState(t('common.analyzing'));
 
   const toggleSymptom = (symptom) => {
     setSelected(prev =>
@@ -24,64 +30,73 @@ export default function SymptomScreen() {
     );
   };
 
-  const startVoiceInput = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser. Try Chrome.');
+  const handleAnalyze = async () => {
+    if (selected.length === 0 && !additional.trim()) {
+      alert("Please select at least one symptom or describe your problem.");
       return;
     }
 
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
+    setLoading(true);
+    setAnalyzingText(t('common.analyzing'));
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = langMode;
-    recognition.continuous = true;
-    recognition.interimResults = true;
+    try {
+      // Step 1: Extract entities using Cloud NL (if any text provided)
+      let finalSymptoms = [...selected];
 
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
+      if (additional.trim().length > 3) {
+        try {
+          const entities = await extractEntities(additional);
+          // Filter out generic entities (e.g. 'Person') if needed, for now include relevant types
+          // Cloud NL Types: EVENT, OTHER, PERSON, LOCATION, ORGANIZATION, CONSUMER_GOOD, WORK_OF_ART
+          const relevantEntities = entities
+            .filter(e => ['OTHER', 'EVENT', 'CONSUMER_GOOD'].includes(e.type) && e.salience > 0.02)
+            .map(e => e.name); // Entity name (e.g. "headache")
 
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + ' ';
+          // Add unique entities to symptoms list
+          relevantEntities.forEach(e => {
+            if (!finalSymptoms.some(s => s.toLowerCase() === e.toLowerCase())) {
+              finalSymptoms.push(e);
+            }
+          });
+
+          if (relevantEntities.length > 0) {
+            // setAnalyzingText(`Found: ${relevantEntities.slice(0, 2).join(", ")}...`);
+            await new Promise(r => setTimeout(r, 500));
+          }
+        } catch (nlpError) {
+          console.warn("Entity extraction skipped:", nlpError);
+          // Continue without extracted entities
         }
       }
-      if (finalTranscript) {
-        setAdditional(prev => (prev + ' ' + finalTranscript).trim());
+
+      setAnalyzingText(t('common.analyzing'));
+      // Step 2: Analyze with Gemini
+      const analysisResult = await analyzeSymptoms(finalSymptoms, additional);
+
+      // Step 3: Save and Navigate
+      const userId = getUserId();
+      if (userId) {
+        await saveSymptomLog(userId, finalSymptoms, analysisResult);
       }
-    };
 
-    recognition.onerror = (e) => {
-      setIsListening(false);
-      if (e.error !== 'aborted') alert(`Voice error: ${e.error}. Please try again.`);
-    };
+      navigate('/results', { state: { result: analysisResult, symptoms: finalSymptoms } });
 
-    recognitionRef.current = recognition;
-    recognition.start();
-  };
-
-  const handleAnalyze = () => {
-    if (selected.length === 0 && additional.trim() === '') {
-      alert('Please select at least one symptom or describe your condition.');
-      return;
+    } catch (err) {
+      console.error(err);
+      alert(t('common.error'));
+    } finally {
+      setLoading(false);
     }
-    navigate('/results', { state: { symptoms: selected, additional } });
   };
 
   return (
     <div className="min-h-full pb-24 pt-8 animate-fade-in">
       <div className="max-w-2xl mx-auto px-4">
         <h2 className="text-3xl font-extrabold text-text-primary mb-1 tracking-tight">
-          How are you feeling?
+          {t('symptoms.title')}
         </h2>
         <p className="text-text-secondary mb-6 text-lg">
-          Select symptoms you're experiencing today.
+          {t('symptoms.subtitle')}
         </p>
 
         <DisclaimerBanner />
@@ -89,7 +104,7 @@ export default function SymptomScreen() {
         {/* Symptom Chips */}
         <div className="glass-card p-6 mb-6 mt-6">
           <p className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-4">
-            Common Symptoms — tap to select
+            {t('symptoms.common_label')}
           </p>
           <div className="flex flex-wrap gap-3">
             {SYMPTOMS.map(symptom => (
@@ -107,69 +122,50 @@ export default function SymptomScreen() {
           </div>
           {selected.length > 0 && (
             <p className="text-xs text-primary font-semibold mt-4">
-              ✓ {selected.length} symptom{selected.length > 1 ? 's' : ''} selected
+              ✓ {selected.length} {t('symptoms.selected')}
             </p>
           )}
         </div>
 
-        {/* Voice Input Language Toggle */}
+        {/* Voice Input Section */}
         <div className="glass-card p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <label className="block text-sm font-semibold text-text-primary uppercase tracking-wide">
-              Describe in your words
+              {t('symptoms.describe_label')}
             </label>
-            <div className="flex gap-1 bg-primary/10 rounded-full p-1">
-              {[
-                { code: 'en-IN', label: 'EN' },
-                { code: 'te-IN', label: 'TE' },
-                { code: 'ta-IN', label: 'TA' },
-              ].map(l => (
-                <button
-                  key={l.code}
-                  onClick={() => setLangMode(l.code)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${langMode === l.code
-                    ? 'bg-primary text-white shadow'
-                    : 'text-text-secondary hover:text-primary'
-                    }`}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
           </div>
           <textarea
             value={additional}
             onChange={e => setAdditional(e.target.value)}
-            placeholder="Describe anything else you're experiencing... (voice input appends here)"
-            className="w-full px-4 py-3 bg-white/60 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white/90 transition-all resize-none text-text-primary placeholder:text-text-secondary/50 text-sm"
+            placeholder={t('symptoms.placeholder')}
+            className="w-full px-4 py-3 bg-white/60 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white/90 transition-all resize-none text-text-primary placeholder:text-text-secondary/50 text-sm mb-4"
             rows="3"
+          />
+          <VoiceInputButton
+            onTranscript={(text) => {
+              setAdditional(prev => (prev + ' ' + text).trim());
+            }}
           />
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          {/* Voice Button */}
-          <div className="flex flex-col items-center gap-1">
-            <button
-              onClick={startVoiceInput}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${isListening
-                ? 'bg-red-500 shadow-[0_0_0_10px_rgba(239,68,68,0.15)] animate-pulse'
-                : 'bg-primary text-white hover:bg-primary/80 shadow-lg shadow-primary/30 hover:scale-105'
-                }`}
-            >
-              <span className="text-xl">{isListening ? '⏹' : '🎤'}</span>
-            </button>
-            <span className="text-[10px] font-semibold text-text-secondary text-center leading-tight">
-              {isListening ? 'Tap to stop' : `Voice (${langMode.split('-')[0].toUpperCase()})`}
-            </span>
-          </div>
-
           {/* Analyze Button */}
           <button
             onClick={handleAnalyze}
-            className="flex-1 py-4 bg-primary text-white font-bold rounded-full text-lg shadow-lg shadow-primary/25 hover:bg-primary/80 hover:shadow-xl hover:translate-y-[-2px] active:scale-[0.98] transition-all"
+            disabled={loading}
+            className="flex-1 py-4 bg-primary text-white font-bold rounded-full text-lg shadow-lg shadow-primary/25 hover:bg-primary/80 hover:shadow-xl hover:translate-y-[-2px] active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Analyze Symptoms →
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                {analyzingText}
+              </>
+            ) : (
+              <>
+                {t('symptoms.analyze')} →
+              </>
+            )}
           </button>
         </div>
       </div>

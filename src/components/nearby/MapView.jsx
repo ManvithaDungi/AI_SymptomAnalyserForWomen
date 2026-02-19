@@ -1,111 +1,130 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const MapView = ({ userLocation, places, activeCategory, onMarkerClick }) => {
+const MAP_STYLES = [
+   { featureType: "all", elementType: "geometry", stylers: [{ saturation: -20 }, { lightness: 10 }] },
+   { featureType: "water", elementType: "geometry", stylers: [{ color: "#dde8f0" }] },
+   { featureType: "road", elementType: "geometry", stylers: [{ color: "#f0eeff" }] },
+   { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e8f0e8" }] },
+   { featureType: "transit", elementType: "geometry", stylers: [{ color: "#ede9ff" }] },
+   { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c4b8e8" }] }
+];
+
+const MapView = ({ userLocation, places, onMarkerClick, activePlaceId, onMapLoad }) => {
    const mapRef = useRef(null);
    const mapInstanceRef = useRef(null);
    const markersRef = useRef([]);
+   const userMarkerRef = useRef(null);
 
+   // Initialize Map
    useEffect(() => {
-      if (!userLocation || !window.google || !mapRef.current) return;
+      if (!mapRef.current || !window.google) return;
 
-      // Initialize map if not already done
       if (!mapInstanceRef.current) {
          mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-            center: userLocation,
-            zoom: 14,
+            center: userLocation || { lat: 13.0827, lng: 80.2707 }, // Default Chennai
+            zoom: 13,
             disableDefaultUI: true,
             zoomControl: true,
-            styles: [
-               { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-               { featureType: 'transit', stylers: [{ visibility: 'simplified' }] }
-            ]
-         });
-
-         // Add user marker (pulsing)
-         new window.google.maps.Marker({
-            position: userLocation,
-            map: mapInstanceRef.current,
-            icon: {
-               path: window.google.maps.SymbolPath.CIRCLE,
-               scale: 8,
-               fillColor: '#6D5BD0',
-               fillOpacity: 1,
-               strokeColor: 'white',
-               strokeWeight: 2,
+            zoomControlOptions: {
+               position: window.google.maps.ControlPosition.RIGHT_BOTTOM
             },
-            title: 'You are here'
+            styles: MAP_STYLES
          });
 
-         // Pulse effect via circle overlay
-         new window.google.maps.Circle({
-            strokeColor: '#6D5BD0',
-            strokeOpacity: 0.3,
-            strokeWeight: 1,
-            fillColor: '#6D5BD0',
-            fillOpacity: 0.1,
-            map: mapInstanceRef.current,
-            center: userLocation,
-            radius: 200 // meters
-         });
-      } else {
-         // Just update center if location changes significantly
-         mapInstanceRef.current.setCenter(userLocation);
+         if (onMapLoad) onMapLoad(mapInstanceRef.current);
       }
+   }, []);
+
+   // Update User Location Marker
+   useEffect(() => {
+      if (!mapInstanceRef.current || !userLocation || !window.google) return;
+
+      mapInstanceRef.current.panTo(userLocation);
+
+      // Remove old user marker
+      if (userMarkerRef.current) userMarkerRef.current.setMap(null);
+
+      // Custom pulsing marker using SVG
+      // Since accurate CSS pulse requires OverlayView which is complex in functional component without library,
+      // We'll use a high-quality SVG icon that looks like the requests
+      const svgIcon = `
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+           <circle cx="20" cy="20" r="20" fill="#6D5BD0" fill-opacity="0.2"/>
+           <circle cx="20" cy="20" r="8" fill="#6D5BD0" result="core"/>
+           <circle cx="20" cy="20" r="12" stroke="white" stroke-width="2" fill="none"/>
+        </svg>
+      `;
+
+      userMarkerRef.current = new window.google.maps.Marker({
+         position: userLocation,
+         map: mapInstanceRef.current,
+         icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
+            scaledSize: new window.google.maps.Size(40, 40),
+            anchor: new window.google.maps.Point(20, 20)
+         },
+         title: 'You are here'
+      });
 
    }, [userLocation]);
 
-   // Update place markers when places change
+   // Update Place Markers
    useEffect(() => {
       if (!mapInstanceRef.current || !window.google) return;
 
       // Clear old markers
-      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current.forEach(m => m.setMap(null));
       markersRef.current = [];
 
-      // Add new markers
-      places.forEach((place) => {
+      places.forEach((place, index) => {
+         const isSelected = activePlaceId === place.placeId;
+         const baseColor = isSelected ? '#6D5BD0' : 'white';
+         const textColor = isSelected ? 'white' : '#1E1B2E';
+         const borderColor = '#6D5BD0';
+
+         // Get appropriate emoji based on types
+         let emoji = '📍';
+         if (place.types.includes('doctor') || place.types.includes('health')) emoji = '🏥';
+         if (place.types.includes('pharmacy')) emoji = '💊';
+         if (place.types.includes('dentist')) emoji = '🦷';
+
+         // Create pill SVG
+         const labelText = `${emoji} ${index + 1}`;
+         const width = 60;
+         const svgPill = `
+            <svg width="${width}" height="32" viewBox="0 0 ${width} 32" xmlns="http://www.w3.org/2000/svg">
+               <rect x="1" y="1" width="${width - 2}" height="30" rx="15" fill="${baseColor}" stroke="${borderColor}" stroke-width="2"/>
+               <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-size="14" font-weight="bold" font-family="sans-serif" fill="${textColor}">${labelText}</text>
+            </svg>
+         `;
+
          const marker = new window.google.maps.Marker({
             position: place.location,
             map: mapInstanceRef.current,
-            title: place.name,
-            // Helper to pick color based on active category context
             icon: {
-               path: window.google.maps.SymbolPath.CIRCLE,
-               scale: 6,
-               fillColor: getCategoryColor(activeCategory),
-               fillOpacity: 1,
-               strokeColor: 'white',
-               strokeWeight: 1,
-            }
+               url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgPill),
+               scaledSize: new window.google.maps.Size(60, 32),
+               anchor: new window.google.maps.Point(30, 16) // Center anchor
+            },
+            title: place.name,
+            zIndex: isSelected ? 100 : 1 // Bring selected to front
          });
 
          marker.addListener('click', () => {
             if (onMarkerClick) onMarkerClick(place);
             mapInstanceRef.current.panTo(place.location);
-            mapInstanceRef.current.setZoom(16);
          });
 
          markersRef.current.push(marker);
       });
-
-   }, [places, activeCategory]);
-
-   const getCategoryColor = (category) => {
-      switch (category) {
-         case 'gynecologist': return '#9B8EC4';
-         case 'pharmacy': return '#C4956A';
-         case 'hospital': return '#B5756B';
-         case 'ngo': return '#B8D4BE';
-         case 'counseling': return '#6D5BD0';
-         default: return '#6D5BD0';
-      }
-   };
+   }, [places, activePlaceId]);
 
    return (
       <div
          ref={mapRef}
-         className="w-full h-[250px] rounded-2xl overflow-hidden border border-primary/10 mb-4 shadow-sm"
+         className="w-full h-full"
+         style={{ minHeight: '100%' }} // Ensure it fills container
       />
    );
 };

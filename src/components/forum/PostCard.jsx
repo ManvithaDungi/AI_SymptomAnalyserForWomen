@@ -35,6 +35,11 @@ export default function PostCard({ post, onReact, currentUserId }) {
                <span className="bg-primary/5 text-text-secondary text-xs font-medium px-2 py-1 rounded-md">
                   {post.anonName || 'Anon'}
                </span>
+               {post.language && (
+                  <span className="text-[10px] text-text-secondary/70 font-medium px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200 uppercase tracking-tight">
+                     {post.language === 'en' ? '🇬🇧 EN' : `🇮🇳 ${post.language.toUpperCase()}`}
+                  </span>
+               )}
                <span className="text-xs text-text-secondary font-medium px-2 py-1 bg-white/60 rounded-md border border-primary/10">
                   {post.topic}
                </span>

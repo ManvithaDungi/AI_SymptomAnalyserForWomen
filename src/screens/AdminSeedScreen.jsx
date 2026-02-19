@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { seedFirestore } from '../data/seedDatabase';
+import { seedAllPosts } from '../scripts/seedForum';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminSeedScreen() {
@@ -18,6 +19,12 @@ export default function AdminSeedScreen() {
       const result = await seedFirestore();
 
       if (result.success) {
+         try {
+            const multiLogs = await seedAllPosts();
+            result.logs.push(...multiLogs);
+         } catch (err) {
+            result.logs.push(`⚠️ Error seeding multilingual posts: ${err.message}`);
+         }
          setLogs(result.logs);
       } else {
          setError(result.error);
@@ -45,8 +52,8 @@ export default function AdminSeedScreen() {
                   onClick={handleSeed}
                   disabled={loading}
                   className={`w-full py-4 rounded-lg font-bold text-white transition-all ${loading
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200'
+                     ? 'bg-gray-400 cursor-not-allowed'
+                     : 'bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200'
                      }`}
                >
                   {loading ? 'Seeding Database...' : 'Seed Firestore Database'}

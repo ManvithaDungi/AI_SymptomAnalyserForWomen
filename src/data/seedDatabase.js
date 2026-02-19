@@ -465,10 +465,12 @@ export const seedFirestore = async () => {
                   geminiCheck: false,
                   moderatedAt: timestamp
                },
+
                createdAt: timestamp,
                approved: true,
                upvotes: post.upvotes || 0,
-               commentCount: post.commentCount || 0
+               commentCount: post.commentCount || 0,
+               language: 'en' // Default language for original seed data
             });
          });
          await Promise.all(postPromises);

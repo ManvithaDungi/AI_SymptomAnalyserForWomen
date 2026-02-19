@@ -192,17 +192,9 @@ export default function LoginScreen() {
                </div>
             </div>
 
-            <button
-               onClick={handleAnonymousLogin}
-               disabled={loading}
-               className="w-full bg-transparent border-[1.5px] border-primary/25 text-primary py-3.5 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-primary/5 active:bg-primary/10 transition-all flex items-center justify-center gap-2 group"
-            >
-               <span className="text-lg group-hover:scale-110 transition-transform">👤</span>
-               {loading ? 'Signing you in...' : 'Continue Anonymously'}
-            </button>
-
+            {/* Anonymous Login Removed */}
             <p className="text-xs text-text-secondary/60 text-center mt-3">
-               No account needed. Your data stays on your device.
+               Your data stays private.
             </p>
          </div>
 

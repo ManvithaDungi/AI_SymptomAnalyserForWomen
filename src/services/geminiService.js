@@ -33,8 +33,21 @@ const callGemini = async (prompt) => {
   }
 };
 
+const getLanguageName = () => {
+  const map = {
+    en: 'English',
+    ta: 'Tamil',
+    hi: 'Hindi',
+    ml: 'Malayalam',
+    te: 'Telugu',
+    kn: 'Kannada'
+  };
+  return map[localStorage.getItem('language')] || 'English';
+};
+
 export const analyzeSymptoms = async (symptoms, additionalNotes = "") => {
   const symptomList = Array.isArray(symptoms) ? symptoms.join(", ") : symptoms;
+  const language = getLanguageName();
 
   const prompt = `
     You are a compassionate, expert women's health assistant for the Indian context.
@@ -42,7 +55,10 @@ export const analyzeSymptoms = async (symptoms, additionalNotes = "") => {
     Additional details: "${additionalNotes}".
 
     Analyze these symptoms carefully. Consider common conditions like PCOS, Anemia, Thyroid issues, PMS, Endometriosis, etc.
-    Provide a JSON response with the following structure:
+    Provide a JSON response with the following structure.
+    Strictly output ONLY valid JSON.
+    Respond entirely in ${language}. All text fields (name, description, tips, etc.) must be in ${language}.
+
     {
       "possible_conditions": [
         { "name": "Condition Name", "probability": "High/Medium/Low", "description": "Brief explanation in simple terms." }
@@ -52,13 +68,13 @@ export const analyzeSymptoms = async (symptoms, additionalNotes = "") => {
       "local_foods": ["Food 1 (e.g. Ragi)", "Food 2 (e.g. Amla)"],
       "disclaimer": "Standard medical disclaimer."
     }
-    Strictly output ONLY valid JSON.
   `;
   return callGemini(prompt);
 };
 
 export const generateWeeklySummary = async (entries) => {
   if (!entries || entries.length === 0) return null;
+  const language = getLanguageName();
 
   const entryText = entries.map(e =>
     `Date: ${e.date}, Mood: ${e.mood}, Period: ${e.period}, Symptoms: ${e.notes || 'None'}, Fatigue: ${e.fatigue}/5`
@@ -69,7 +85,10 @@ export const generateWeeklySummary = async (entries) => {
     ${entryText}
 
     Identify patterns related to their menstrual cycle, mood, or energy.
-    Provide a JSON response with:
+    Provide a JSON response with the following structure.
+    Strictly output ONLY valid JSON.
+    Respond entirely in ${language}.
+
     {
       "summary": "2-3 sentence summary of their week.",
       "pattern": "Any noticeable pattern (e.g., 'Mood drops 2 days before period').",
@@ -77,23 +96,25 @@ export const generateWeeklySummary = async (entries) => {
       "anemia_risk": "Low" | "Moderate" | "High",
       "anemia_reason": "Why you think so (e.g., fatigue consistently high)."
     }
-    Strictly output ONLY valid JSON.
   `;
   return callGemini(prompt);
 };
 
 export const validateRemedy = async (remedyName) => {
+  const language = getLanguageName();
   const prompt = `
     Evaluate the safety of this home remedy: "${remedyName}" for women's health.
     Context: Indian home remedies.
-    Provide a JSON response with:
+    Provide a JSON response with the following structure.
+    Strictly output ONLY valid JSON.
+    Respond entirely in ${language}.
+
     {
       "verdict": "Safe" | "Caution" | "Unsafe",
       "explanation": "Why?",
       "scientific_backing": "Supported" | "Mixed Evidence" | "Folklore",
       "tip": "How to use safely."
     }
-    Strictly output ONLY valid JSON.
   `;
   return callGemini(prompt);
 };

@@ -3,15 +3,51 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveForumPost, getUserId, getAnonName } from '../services/firebaseService';
 import { moderateContent } from '../services/moderationService';
+import { classifyContent } from '../services/nlpService';
 
 export default function NewPostScreen() {
    const navigate = useNavigate();
    const [loading, setLoading] = useState(false);
+   const [tagging, setTagging] = useState(false);
    const [title, setTitle] = useState('');
    const [content, setContent] = useState('');
    const [topic, setTopic] = useState('');
    const [postType, setPostType] = useState('text');
    const [imageUrl, setImageUrl] = useState('');
+
+   const handleAutoTag = async () => {
+      if (!content || content.length < 10) {
+         alert("Please write a bit more first.");
+         return;
+      }
+      setTagging(true);
+      try {
+         const fullText = `${title} ${content}`;
+         // Call Cloud NL Classify
+         const categories = await classifyContent(fullText);
+
+         const lowerText = fullText.toLowerCase();
+         let suggested = '';
+
+         // Simple mapping logic
+         if (lowerText.includes('pcos') || lowerText.includes('ovary')) suggested = 'PCOS';
+         else if (lowerText.includes('anemia') || lowerText.includes('iron')) suggested = 'Anemia';
+         else if (lowerText.includes('period') || lowerText.includes('bleed')) suggested = 'Menstrual Health';
+         else if (lowerText.includes('remedy') || lowerText.includes('ginger')) suggested = 'Home Remedies';
+
+         if (suggested) {
+            setTopic(suggested);
+         } else {
+            // Fallback if no keyword match
+            if (categories.some(c => c.includes('Women') || c.includes('Reproductive'))) setTopic('Menstrual Health');
+            else alert("Couldn't detect a specific topic. Please choose one.");
+         }
+      } catch (e) {
+         console.error(e);
+      } finally {
+         setTagging(false);
+      }
+   };
 
    const topics = [
       { id: 'PCOS', label: 'PCOS' },
@@ -108,9 +144,18 @@ export default function NewPostScreen() {
 
             <div className="glass-card p-4 space-y-4">
                <div>
-                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide mb-3">
-                     Choose a topic
-                  </label>
+                  <div className="flex justify-between items-center mb-3">
+                     <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide">
+                        Choose a topic
+                     </label>
+                     <button
+                        onClick={handleAutoTag}
+                        disabled={tagging || !content}
+                        className="text-xs text-primary font-bold hover:underline disabled:opacity-50"
+                     >
+                        {tagging ? '✨ Analyzing...' : '✨ Auto-suggest'}
+                     </button>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                      {topics.map((t) => (
                         <button
