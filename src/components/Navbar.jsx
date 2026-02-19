@@ -1,9 +1,20 @@
+import { signOut } from 'firebase/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { auth } from '../services/firebaseService';
 
 export default function Navbar({ language, setLanguage }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isForum = location.pathname === '/';
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const navLinks = [
     { name: 'Community Forum', path: '/forum' },
@@ -38,12 +49,22 @@ export default function Navbar({ language, setLanguage }) {
           </div>
         </div>
 
-        <button
-          onClick={() => setLanguage(language === 'EN' ? 'TE' : 'EN')}
-          className="px-4 py-1.5 rounded-full border border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-all duration-200"
-        >
-          {language}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setLanguage(language === 'EN' ? 'TE' : 'EN')}
+            className="px-4 py-1.5 rounded-full border border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-all duration-200"
+          >
+            {language}
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="text-text-secondary hover:text-danger p-2 transition-colors text-sm font-medium"
+            title="Sign Out"
+          >
+            Log Out
+          </button>
+        </div>
       </div>
     </nav>
   );
