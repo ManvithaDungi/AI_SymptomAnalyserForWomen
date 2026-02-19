@@ -1,77 +1,108 @@
-# Sahachari / Vaazhvu (Women's Health Companion) 💜
+# Sahachari / Vaazhvu (Women's Health Companion)
 
-A safe, AI-powered space for women's health, privacy, and community. Built for the Google AI Hackathon.
+A privacy-first women’s health companion with a calm community circle, symptom insights, and culturally sensitive remedies.
 
-## ✨ Key Features
+## ✨ Features
 
-### 🌸 AI Symptom Checker & Remedies
-- **Private Analysis:** Describe symptoms in plain English (or Tamil/Hindi) and get immediate AI-driven insights.
-- **Home Remedies:** Curated, safe home remedies for common issues like PCOS, Anemia, and Menstrual cramps.
-- **Emergency Detection:** Intelligent flagging of urgent symptoms (e.g., severe pain, heavy bleeding).
+### 🌸 Symptom Insights
+- **Private Analysis:** Describe symptoms and receive AI-backed insights.
+- **Localized Guidance:** Culturally sensitive tips and awareness notes.
 
-### 💬 Safe Community Circle (Forum)
-- **Anonymous & Supportive:** Share experiences without revealing your identity ("Anon#1234").
-- **AI Moderation:** Double-layer safety check (Hugging Face + Gemini) to prevent hate speech, misinformation, and unsafe content *before* it's posted.
-- **Topic Channels:** Dedicated spaces for PCOS, Anemia, Menstrual Health, and Wellness.
-- **Gentle Interactions:** "Support", "Me Too", and "Helpful" reactions instead of toxic "Likes".
+### 🌿 Remedies Library
+- **Curated Remedies:** Evidence-aware home remedies with safety notes.
+- **Searchable Topics:** PCOS, Anemia, Menstrual Health, General Wellness.
 
-### 🩺 Doctor Connect & Q&A
-- **Verified Directory:** Find trusted gynecologists and nutritionists near you.
-- **Private Q&A:** Ask questions anonymously and get answers from verified experts.
+### 💬 Community Forum (Support Circle)
+- **Anonymous Posting:** Stable anon identity (Anon#xxxx).
+- **Gentle Feed:** Not a social feed; a quiet circle for reflections and questions.
+- **Threaded Replies:** Supportive comments with lightweight reactions.
+- **AI Moderation:** Two-layer checks (Hugging Face sentiment + Gemini safety) before posts/comments are saved.
 
 ### 📔 Wellness Journal
-- **Daily Tracking:** Log mood, symptoms, water intake, and sleep.
-- **Cycle Insights:** Visual tracking of health patterns over time.
+- **Daily Logs:** Track symptoms, moods, and patterns over time.
 
-### 🔒 Privacy First
-- **Anonymous by Design:** No real names required for community participation.
-- **Local-First Storage:** Sensitive logs kept private where possible.
+## 🧱 Tech Stack
 
-## 🛠️ Tech Stack
+- **Frontend:** React + Vite + Tailwind CSS
+- **Backend:** Firebase Auth + Firestore
+- **AI Services:** Gemini 1.5 Flash, Hugging Face sentiment
 
-- **Frontend:** React, Vite, Tailwind CSS (Glassmorphism UI)
-- **Backend:** Firebase (Auth, Firestore)
-- **AI Models:** 
-  - **Google Gemini 1.5 Flash:** For symptom analysis and deep content moderation.
-  - **Hugging Face (Roberta):** For real-time sentiment analysis latency checks.
-- **Language:** English (Multi-language support architecture ready).
+## ✅ Prerequisites
 
-## 🚀 Getting Started
+- Node.js 18+  
+- Firebase project with Firestore enabled (Native mode)
 
-1. **Clone the repo**
+## 🚀 Run Locally (Step by Step)
+
+1. **Clone**
    ```bash
    git clone https://github.com/ManvithaDungi/AI_SymptomAnalyserForWomen.git
    cd AI_SymptomAnalyserForWomen
    ```
 
-2. **Install dependencies**
+2. **Install**
    ```bash
    npm install
    ```
 
-3. **Set up Environment Variables**
-   Create a `.env` file in the root directory:
+3. **Create .env**
    ```env
    VITE_FIREBASE_API_KEY=your_key
    VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
    VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
    VITE_GEMINI_API_KEY=your_gemini_key
    VITE_HF_TOKEN=your_hugging_face_token
    ```
 
-4. **Run Locally**
+4. **Run**
    ```bash
    npm run dev
    ```
 
-5. **Seed Database (First Time Only)**
-    - Navigate to `/admin-seed` in your browser.
-    - Click **"Seed Database"** to populate initial topics, remedies, and doctors.
+5. **Seed Firestore (First Time Only)**
+   - Visit `/admin-seed`
+   - Click **Seed Firestore Database**
 
-## 📱 Screenshots
+## 🧪 Tests
 
-_(Add screenshots of Home, Symptom Checker, and Forum here)_
+```bash
+npm run test:run
+```
+
+## 🚢 Deploy (Firebase Hosting)
+
+1. **Install Firebase CLI**
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   ```
+
+2. **Initialize Firebase**
+   ```bash
+   firebase init
+   ```
+   - Select **Hosting** (and **Firestore** if you want to deploy rules)
+   - Set build output directory to `dist`
+
+3. **Build**
+   ```bash
+   npm run build
+   ```
+
+4. **Deploy**
+   ```bash
+   firebase deploy
+   ```
+
+## 🔧 Troubleshooting
+
+- **Seeding feels stuck:** Ensure Firestore is enabled and the project ID in `.env` is correct.
+- **Forum data not visible:** Confirm `/admin-seed` completed and Firestore rules allow reads.
+- **Vitest ERR_REQUIRE_ESM:** Upgrade dependencies or pin `jsdom` to a compatible version if your CI image uses strict ESM resolution.
 
 ## 🤝 Contributing
 
-Built with love for women's health. Issues and PRs welcome!
+Issues and PRs are welcome.

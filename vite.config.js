@@ -8,6 +8,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.js',
     css: true,
+    server: {
+      deps: {
+        inline: ['html-encoding-sniffer']
+      }
+    }
   },
   server: {
     port: 3000,
