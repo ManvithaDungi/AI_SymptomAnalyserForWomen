@@ -5,7 +5,7 @@ export default function BottomNav() {
    const location = useLocation();
 
    const navItems = [
-      { id: 1, icon: '💬', label: 'Forum', route: '/' },
+      { id: 1, icon: '💬', label: 'Forum', route: '/forum' },
       { id: 2, icon: '🔍', label: 'Symptoms', route: '/symptoms' },
       { id: 3, icon: '🌿', label: 'Remedies', route: '/remedy' },
       { id: 4, icon: '📔', label: 'Journal', route: '/journal' },

@@ -1,26 +1,46 @@
-extend type Movie {
+extend type ForumPost {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Movie", purpose: IMPLICIT_KEY_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "ForumPost", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `ForumPost`.`parentPost`. It must match the value of `ForumPost`.`id`. See `@ref` for how to customize it.
+  """
+  parentPostId: UUID @fdc_generated(from: "ForumPost.parentPost", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `ForumPost`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "ForumPost.user", purpose: IMPLICIT_REF_FIELD)
 }
-extend type MovieMetadata {
+extend type HealthJournalEntry {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "MovieMetadata", purpose: IMPLICIT_KEY_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "HealthJournalEntry", purpose: IMPLICIT_KEY_FIELD)
   """
-  ✨ Implicit foreign key field based on `MovieMetadata`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `HealthJournalEntry`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "MovieMetadata.movie", purpose: IMPLICIT_REF_FIELD)
+  userId: UUID! @fdc_generated(from: "HealthJournalEntry.user", purpose: IMPLICIT_REF_FIELD)
 }
-extend type Review {
+extend type SymptomLog {
   """
-  ✨ Implicit foreign key field based on `Review`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "Review.movie", purpose: IMPLICIT_REF_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "SymptomLog", purpose: IMPLICIT_KEY_FIELD)
   """
-  ✨ Implicit foreign key field based on `Review`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `SymptomLog`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  userId: String! @fdc_generated(from: "Review.user", purpose: IMPLICIT_REF_FIELD)
+  userId: UUID! @fdc_generated(from: "SymptomLog.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type VerifiedRemedy {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "VerifiedRemedy", purpose: IMPLICIT_KEY_FIELD)
 }

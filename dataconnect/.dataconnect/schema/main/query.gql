@@ -1,8 +1,8 @@
 extend type Query {
   """
-  ✨ Look up a single `Movie` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `ForumPost` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movie(
+  forumPost(
     """
     The unique ID of the object.
     """
@@ -11,17 +11,17 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: Movie_Key
+    key: ForumPost_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Movie_FirstRow
-  ): Movie @fdc_generated(from: "Movie", purpose: QUERY_SINGLE)
+    first: ForumPost_FirstRow
+  ): ForumPost @fdc_generated(from: "ForumPost", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `MovieMetadata` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `HealthJournalEntry` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movieMetadata(
+  healthJournalEntry(
     """
     The unique ID of the object.
     """
@@ -30,27 +30,32 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: MovieMetadata_Key
+    key: HealthJournalEntry_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: MovieMetadata_FirstRow
-  ): MovieMetadata @fdc_generated(from: "MovieMetadata", purpose: QUERY_SINGLE)
+    first: HealthJournalEntry_FirstRow
+  ): HealthJournalEntry @fdc_generated(from: "HealthJournalEntry", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `Review` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `SymptomLog` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  review(
+  symptomLog(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
     """
     The key used to identify the object.
     """
-    key: Review_Key
+    key: SymptomLog_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Review_FirstRow
-  ): Review @fdc_generated(from: "Review", purpose: QUERY_SINGLE)
+    first: SymptomLog_FirstRow
+  ): SymptomLog @fdc_generated(from: "SymptomLog", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -58,12 +63,7 @@ extend type Query {
     """
     The unique ID of the object.
     """
-    id: String
-
-    """
-    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
-    """
-    id_expr: String_Expr
+    id: UUID
 
     """
     The key used to identify the object.
@@ -76,18 +76,37 @@ extend type Query {
     first: User_FirstRow
   ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
   """
-  ✨ List `Movie` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ Look up a single `VerifiedRemedy` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movies(
+  verifiedRemedy(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: VerifiedRemedy_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VerifiedRemedy_FirstRow
+  ): VerifiedRemedy @fdc_generated(from: "VerifiedRemedy", purpose: QUERY_SINGLE)
+  """
+  ✨ List `ForumPost` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  forumPosts(
     """
     Filter condition to narrow down the query results.
     """
-    where: Movie_Filter
+    where: ForumPost_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Movie_Order!]
+    orderBy: [ForumPost_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -107,21 +126,21 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: Movie_Having
-  ): [Movie!]! @fdc_generated(from: "Movie", purpose: QUERY_MULTIPLE)
+    having: ForumPost_Having
+  ): [ForumPost!]! @fdc_generated(from: "ForumPost", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `MovieMetadata` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ List `HealthJournalEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
-  movieMetadatas(
+  healthJournalEntries(
     """
     Filter condition to narrow down the query results.
     """
-    where: MovieMetadata_Filter
+    where: HealthJournalEntry_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [MovieMetadata_Order!]
+    orderBy: [HealthJournalEntry_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -141,21 +160,21 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: MovieMetadata_Having
-  ): [MovieMetadata!]! @fdc_generated(from: "MovieMetadata", purpose: QUERY_MULTIPLE)
+    having: HealthJournalEntry_Having
+  ): [HealthJournalEntry!]! @fdc_generated(from: "HealthJournalEntry", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `Review` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ List `SymptomLog` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
-  reviews(
+  symptomLogs(
     """
     Filter condition to narrow down the query results.
     """
-    where: Review_Filter
+    where: SymptomLog_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Review_Order!]
+    orderBy: [SymptomLog_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -175,8 +194,8 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: Review_Having
-  ): [Review!]! @fdc_generated(from: "Review", purpose: QUERY_MULTIPLE)
+    having: SymptomLog_Having
+  ): [SymptomLog!]! @fdc_generated(from: "SymptomLog", purpose: QUERY_MULTIPLE)
   """
   ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -211,4 +230,38 @@ extend type Query {
     """
     having: User_Having
   ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `VerifiedRemedy` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  verifiedRemedies(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: VerifiedRemedy_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [VerifiedRemedy_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: VerifiedRemedy_Having
+  ): [VerifiedRemedy!]! @fdc_generated(from: "VerifiedRemedy", purpose: QUERY_MULTIPLE)
 }

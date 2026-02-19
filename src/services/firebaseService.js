@@ -1,13 +1,21 @@
-import { signInAnonymously } from 'firebase/auth';
+import {
+  signInAnonymously,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from 'firebase/auth';
 import {
   collection,
   addDoc,
+  setDoc,
+  doc,
   query,
   where,
   getDocs,
   serverTimestamp,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseConfig';
+
+export { auth };
 
 export const initializeAuth = async () => {
   try {
@@ -21,8 +29,41 @@ export const initializeAuth = async () => {
   }
 };
 
+export const signUpWithEmail = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Create user document
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      createdAt: serverTimestamp(),
+      isAnonymous: false,
+      language: 'english'
+    });
+
+    localStorage.setItem('userId', user.uid);
+    return user;
+  } catch (error) {
+    console.error("Sign up error:", error);
+    throw error;
+  }
+};
+
+export const loginWithEmail = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    localStorage.setItem('userId', user.uid);
+    return user;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+
 export const getUserId = () => {
-  return localStorage.getItem('userId') || null;
+  return auth.currentUser ? auth.currentUser.uid : localStorage.getItem('userId');
 };
 
 export const saveSymptomLog = async (userId, symptoms, result) => {

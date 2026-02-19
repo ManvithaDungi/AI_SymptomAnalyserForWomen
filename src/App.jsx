@@ -1,35 +1,34 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth'; // Import this
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
+import LoginScreen from './screens/LoginScreen'; // Import LoginScreen
 import HomeScreen from './screens/HomeScreen';
 import SymptomScreen from './screens/SymptomScreen';
 import ResultsScreen from './screens/ResultsScreen';
 import ForumScreen from './screens/ForumScreen';
 import RemedyScreen from './screens/RemedyScreen';
 import JournalScreen from './screens/JournalScreen';
-import { initializeAuth } from './services/firebaseService';
+import { auth } from './services/firebaseService'; // Import auth instance
+import AdminSeedScreen from './screens/AdminSeedScreen'; // Import AdminSeedScreen
 
 export default function App() {
   const [language, setLanguage] = useState('EN');
-  const [authReady, setAuthReady] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize Firebase anonymous auth on app load
-    const initAuth = async () => {
-      try {
-        await initializeAuth();
-        setAuthReady(true);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setAuthReady(true); // Continue even if auth fails
-      }
-    };
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
 
-    initAuth();
+    return () => unsubscribe();
   }, []);
 
-  if (!authReady) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center animate-pulse">
@@ -43,20 +42,27 @@ export default function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col font-sans text-text-primary">
-        <Navbar language={language} setLanguage={setLanguage} />
+        {user && <Navbar language={language} setLanguage={setLanguage} />}
         <main className="flex-grow pb-20 md:pb-0">
           <Routes>
-            <Route path="/" element={<ForumScreen />} />
-            <Route path="/symptoms" element={<SymptomScreen />} />
-            <Route path="/results" element={<ResultsScreen />} />
-            <Route path="/forum" element={<ForumScreen />} />
-            <Route path="/remedy" element={<RemedyScreen />} />
-            <Route path="/journal" element={<JournalScreen />} />
+            {/* Public Route */}
+            <Route path="/" element={!user ? <LoginScreen /> : <Navigate to="/forum" />} />
+
+            {/* Protected Routes */}
+            <Route path="/home" element={user ? <HomeScreen /> : <Navigate to="/" />} />
+            <Route path="/forum" element={user ? <ForumScreen /> : <Navigate to="/" />} />
+            <Route path="/symptoms" element={user ? <SymptomScreen /> : <Navigate to="/" />} />
+            <Route path="/results" element={user ? <ResultsScreen /> : <Navigate to="/" />} />
+            <Route path="/remedy" element={user ? <RemedyScreen /> : <Navigate to="/" />} />
+            <Route path="/journal" element={user ? <JournalScreen /> : <Navigate to="/" />} />
+            <Route path="/admin-seed" element={<AdminSeedScreen />} /> {/* Temporary Route */}
           </Routes>
         </main>
-        <div className="md:hidden">
-          <BottomNav />
-        </div>
+        {user && (
+          <div className="md:hidden">
+            <BottomNav />
+          </div>
+        )}
       </div>
     </Router>
   );

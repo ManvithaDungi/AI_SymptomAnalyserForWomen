@@ -1,31 +1,31 @@
 extend type Mutation {
   """
-  ✨ Insert a single `Movie` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert a single `ForumPost` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  movie_insert(
+  forumPost_insert(
     """
     Data object to insert into the table.
     """
-    data: Movie_Data!
-  ): Movie_KeyOutput! @fdc_generated(from: "Movie", purpose: INSERT_SINGLE)
+    data: ForumPost_Data!
+  ): ForumPost_KeyOutput! @fdc_generated(from: "ForumPost", purpose: INSERT_SINGLE)
   """
-  ✨ Insert a single `MovieMetadata` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert a single `HealthJournalEntry` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  movieMetadata_insert(
+  healthJournalEntry_insert(
     """
     Data object to insert into the table.
     """
-    data: MovieMetadata_Data!
-  ): MovieMetadata_KeyOutput! @fdc_generated(from: "MovieMetadata", purpose: INSERT_SINGLE)
+    data: HealthJournalEntry_Data!
+  ): HealthJournalEntry_KeyOutput! @fdc_generated(from: "HealthJournalEntry", purpose: INSERT_SINGLE)
   """
-  ✨ Insert a single `Review` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert a single `SymptomLog` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  review_insert(
+  symptomLog_insert(
     """
     Data object to insert into the table.
     """
-    data: Review_Data!
-  ): Review_KeyOutput! @fdc_generated(from: "Review", purpose: INSERT_SINGLE)
+    data: SymptomLog_Data!
+  ): SymptomLog_KeyOutput! @fdc_generated(from: "SymptomLog", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -36,32 +36,41 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
   """
-  ✨ Insert `Movie` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert a single `VerifiedRemedy` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  movie_insertMany(
+  verifiedRemedy_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: VerifiedRemedy_Data!
+  ): VerifiedRemedy_KeyOutput! @fdc_generated(from: "VerifiedRemedy", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `ForumPost` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  forumPost_insertMany(
     """
     List of data objects to insert into the table.
     """
-    data: [Movie_Data!]!
-  ): [Movie_KeyOutput!]! @fdc_generated(from: "Movie", purpose: INSERT_MULTIPLE)
+    data: [ForumPost_Data!]!
+  ): [ForumPost_KeyOutput!]! @fdc_generated(from: "ForumPost", purpose: INSERT_MULTIPLE)
   """
-  ✨ Insert `MovieMetadata` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert `HealthJournalEntry` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  movieMetadata_insertMany(
+  healthJournalEntry_insertMany(
     """
     List of data objects to insert into the table.
     """
-    data: [MovieMetadata_Data!]!
-  ): [MovieMetadata_KeyOutput!]! @fdc_generated(from: "MovieMetadata", purpose: INSERT_MULTIPLE)
+    data: [HealthJournalEntry_Data!]!
+  ): [HealthJournalEntry_KeyOutput!]! @fdc_generated(from: "HealthJournalEntry", purpose: INSERT_MULTIPLE)
   """
-  ✨ Insert `Review` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert `SymptomLog` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  review_insertMany(
+  symptomLog_insertMany(
     """
     List of data objects to insert into the table.
     """
-    data: [Review_Data!]!
-  ): [Review_KeyOutput!]! @fdc_generated(from: "Review", purpose: INSERT_MULTIPLE)
+    data: [SymptomLog_Data!]!
+  ): [SymptomLog_KeyOutput!]! @fdc_generated(from: "SymptomLog", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -72,32 +81,41 @@ extend type Mutation {
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
   """
-  ✨ Insert or update a single `Movie` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Movie`.
+  ✨ Insert `VerifiedRemedy` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  movie_upsert(
+  verifiedRemedy_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [VerifiedRemedy_Data!]!
+  ): [VerifiedRemedy_KeyOutput!]! @fdc_generated(from: "VerifiedRemedy", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `ForumPost` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ForumPost`.
+  """
+  forumPost_upsert(
     """
     Data object to insert or update if it already exists.
     """
-    data: Movie_Data!
-  ): Movie_KeyOutput! @fdc_generated(from: "Movie", purpose: UPSERT_SINGLE)
+    data: ForumPost_Data!
+  ): ForumPost_KeyOutput! @fdc_generated(from: "ForumPost", purpose: UPSERT_SINGLE)
   """
-  ✨ Insert or update a single `MovieMetadata` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MovieMetadata`.
+  ✨ Insert or update a single `HealthJournalEntry` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HealthJournalEntry`.
   """
-  movieMetadata_upsert(
+  healthJournalEntry_upsert(
     """
     Data object to insert or update if it already exists.
     """
-    data: MovieMetadata_Data!
-  ): MovieMetadata_KeyOutput! @fdc_generated(from: "MovieMetadata", purpose: UPSERT_SINGLE)
+    data: HealthJournalEntry_Data!
+  ): HealthJournalEntry_KeyOutput! @fdc_generated(from: "HealthJournalEntry", purpose: UPSERT_SINGLE)
   """
-  ✨ Insert or update a single `Review` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Review`.
+  ✨ Insert or update a single `SymptomLog` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `SymptomLog`.
   """
-  review_upsert(
+  symptomLog_upsert(
     """
     Data object to insert or update if it already exists.
     """
-    data: Review_Data!
-  ): Review_KeyOutput! @fdc_generated(from: "Review", purpose: UPSERT_SINGLE)
+    data: SymptomLog_Data!
+  ): SymptomLog_KeyOutput! @fdc_generated(from: "SymptomLog", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -108,32 +126,41 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
   """
-  ✨ Insert or update `Movie` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Movie`.
+  ✨ Insert or update a single `VerifiedRemedy` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `VerifiedRemedy`.
   """
-  movie_upsertMany(
+  verifiedRemedy_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: VerifiedRemedy_Data!
+  ): VerifiedRemedy_KeyOutput! @fdc_generated(from: "VerifiedRemedy", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `ForumPost` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ForumPost`.
+  """
+  forumPost_upsertMany(
     """
     List of data objects to insert or update if it already exists.
     """
-    data: [Movie_Data!]!
-  ): [Movie_KeyOutput!]! @fdc_generated(from: "Movie", purpose: UPSERT_MULTIPLE)
+    data: [ForumPost_Data!]!
+  ): [ForumPost_KeyOutput!]! @fdc_generated(from: "ForumPost", purpose: UPSERT_MULTIPLE)
   """
-  ✨ Insert or update `MovieMetadata` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MovieMetadata`.
+  ✨ Insert or update `HealthJournalEntry` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HealthJournalEntry`.
   """
-  movieMetadata_upsertMany(
+  healthJournalEntry_upsertMany(
     """
     List of data objects to insert or update if it already exists.
     """
-    data: [MovieMetadata_Data!]!
-  ): [MovieMetadata_KeyOutput!]! @fdc_generated(from: "MovieMetadata", purpose: UPSERT_MULTIPLE)
+    data: [HealthJournalEntry_Data!]!
+  ): [HealthJournalEntry_KeyOutput!]! @fdc_generated(from: "HealthJournalEntry", purpose: UPSERT_MULTIPLE)
   """
-  ✨ Insert or update `Review` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Review`.
+  ✨ Insert or update `SymptomLog` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `SymptomLog`.
   """
-  review_upsertMany(
+  symptomLog_upsertMany(
     """
     List of data objects to insert or update if it already exists.
     """
-    data: [Review_Data!]!
-  ): [Review_KeyOutput!]! @fdc_generated(from: "Review", purpose: UPSERT_MULTIPLE)
+    data: [SymptomLog_Data!]!
+  ): [SymptomLog_KeyOutput!]! @fdc_generated(from: "SymptomLog", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -144,9 +171,18 @@ extend type Mutation {
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
   """
-  ✨ Update a single `Movie` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Movie` or `null` if not found.
+  ✨ Insert or update `VerifiedRemedy` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `VerifiedRemedy`.
   """
-  movie_update(
+  verifiedRemedy_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [VerifiedRemedy_Data!]!
+  ): [VerifiedRemedy_KeyOutput!]! @fdc_generated(from: "VerifiedRemedy", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `ForumPost` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ForumPost` or `null` if not found.
+  """
+  forumPost_update(
     """
     The unique ID of the object.
     """
@@ -155,22 +191,22 @@ extend type Mutation {
     """
     The key used to identify the object.
     """
-    key: Movie_Key
+    key: ForumPost_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Movie_FirstRow
+    first: ForumPost_FirstRow
 
     """
     Data object containing fields to be updated.
     """
-    data: Movie_Data!
-  ): Movie_KeyOutput @fdc_generated(from: "Movie", purpose: UPDATE_SINGLE)
+    data: ForumPost_Data!
+  ): ForumPost_KeyOutput @fdc_generated(from: "ForumPost", purpose: UPDATE_SINGLE)
   """
-  ✨ Update a single `MovieMetadata` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `MovieMetadata` or `null` if not found.
+  ✨ Update a single `HealthJournalEntry` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `HealthJournalEntry` or `null` if not found.
   """
-  movieMetadata_update(
+  healthJournalEntry_update(
     """
     The unique ID of the object.
     """
@@ -179,37 +215,42 @@ extend type Mutation {
     """
     The key used to identify the object.
     """
-    key: MovieMetadata_Key
+    key: HealthJournalEntry_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: MovieMetadata_FirstRow
+    first: HealthJournalEntry_FirstRow
 
     """
     Data object containing fields to be updated.
     """
-    data: MovieMetadata_Data!
-  ): MovieMetadata_KeyOutput @fdc_generated(from: "MovieMetadata", purpose: UPDATE_SINGLE)
+    data: HealthJournalEntry_Data!
+  ): HealthJournalEntry_KeyOutput @fdc_generated(from: "HealthJournalEntry", purpose: UPDATE_SINGLE)
   """
-  ✨ Update a single `Review` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Review` or `null` if not found.
+  ✨ Update a single `SymptomLog` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `SymptomLog` or `null` if not found.
   """
-  review_update(
+  symptomLog_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
     """
     The key used to identify the object.
     """
-    key: Review_Key
+    key: SymptomLog_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Review_FirstRow
+    first: SymptomLog_FirstRow
 
     """
     Data object containing fields to be updated.
     """
-    data: Review_Data!
-  ): Review_KeyOutput @fdc_generated(from: "Review", purpose: UPDATE_SINGLE)
+    data: SymptomLog_Data!
+  ): SymptomLog_KeyOutput @fdc_generated(from: "SymptomLog", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
   """
@@ -217,12 +258,7 @@ extend type Mutation {
     """
     The unique ID of the object.
     """
-    id: String
-
-    """
-    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
-    """
-    id_expr: String_Expr
+    id: UUID
 
     """
     The key used to identify the object.
@@ -240,13 +276,37 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
   """
-  ✨ Update `Movie` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  ✨ Update a single `VerifiedRemedy` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `VerifiedRemedy` or `null` if not found.
   """
-  movie_updateMany(
+  verifiedRemedy_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: VerifiedRemedy_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VerifiedRemedy_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: VerifiedRemedy_Data!
+  ): VerifiedRemedy_KeyOutput @fdc_generated(from: "VerifiedRemedy", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `ForumPost` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  forumPost_updateMany(
     """
     Filter condition to specify which rows to update.
     """
-    where: Movie_Filter
+    where: ForumPost_Filter
 
     """
     Set to true to update all rows.
@@ -256,16 +316,16 @@ extend type Mutation {
     """
     Data object containing fields to update.
     """
-    data: Movie_Data!
-  ): Int! @fdc_generated(from: "Movie", purpose: UPDATE_MULTIPLE)
+    data: ForumPost_Data!
+  ): Int! @fdc_generated(from: "ForumPost", purpose: UPDATE_MULTIPLE)
   """
-  ✨ Update `MovieMetadata` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  ✨ Update `HealthJournalEntry` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
-  movieMetadata_updateMany(
+  healthJournalEntry_updateMany(
     """
     Filter condition to specify which rows to update.
     """
-    where: MovieMetadata_Filter
+    where: HealthJournalEntry_Filter
 
     """
     Set to true to update all rows.
@@ -275,16 +335,16 @@ extend type Mutation {
     """
     Data object containing fields to update.
     """
-    data: MovieMetadata_Data!
-  ): Int! @fdc_generated(from: "MovieMetadata", purpose: UPDATE_MULTIPLE)
+    data: HealthJournalEntry_Data!
+  ): Int! @fdc_generated(from: "HealthJournalEntry", purpose: UPDATE_MULTIPLE)
   """
-  ✨ Update `Review` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  ✨ Update `SymptomLog` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
-  review_updateMany(
+  symptomLog_updateMany(
     """
     Filter condition to specify which rows to update.
     """
-    where: Review_Filter
+    where: SymptomLog_Filter
 
     """
     Set to true to update all rows.
@@ -294,8 +354,8 @@ extend type Mutation {
     """
     Data object containing fields to update.
     """
-    data: Review_Data!
-  ): Int! @fdc_generated(from: "Review", purpose: UPDATE_MULTIPLE)
+    data: SymptomLog_Data!
+  ): Int! @fdc_generated(from: "SymptomLog", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -316,9 +376,28 @@ extend type Mutation {
     data: User_Data!
   ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
   """
-  ✨ Delete a single `Movie` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  ✨ Update `VerifiedRemedy` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
-  movie_delete(
+  verifiedRemedy_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: VerifiedRemedy_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: VerifiedRemedy_Data!
+  ): Int! @fdc_generated(from: "VerifiedRemedy", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `ForumPost` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  forumPost_delete(
     """
     The unique ID of the object.
     """
@@ -327,17 +406,17 @@ extend type Mutation {
     """
     The key used to identify the object.
     """
-    key: Movie_Key
+    key: ForumPost_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Movie_FirstRow
-  ): Movie_KeyOutput @fdc_generated(from: "Movie", purpose: DELETE_SINGLE)
+    first: ForumPost_FirstRow
+  ): ForumPost_KeyOutput @fdc_generated(from: "ForumPost", purpose: DELETE_SINGLE)
   """
-  ✨ Delete a single `MovieMetadata` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  ✨ Delete a single `HealthJournalEntry` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
-  movieMetadata_delete(
+  healthJournalEntry_delete(
     """
     The unique ID of the object.
     """
@@ -346,27 +425,32 @@ extend type Mutation {
     """
     The key used to identify the object.
     """
-    key: MovieMetadata_Key
+    key: HealthJournalEntry_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: MovieMetadata_FirstRow
-  ): MovieMetadata_KeyOutput @fdc_generated(from: "MovieMetadata", purpose: DELETE_SINGLE)
+    first: HealthJournalEntry_FirstRow
+  ): HealthJournalEntry_KeyOutput @fdc_generated(from: "HealthJournalEntry", purpose: DELETE_SINGLE)
   """
-  ✨ Delete a single `Review` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  ✨ Delete a single `SymptomLog` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
-  review_delete(
+  symptomLog_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
     """
     The key used to identify the object.
     """
-    key: Review_Key
+    key: SymptomLog_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Review_FirstRow
-  ): Review_KeyOutput @fdc_generated(from: "Review", purpose: DELETE_SINGLE)
+    first: SymptomLog_FirstRow
+  ): SymptomLog_KeyOutput @fdc_generated(from: "SymptomLog", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -374,12 +458,7 @@ extend type Mutation {
     """
     The unique ID of the object.
     """
-    id: String
-
-    """
-    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
-    """
-    id_expr: String_Expr
+    id: UUID
 
     """
     The key used to identify the object.
@@ -392,47 +471,66 @@ extend type Mutation {
     first: User_FirstRow
   ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
   """
-  ✨ Delete `Movie` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  ✨ Delete a single `VerifiedRemedy` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
-  movie_deleteMany(
+  verifiedRemedy_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: VerifiedRemedy_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VerifiedRemedy_FirstRow
+  ): VerifiedRemedy_KeyOutput @fdc_generated(from: "VerifiedRemedy", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `ForumPost` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  forumPost_deleteMany(
     """
     Filter condition to specify which rows to delete.
     """
-    where: Movie_Filter
+    where: ForumPost_Filter
 
     """
     Set to true to delete all rows.
     """
     all: Boolean = false
-  ): Int! @fdc_generated(from: "Movie", purpose: DELETE_MULTIPLE)
+  ): Int! @fdc_generated(from: "ForumPost", purpose: DELETE_MULTIPLE)
   """
-  ✨ Delete `MovieMetadata` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  ✨ Delete `HealthJournalEntry` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
-  movieMetadata_deleteMany(
+  healthJournalEntry_deleteMany(
     """
     Filter condition to specify which rows to delete.
     """
-    where: MovieMetadata_Filter
+    where: HealthJournalEntry_Filter
 
     """
     Set to true to delete all rows.
     """
     all: Boolean = false
-  ): Int! @fdc_generated(from: "MovieMetadata", purpose: DELETE_MULTIPLE)
+  ): Int! @fdc_generated(from: "HealthJournalEntry", purpose: DELETE_MULTIPLE)
   """
-  ✨ Delete `Review` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  ✨ Delete `SymptomLog` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
-  review_deleteMany(
+  symptomLog_deleteMany(
     """
     Filter condition to specify which rows to delete.
     """
-    where: Review_Filter
+    where: SymptomLog_Filter
 
     """
     Set to true to delete all rows.
     """
     all: Boolean = false
-  ): Int! @fdc_generated(from: "Review", purpose: DELETE_MULTIPLE)
+  ): Int! @fdc_generated(from: "SymptomLog", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
@@ -447,4 +545,18 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `VerifiedRemedy` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  verifiedRemedy_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: VerifiedRemedy_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "VerifiedRemedy", purpose: DELETE_MULTIPLE)
 }
