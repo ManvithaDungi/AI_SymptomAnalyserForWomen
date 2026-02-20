@@ -7,19 +7,27 @@ A privacy-first women’s health companion with a calm community circle, symptom
 ### 🌸 Symptom Insights
 - **Private Analysis:** Describe symptoms and receive AI-backed insights.
 - **Localized Guidance:** Culturally sensitive tips and awareness notes.
+![Symptom Insights](./images/symptom.png)
 
 ### 🌿 Remedies Library
+- For women who don't have full scientific knowledge, this is for debunking any myths so that they dont make their present symptoms worse or cause any side effects, and maybe provide a better alternative or home remedy.
 - **Curated Remedies:** Evidence-aware home remedies with safety notes.
 - **Searchable Topics:** PCOS, Anemia, Menstrual Health, General Wellness.
+![Remedies Library](./images/homeremedy.png)
 
 ### 💬 Community Forum (Support Circle)
-- **Anonymous Posting:** Stable anon identity (Anon#xxxx).
+- **Multilingual support:** for women who are not fully comfortable with English, for them we've added Telugu, Malayalam, Tamil, Kannada,  and Hindi. Community forum posts will be filtered according to the language chosen.
 - **Gentle Feed:** Not a social feed; a quiet circle for reflections and questions.
 - **Threaded Replies:** Supportive comments with lightweight reactions.
 - **AI Moderation:** Two-layer checks (Hugging Face sentiment + Gemini safety) before posts/comments are saved.
+![Community Forum](./images/comm_circle.png)
 
 ### 📔 Wellness Journal
 - **Daily Logs:** Track symptoms, moods, and patterns over time.
+![Wellness Journal](./images/journal.png)
+
+after symptom analyser and all the help, if the user feels like she needs medical or professional assistance, this feature shows the nearest pahrmacies, doctors, hospitals, etc.
+![Nearby Places](./images/nearby.png)
 
 ## 🧱 Tech Stack
 
