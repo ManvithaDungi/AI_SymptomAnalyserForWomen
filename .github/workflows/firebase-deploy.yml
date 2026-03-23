@@ -26,6 +26,8 @@ jobs:
         env:
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
           VITE_HF_TOKEN: ${{ secrets.VITE_HF_TOKEN }}
+          VITE_GOOGLE_MAPS_KEY: ${{ secrets.VITE_GOOGLE_MAPS_KEY }}
+          VITE_CLOUD_NATURAL_LANGUAGE_KEY: ${{ secrets.VITE_CLOUD_NATURAL_LANGUAGE_KEY }}
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
