@@ -1,86 +1,146 @@
 # Sahachari / Vaazhvu (Women's Health Companion)
 
-A privacy-first women’s health companion with a calm community circle, symptom insights, and culturally sensitive remedies.
+A privacy-first women's health companion with AI-backed symptom analysis, multilingual community support, and evidence-aware remedies recommendations.
+
+**[🌐 Live Demo](https://women-ai-cd813.web.app)**
 
 ## ✨ Features
 
 ### 🌸 Symptom Insights
-- **Private Analysis:** Describe symptoms and receive AI-backed insights.
-- **Localized Guidance:** Culturally sensitive tips and awareness notes.
-![Symptom Insights](./images/symptom.png)
+- **AI-Powered Analysis:** Uses Gemini 1.5 Flash API for real-time symptom interpretation
+- **Privacy-First:** All analysis processed securely with Firestore, minimal data retention
+- **Culturally Contextualized:** Localized medical terminology and health awareness notes
+- **Structured Output:** Severity classification (Low/Medium/High), differential analysis, and recommended next steps
 
 ### 🌿 Remedies Library
-- For women who don't have full scientific knowledge, this is for debunking any myths so that they dont make their present symptoms worse or cause any side effects, and maybe provide a better alternative or home remedy.
-- **Curated Remedies:** Evidence-aware home remedies with safety notes.
-- **Searchable Topics:** PCOS, Anemia, Menstrual Health, General Wellness.
-![Remedies Library](./images/homeremedy.png)
+- **Evidence-Aware**: Cross-references common myths with scientific literature
+- **Structured Database**: Organized by conditions (PCOS, Anemia, Menstrual Health, General Wellness)
+- **Safety Notes**: Contraindications, drug interactions, and when to seek professional care
+- **Full-Text Search**: Firestore-based indexing for instant recipe/remedy discovery
 
 ### 💬 Community Forum (Support Circle)
-- **Multilingual support:** for women who are not fully comfortable with English, for them we've added Telugu, Malayalam, Tamil, Kannada,  and Hindi. Community forum posts will be filtered according to the language chosen.
-- **Gentle Feed:** Not a social feed; a quiet circle for reflections and questions.
-- **Threaded Replies:** Supportive comments with lightweight reactions.
-- **AI Moderation:** Two-layer checks (Hugging Face sentiment + Gemini safety) before posts/comments are saved.
-![Community Forum](./images/comm_circle.png)
+- **Multilingual Stack:** Telugu, Malayalam, Tamil, Kannada, Hindi + English
+- **Language-Based Filtering:** Firestore queries segregate content by selected language
+- **Dual Moderation Pipeline:** 
+  - Hugging Face sentiment analysis (offensive language detection)
+  - Gemini safety API (contextual misinformation check)
+- **Threaded Architecture:** Parent posts with nested replies, lightweight emoji reactions
+- **Real-time Updates:** Cloud Firestore listeners for instant comment notifications
 
-### 📔 Wellness Journal
-- **Daily Logs:** Track symptoms, moods, and patterns over time.
-![Wellness Journal](./images/journal.png)
-
-after symptom analyser and all the help, if the user feels like she needs medical or professional assistance, this feature shows the nearest pahrmacies, doctors, hospitals, etc.
-![Nearby Places](./images/nearby.png)
+### 📔 Wellness Journal & Geolocation
+- **Temporal Analytics:** Track symptom patterns, mood trends, and health metrics
+- **Nearby Healthcare Discovery:** Google Places API integration for nearest pharmacies, clinics, hospitals
+- **Geofencing:** Location-based alerts for health services within configurable radius
 
 ## 🧱 Tech Stack
 
-- **Frontend:** React + Vite + Tailwind CSS
-- **Backend:** Firebase Auth + Firestore
-- **AI Services:** Gemini 1.5 Flash, Hugging Face sentiment
+### Frontend
+- **Framework:** React 18 + Vite (SPA with HMR)
+- **Styling:** Tailwind CSS 3.4 + PostCSS
+- **UI Components:** shadcn/ui (Radix UI primitives)
+- **Routing:** React Router v6 (client-side SPAs)
+- **Internationalization:** i18next with language-specific `locales/` bundles
+- **Testing:** Vitest 4 + React Testing Library + jsdom
 
-## ✅ Prerequisites
+### Backend & Data
+- **Authentication:** Firebase Auth (multi-provider: email, Google, anonymous)
+- **Database:** Firestore (Realtime + Cloud Functions)
+- **Hosting:** Firebase Hosting (CDN, Vite build output)
+- **Storage:** Firebase Cloud Storage (images, journal attachments)
+- **Rules Engine:** Firestore Security Rules + Custom Claims
 
-- Node.js 18+  
-- Firebase project with Firestore enabled (Native mode)
+### AI/ML Services
+- **Symptom Analysis:** Google Gemini 1.5 Flash API
+- **Content Moderation:** Hugging Face Inference API (sentiment classification)
+- **Safety Checks:** Gemini API safety filters
+- **Geolocation:** Google Places API (nearby healthcare discovery)
+
+### DevOps & CI/CD
+- **VCS:** GitHub
+- **CI/CD Pipeline:** GitHub Actions (automated build & deploy on push to main)
+- **Build:** Vite (esbuild/Rollup bundling)
+- **Deployment:** Firebase Hosting CLI (auto-triggered on main branch)
 
 ## 🚀 Run Locally (Step by Step)
 
-1. **Clone**
+### Prerequisites
+- Node.js 18+ (LTS recommended)
+- npm or pnpm
+- Firebase project with Firestore enabled (Native mode, not Datastore)
+
+### Setup
+
+1. **Clone Repository**
    ```bash
    git clone https://github.com/ManvithaDungi/AI_SymptomAnalyserForWomen.git
    cd AI_SymptomAnalyserForWomen
    ```
 
-2. **Install**
+2. **Install Dependencies**
    ```bash
-   npm install
+   npm ci  # or: pnpm install
    ```
 
-3. **Create .env**
+3. **Configure Environment Variables**
+   
+   Create `.env.local` in project root:
    ```env
-   VITE_FIREBASE_API_KEY=your_key
-   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your_project_id
-   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   VITE_FIREBASE_APP_ID=your_app_id
-   VITE_GEMINI_API_KEY=your_gemini_key
-   VITE_HF_TOKEN=your_hugging_face_token
+   # Firebase Web Config (from Firebase Console > Project Settings)
+   VITE_FIREBASE_API_KEY=AIzaSy...
+   VITE_FIREBASE_AUTH_DOMAIN=women-ai-cd813.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=women-ai-cd813
+   VITE_FIREBASE_STORAGE_BUCKET=women-ai-cd813.firebasestorage.app
+   VITE_FIREBASE_MESSAGING_SENDER_ID=446611...
+   VITE_FIREBASE_APP_ID=1:446611...:web:172e3f2c...
+
+   # AI Service Keys
+   VITE_GEMINI_API_KEY=AIzaSy...  # From Google AI Studio (https://aistudio.google.com)
+   VITE_HF_TOKEN=hf_...            # From Hugging Face (https://huggingface.co/settings/tokens)
    ```
 
-4. **Run**
+4. **Start Development Server**
    ```bash
    npm run dev
+   # Server runs at http://localhost:5173 with HMR enabled
    ```
 
 5. **Seed Firestore (First Time Only)**
-   - Visit `/admin-seed`
-   - Click **Seed Firestore Database**
+   - Navigate to `http://localhost:5173/admin-seed`
+   - Click **Seed Firestore Database** button
+   - Waits for Firestore rules to permit write access
+   - Populates initial remedies library and categories
 
-## 🧪 Tests
+## 🧪 Testing
 
+### Unit & Component Tests
 ```bash
-npm run test:run
+npm run test        # Watch mode
+npm run test:run    # Single run (CI mode)
 ```
 
-## 🚢 Deploy (Firebase Hosting)
+**Test Configuration:**
+- **Runner:** Vitest 4 (Vite-native test framework)
+- **Environment:** jsdom (DOM simulation)
+- **Test Files:** `src/**/*.test.jsx`
+- **Coverage:** React Testing Library best practices
+
+**Known Issues & Solutions:**
+- `ERR_REQUIRE_ESM` with jsdom: Configured `vite.config.js` with `singleFork: true` and dependency inlining
+- See `.github/workflows/firebase-deploy.yml` for CI test execution
+
+## 🚢 Deployment
+
+### Automated Deployment (Recommended)
+
+**GitHub Actions CI/CD Pipeline** automatically deploys on push to `main`:
+- ✅ Runs tests (`npm run test:run`)
+- ✅ Builds project (`npm run build`)
+- ✅ Deploys to Firebase Hosting
+- ✅ Live at: https://women-ai-cd813.web.app
+
+**Workflow file:** `.github/workflows/firebase-deploy.yml`
+
+### Manual Deployment
 
 1. **Install Firebase CLI**
    ```bash
@@ -88,29 +148,108 @@ npm run test:run
    firebase login
    ```
 
-2. **Initialize Firebase**
-   ```bash
-   firebase init
-   ```
-   - Select **Hosting** (and **Firestore** if you want to deploy rules)
-   - Set build output directory to `dist`
-
-3. **Build**
+2. **Build**
    ```bash
    npm run build
+   # Output: dist/ directory (configured in firebase.json)
    ```
 
-4. **Deploy**
+3. **Deploy**
    ```bash
    firebase deploy
+   # Deploys Hosting, Firestore rules, Storage rules, Functions
    ```
+
+**Configuration:**
+- **Hosting Root:** `dist/` (Vite output)
+- **Rewrites:** All routes → `/index.html` (SPA mode)
+- **Security Rules:** `firestore.rules`, `storage.rules` auto-deployed
 
 ## 🔧 Troubleshooting
 
-- **Seeding feels stuck:** Ensure Firestore is enabled and the project ID in `.env` is correct.
-- **Forum data not visible:** Confirm `/admin-seed` completed and Firestore rules allow reads.
-- **Vitest ERR_REQUIRE_ESM:** Upgrade dependencies or pin `jsdom` to a compatible version if your CI image uses strict ESM resolution.
+### Build & Dependencies
+| Issue | Solution |
+|-------|----------|
+| **Module not found** | Run `npm ci` to reinstall lockfile-pinned dependencies |
+| **Vite HMR timeout** | Check firewall/proxy settings; adjust `vite.config.js` if needed |
+| **Vitest ERR_REQUIRE_ESM** | Ensure `deps.inline: ['html-encoding-sniffer', '@exodus/bytes']` in `vite.config.js` |
+
+### Firebase Configuration
+| Issue | Solution |
+|-------|----------|
+| **Firestore seeding stuck** | Verify rules allow `.write` for authenticated users; check project ID in `.env.local` |
+| **Missing environment variables** | Use `.env.local` (never commit to git); all `VITE_*` vars must be set |
+| **Auth not working** | Enable Email/Google providers in Firebase Console > Authentication > Sign-in methods |
+| **Forum data not visible** | Ensure seeding completed (`/admin-seed`); verify Firestore rules in console |
+
+### API Rate Limiting
+- **Gemini API:** 60 req/min free tier; implement exponential backoff
+- **Hugging Face:** Depends on model tier; use caching for sentiment analysis
+- **Google Places:** Verify API key has Places API enabled
+
+### Performance
+- **Large Firestore queries:** Use pagination; add composite indexes for multi-field filters
+- **AI API latency:** Implement request debouncing in UI; show skeleton loaders
+
+## 📁 Project Structure
+
+```
+.
+├── .github/workflows/          # GitHub Actions CI/CD
+├── app/                       # Next.js app directory (legacy)
+├── components/
+│   ├── ui/                    # shadcn/ui components
+│   └── theme-provider.tsx     # Tailwind theme config
+├── functions/                 # Firebase Cloud Functions
+├── hooks/                     # Custom React hooks
+├── src/
+│   ├── App.jsx               # Root component
+│   ├── main.jsx              # Entry point
+│   ├── components/           # Feature components
+│   ├── firebase/             # Firebase SDK setup
+│   ├── services/             # API/business logic
+│   ├── locales/              # i18n translations
+│   └── data/                 # Static data, fixtures
+├── dataconnect/              # Firebase Data Connect schema
+├── firestore.rules           # Firestore Security Rules
+├── storage.rules             # Storage Security Rules
+├── firebase.json             # Firebase deployment config
+├── vite.config.js           # Vite build config
+└── tsconfig.json            # TypeScript config
+```
+
+## 🔐 Security Best Practices
+
+1. **Firestore Rules:** Rows use `auth.uid` to scope data access
+2. **API Keys:** Use `.env.local`; never commit; rotate keys regularly
+3. **Functions:** Validate input; rate-limit external API calls
+4. **CORS:** Firebase Hosting auto-handles; Storage rules prevent direct access
+
+## 📊 Architecture Decisions
+
+- **Client-Side AI:** Kept Gemini API calls on frontend for reduced latency + cost
+- **Firestore over SQL:** Schema flexibility for multilingual content; real-time updates
+- **Dual Moderation:** Sentiment analysis + LLM safety for high-confidence filtering
+- **Vite over CRA:** ESM-first dev experience, faster builds, better tree-shaking
 
 ## 🤝 Contributing
 
-Issues and PRs are welcome.
+Issues and PRs are welcome. For major changes:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Ensure tests pass (`npm run test:run`)
+4. Commit with clear messages
+5. Push and open a Pull Request
+
+## 📚 Resources
+
+- [Firebase Console](https://console.firebase.google.com)
+- [Gemini API Docs](https://ai.google.dev)
+- [Vite Documentation](https://vitejs.dev)
+- [React Router v6](https://reactrouter.com)
+- [i18next](https://www.i18next.com)
+- [Live Application](https://women-ai-cd813.web.app)
+
+## 📝 License
+
+[Add license information here]
