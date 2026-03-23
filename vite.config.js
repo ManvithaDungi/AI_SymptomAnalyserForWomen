@@ -8,10 +8,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.js',
     css: true,
-    server: {
-      deps: {
-        inline: ['html-encoding-sniffer']
-      }
+    singleFork: true,
+    deps: {
+      inline: ['html-encoding-sniffer', '@exodus/bytes']
     }
   },
   server: {
