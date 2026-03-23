@@ -49,7 +49,7 @@
   "indexes": [
     {
       "collectionGroup": "comments",
-      "queryScope": "COLLECTION",
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "approved", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "ASCENDING" }
