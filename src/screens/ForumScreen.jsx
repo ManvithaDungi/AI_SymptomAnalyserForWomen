@@ -12,6 +12,7 @@ export default function ForumScreen() {
   const [activeTopic, setActiveTopic] = useState('all');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [indexBuilding, setIndexBuilding] = useState(false);
 
   // Re-fetch whenever language or topic changes
   useEffect(() => {
@@ -20,10 +21,15 @@ export default function ForumScreen() {
 
   const fetchPosts = async () => {
     setLoading(true);
+    setIndexBuilding(false);
     try {
       // Pass language to getForumPosts
       const fetchedPosts = await getForumPosts(activeTopic, 'recent', i18n.language);
       setPosts(fetchedPosts);
+      // If empty, index might be building
+      if (fetchedPosts.length === 0) {
+        setIndexBuilding(true);
+      }
     } catch (error) {
       console.error("Failed to load forum posts", error);
     } finally {
@@ -114,6 +120,20 @@ export default function ForumScreen() {
                 }}
               />
             ))
+          ) : indexBuilding ? (
+            <div className="text-center py-20 opacity-70">
+              <div className="text-4xl mb-4">⏳</div>
+              <h3 className="font-semibold text-text-primary mb-2">
+                Setting up your forum...
+              </h3>
+              <p className="text-sm text-text-secondary mb-4">Our database is preparing your community space. This usually takes 2-5 minutes.</p>
+              <button
+                onClick={fetchPosts}
+                className="text-primary border border-primary/30 px-6 py-2 rounded-full text-sm font-medium hover:bg-primary/5 transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
           ) : (
             <div className="text-center py-20 opacity-70">
               <div className="text-4xl mb-4">🌿</div>

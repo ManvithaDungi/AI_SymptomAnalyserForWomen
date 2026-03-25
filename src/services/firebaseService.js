@@ -117,6 +117,11 @@ export const getForumPosts = async (topic = 'all', sortBy = 'recent', language =
       ...snapshot.data(),
     }));
   } catch (error) {
+    // Provide user-friendly message while index is being created
+    if (error.message && error.message.includes('requires an index')) {
+      console.warn('Firestore index is being created. This usually takes 2-5 minutes. Please refresh the page shortly.');
+      return []; // Return empty array while index builds
+    }
     console.error('Error fetching forum posts:', error);
     throw error;
   }
