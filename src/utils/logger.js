@@ -30,7 +30,7 @@ export const logger = {
    */
   error: (message, error) => {
     if (isDev) {
-      console.error(`${LOG_PREFIX} ❌ ${message}`, error ?? '');
+      console.error(`${LOG_PREFIX} [ERROR] ${message}`, error ?? '');
     }
   },
 
@@ -52,7 +52,7 @@ export const logger = {
    */
   debug: (message, data) => {
     if (isDev) {
-      console.debug(`${LOG_PREFIX} 🐛 ${message}`, data ?? '');
+      console.debug(`${LOG_PREFIX} [DEBUG] ${message}`, data ?? '');
     }
   },
 

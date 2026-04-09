@@ -2,23 +2,23 @@
 
 A privacy-first women's health companion with AI-backed symptom analysis, multilingual community support, and evidence-aware remedies recommendations.
 
-**[🌐 Live Demo](https://women-ai-cd813.web.app)**
+**[[Globe] Live Demo](https://women-ai-cd813.web.app)**
 
-## ✨ Features
+## [Sparkles] Features
 
-### 🌸 Symptom Insights
+### [Flower] Symptom Insights
 - **AI-Powered Analysis:** Uses Gemini 1.5 Flash API for real-time symptom interpretation
 - **Privacy-First:** All analysis processed securely with Firestore, minimal data retention
 - **Culturally Contextualized:** Localized medical terminology and health awareness notes
 - **Structured Output:** Severity classification (Low/Medium/High), differential analysis, and recommended next steps
 
-### 🌿 Remedies Library
+### [Leaf] Remedies Library
 - **Evidence-Aware**: Cross-references common myths with scientific literature
 - **Structured Database**: Organized by conditions (PCOS, Anemia, Menstrual Health, General Wellness)
 - **Safety Notes**: Contraindications, drug interactions, and when to seek professional care
 - **Full-Text Search**: Firestore-based indexing for instant recipe/remedy discovery
 
-### 💬 Community Forum (Support Circle)
+### [MessageSquare] Community Forum (Support Circle)
 - **Multilingual Stack:** Telugu, Malayalam, Tamil, Kannada, Hindi + English
 - **Language-Based Filtering:** Firestore queries segregate content by selected language
 - **Dual Moderation Pipeline:** 
@@ -27,12 +27,12 @@ A privacy-first women's health companion with AI-backed symptom analysis, multil
 - **Threaded Architecture:** Parent posts with nested replies, lightweight emoji reactions
 - **Real-time Updates:** Cloud Firestore listeners for instant comment notifications
 
-### 📔 Wellness Journal & Geolocation
+### [BookOpen] Wellness Journal & Geolocation
 - **Temporal Analytics:** Track symptom patterns, mood trends, and health metrics
 - **Nearby Healthcare Discovery:** Google Places API integration for nearest pharmacies, clinics, hospitals
 - **Geofencing:** Location-based alerts for health services within configurable radius
 
-## 🧱 Tech Stack
+## [Blocks] Tech Stack
 
 ### Frontend
 - **Framework:** React 18 + Vite (SPA with HMR)
@@ -61,7 +61,7 @@ A privacy-first women's health companion with AI-backed symptom analysis, multil
 - **Build:** Vite (esbuild/Rollup bundling)
 - **Deployment:** Firebase Hosting CLI (auto-triggered on main branch)
 
-## 🚀 Run Locally (Step by Step)
+## [Rocket] Run Locally (Step by Step)
 
 ### Prerequisites
 - Node.js 18+ (LTS recommended)
@@ -110,7 +110,7 @@ A privacy-first women's health companion with AI-backed symptom analysis, multil
    - Waits for Firestore rules to permit write access
    - Populates initial remedies library and categories
 
-## 🧪 Testing
+## [TestTube] Testing
 
 ### Unit & Component Tests
 ```bash
@@ -128,14 +128,14 @@ npm run test:run    # Single run (CI mode)
 - `ERR_REQUIRE_ESM` with jsdom: Configured `vite.config.js` with `singleFork: true` and dependency inlining
 - See `.github/workflows/firebase-deploy.yml` for CI test execution
 
-## 🚢 Deployment
+## [Ship] Deployment
 
 ### Automated Deployment (Recommended)
 
 **GitHub Actions CI/CD Pipeline** automatically deploys on push to `main`:
-- ✅ Runs tests (`npm run test:run`)
-- ✅ Builds project (`npm run build`)
-- ✅ Deploys to Firebase Hosting
+- [Check] Runs tests (`npm run test:run`)
+- [Check] Builds project (`npm run build`)
+- [Check] Deploys to Firebase Hosting
 - ✅ Live at: https://women-ai-cd813.web.app
 
 **Workflow file:** `.github/workflows/firebase-deploy.yml`
@@ -165,7 +165,7 @@ npm run test:run    # Single run (CI mode)
 - **Rewrites:** All routes → `/index.html` (SPA mode)
 - **Security Rules:** `firestore.rules`, `storage.rules` auto-deployed
 
-## 🔧 Troubleshooting
+## [Wrench] Troubleshooting
 
 ### Build & Dependencies
 | Issue | Solution |
@@ -191,7 +191,7 @@ npm run test:run    # Single run (CI mode)
 - **Large Firestore queries:** Use pagination; add composite indexes for multi-field filters
 - **AI API latency:** Implement request debouncing in UI; show skeleton loaders
 
-## 📁 Project Structure
+## [Folder] Project Structure
 
 ```
 .
@@ -218,21 +218,21 @@ npm run test:run    # Single run (CI mode)
 └── tsconfig.json            # TypeScript config
 ```
 
-## 🔐 Security Best Practices
+## [Shield] Security Best Practices
 
 1. **Firestore Rules:** Rows use `auth.uid` to scope data access
 2. **API Keys:** Use `.env.local`; never commit; rotate keys regularly
 3. **Functions:** Validate input; rate-limit external API calls
 4. **CORS:** Firebase Hosting auto-handles; Storage rules prevent direct access
 
-## 📊 Architecture Decisions
+## [BarChart3] Architecture Decisions
 
 - **Client-Side AI:** Kept Gemini API calls on frontend for reduced latency + cost
 - **Firestore over SQL:** Schema flexibility for multilingual content; real-time updates
 - **Dual Moderation:** Sentiment analysis + LLM safety for high-confidence filtering
 - **Vite over CRA:** ESM-first dev experience, faster builds, better tree-shaking
 
-## 🤝 Contributing
+## [HandshakeIcon] Contributing
 
 Issues and PRs are welcome. For major changes:
 1. Fork the repository
@@ -241,7 +241,7 @@ Issues and PRs are welcome. For major changes:
 4. Commit with clear messages
 5. Push and open a Pull Request
 
-## 📚 Resources
+## [Book] Resources
 
 - [Firebase Console](https://console.firebase.google.com)
 - [Gemini API Docs](https://ai.google.dev)

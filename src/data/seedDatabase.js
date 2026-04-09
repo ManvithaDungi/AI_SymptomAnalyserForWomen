@@ -8,7 +8,7 @@ const forumTopics = [
       title: "PCOS",
       titleTamil: "பிசிஓஎஸ்",
       description: "Gentle space for PCOS experiences",
-      icon: "🌸",
+      icon: "flower",
       color: "rgba(109,91,208,0.12)",
       postCount: 0
    },
@@ -17,7 +17,7 @@ const forumTopics = [
       title: "Anemia",
       titleTamil: "இரத்த சோகை",
       description: "Iron support, fatigue, and nourishment",
-      icon: "🥗",
+      icon: "salad",
       color: "rgba(184,212,190,0.2)",
       postCount: 0
    },
@@ -26,7 +26,7 @@ const forumTopics = [
       title: "Menstrual Health",
       titleTamil: "மாதவிடாய் ஆரோக்கியம்",
       description: "Open, stigma-free period care",
-      icon: "🌙",
+      icon: "moon",
       color: "rgba(155,142,196,0.15)",
       postCount: 0
    },
@@ -35,7 +35,7 @@ const forumTopics = [
       title: "Home Remedies",
       titleTamil: "வீட்டு வைத்தியம்",
       description: "Cultural remedies with care",
-      icon: "🌿",
+      icon: "leaf",
       color: "rgba(184,212,190,0.25)",
       postCount: 0
    },
@@ -44,7 +44,7 @@ const forumTopics = [
       title: "General Wellness",
       titleTamil: "பொது ஆரோக்கியம்",
       description: "Everyday wellbeing and emotional balance",
-      icon: "💫",
+      icon: "sparkles",
       color: "rgba(196,149,106,0.1)",
       postCount: 0
    }
@@ -408,15 +408,15 @@ import { auth } from '../firebase/firebaseConfig';
 import { signInAnonymously } from 'firebase/auth';
 
 export const seedFirestore = async () => {
-   console.log('🌱 Starting seeding process...');
+   console.log('[INFO] Starting seeding process...');
    const logs = [];
 
    try {
       // 0. Ensure Authentication
       if (!auth.currentUser) {
-         logs.push('🔑 Signing in anonymously for permissions...');
+         logs.push('[INFO] Signing in anonymously for permissions...');
          await signInAnonymously(auth);
-         logs.push('✅ Signed in.');
+         logs.push('[SUCCESS] Signed in.');
       }
 
       // 1. Seed Forum Topics
@@ -435,8 +435,8 @@ export const seedFirestore = async () => {
          );
          await Promise.all(topicPromises);
 
-         console.log('✅ Forum topics seeded.');
-         logs.push('✅ Forum topics seeded.');
+         console.log('[SUCCESS] Forum topics seeded.');
+         logs.push('[SUCCESS] Forum topics seeded.');
       } else {
          console.log('Skipping forum topics (already exist).');
          logs.push('Skipping forum topics (already exist).');
@@ -475,8 +475,8 @@ export const seedFirestore = async () => {
          });
          await Promise.all(postPromises);
 
-         console.log('✅ Forum posts seeded.');
-         logs.push('✅ Forum posts seeded.');
+         console.log('[SUCCESS] Forum posts seeded.');
+         logs.push('[SUCCESS] Forum posts seeded.');
       } else {
          console.log('Skipping forum posts (already exist).');
          logs.push('Skipping forum posts (already exist).');
@@ -499,8 +499,8 @@ export const seedFirestore = async () => {
          );
          await Promise.all(remedyPromises);
 
-         console.log('✅ Remedies seeded.');
-         logs.push('✅ Remedies seeded.');
+         console.log('[SUCCESS] Remedies seeded.');
+         logs.push('[SUCCESS] Remedies seeded.');
       } else {
          console.log('Skipping remedies (already exist).');
          logs.push('Skipping remedies (already exist).');
@@ -522,8 +522,8 @@ export const seedFirestore = async () => {
             });
          });
          await Promise.all(doctorPromises);
-         console.log('✅ Doctors seeded.');
-         logs.push('✅ Doctors seeded.');
+         console.log('[SUCCESS] Doctors seeded.');
+         logs.push('[SUCCESS] Doctors seeded.');
       } else {
          console.log('Skipping doctors (already exist).');
       }
@@ -542,8 +542,8 @@ export const seedFirestore = async () => {
             })
          );
          await Promise.all(journalPromises);
-         console.log('✅ Journal entries seeded.');
-         logs.push('✅ Journal entries seeded.');
+         console.log('[SUCCESS] Journal entries seeded.');
+         logs.push('[SUCCESS] Journal entries seeded.');
       }
 
       // 6. Seed QA (New)
@@ -561,12 +561,12 @@ export const seedFirestore = async () => {
             })
          );
          await Promise.all(qaPromises);
-         console.log('✅ Doctor QA seeded.');
-         logs.push('✅ Doctor QA seeded.');
+         console.log('[SUCCESS] Doctor QA seeded.');
+         logs.push('[SUCCESS] Doctor QA seeded.');
       }
 
-      console.log('🎉 Database seeding completed!');
-      logs.push('🎉 Database seeding completed!');
+      console.log('[SUCCESS] Database seeding completed!');
+      logs.push('[SUCCESS] Database seeding completed!');
       return { success: true, logs };
 
    } catch (error) {
