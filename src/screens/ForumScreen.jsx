@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import TopicFilter from '../components/forum/TopicFilter';
 import PostCard from '../components/forum/PostCard';
 import { getForumPosts, togglePostUpvote, getUserId } from '../services/firebaseService';
+import { logger } from '../utils/logger';
 
 export default function ForumScreen() {
   const navigate = useNavigate();
@@ -13,11 +14,18 @@ export default function ForumScreen() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [indexBuilding, setIndexBuilding] = useState(false);
+  const [loadingPostId, setLoadingPostId] = useState(null);
 
-  // Re-fetch whenever language or topic changes
+  // Fetch only when topic changes, NOT on language change
   useEffect(() => {
     fetchPosts();
-  }, [activeTopic, i18n.language]);
+  }, [activeTopic]);
+
+  // Separate effect for language-based filtering (no refetch)
+  useEffect(() => {
+    // Language change - could update display but don't refetch
+    // Posts remain the same, just UI language changes
+  }, [i18n.language]);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -31,7 +39,7 @@ export default function ForumScreen() {
         setIndexBuilding(true);
       }
     } catch (error) {
-      console.error("Failed to load forum posts", error);
+      logger.error("Failed to load forum posts", error);
     } finally {
       setLoading(false);
     }
@@ -103,6 +111,15 @@ export default function ForumScreen() {
                 post={post}
                 currentUserId={currentUserId}
                 onReact={async (id, liked) => {
+                  // Prevent double-clicks/rapid clicks
+                  if (loadingPostId === id) return;
+                  
+                  setLoadingPostId(id);
+                  
+                  // Keep original posts for reverting on failure
+                  const originalPosts = posts;
+                  
+                  // Optimistic UI update
                   setPosts((prev) =>
                     prev.map((item) => {
                       if (item.id !== id) return item;
@@ -116,7 +133,19 @@ export default function ForumScreen() {
                       };
                     })
                   );
-                  await togglePostUpvote(id, currentUserId);
+                  
+                  try {
+                    await togglePostUpvote(id, currentUserId);
+                  } catch (error) {
+                    // Revert on failure
+                    setPosts(originalPosts);
+                    logger.error('Failed to update upvote', error);
+                    // TODO: Use toast.error() when available
+                    // For now using alert as fallback
+                    alert('Failed to update reaction. Please try again.');
+                  } finally {
+                    setLoadingPostId(null);
+                  }
                 }}
               />
             ))

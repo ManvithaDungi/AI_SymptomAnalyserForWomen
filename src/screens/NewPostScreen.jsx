@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { saveForumPost, getUserId, getAnonName } from '../services/firebaseService';
 import { moderateContent } from '../services/moderationService';
 import { classifyContent } from '../services/nlpService';
+import { logger } from '../utils/logger';
+import { getSecureAnonId } from '../utils/anonId';
 
 export default function NewPostScreen() {
    const navigate = useNavigate();
@@ -43,7 +45,7 @@ export default function NewPostScreen() {
             else alert("Couldn't detect a specific topic. Please choose one.");
          }
       } catch (e) {
-         console.error(e);
+         logger.error('Error auto-tagging content', e);
       } finally {
          setTagging(false);
       }
@@ -67,19 +69,30 @@ export default function NewPostScreen() {
       setLoading(true);
       try {
          const moderationResult = await moderateContent(`${title}\n${content}`);
-         if (!moderationResult.approved) {
-            alert(moderationResult.reason || 'This post may not be appropriate for the community.');
+         
+         // Ensure approved is explicit boolean
+         const isApproved = moderationResult?.approved === true;
+         
+         if (!isApproved) {
+            alert(moderationResult?.reason || 'This post may not be appropriate for the community.');
             return;
          }
+         
          const userId = getUserId();
-         const anonName = getAnonName();
+         let anonName = getAnonName();
+         
+         // If no anonymous name, generate secure one
+         if (!anonName) {
+           anonName = await getSecureAnonId();
+         }
+         
          const postData = {
             title,
             content,
             topic,
             type: postType,
             imageUrl: postType === 'image' ? imageUrl.trim() : null,
-            approved: moderationResult.approved,
+            approved: isApproved,
             moderation: moderationResult,
             userId,
             anonName,
@@ -93,7 +106,8 @@ export default function NewPostScreen() {
          navigate('/forum');
 
       } catch (error) {
-         console.error("Error creating post:", error);
+         logger.error("Error creating post:", error);
+         // TODO: Use toast.error() when available
          alert("Failed to create post. Please try again.");
       } finally {
          setLoading(false);

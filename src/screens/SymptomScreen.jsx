@@ -7,6 +7,8 @@ import { analyzeSymptoms } from '../services/geminiService';
 import { extractEntities } from '../services/nlpService';
 import { saveSymptomLog, getUserId } from '../services/firebaseService';
 import VoiceInputButton from '../components/VoiceInputButton';
+import { validateSymptomInput, sanitizeInput } from '../utils/inputValidator';
+import { logger } from '../utils/logger';
 
 const SYMPTOMS = [
   'Irregular Periods', 'Acne', 'Weight Gain',
@@ -36,16 +38,26 @@ export default function SymptomScreen() {
       return;
     }
 
+    // Validate input before proceeding
+    const validationErrors = validateSymptomInput(selected, additional);
+    if (validationErrors.length > 0) {
+      alert(validationErrors.join('\n'));
+      return;
+    }
+
     setLoading(true);
     setAnalyzingText(t('common.analyzing'));
 
     try {
+      // Sanitize additional input before sending
+      const sanitizedAdditional = sanitizeInput(additional);
+      
       // Step 1: Extract entities using Cloud NL (if any text provided)
       let finalSymptoms = [...selected];
 
-      if (additional.trim().length > 3) {
+      if (sanitizedAdditional.length > 3) {
         try {
-          const entities = await extractEntities(additional);
+          const entities = await extractEntities(sanitizedAdditional);
           // Filter out generic entities (e.g. 'Person') if needed, for now include relevant types
           // Cloud NL Types: EVENT, OTHER, PERSON, LOCATION, ORGANIZATION, CONSUMER_GOOD, WORK_OF_ART
           const relevantEntities = entities
@@ -64,14 +76,14 @@ export default function SymptomScreen() {
             await new Promise(r => setTimeout(r, 500));
           }
         } catch (nlpError) {
-          console.warn("Entity extraction skipped:", nlpError);
+          logger.warn("Entity extraction skipped:", nlpError);
           // Continue without extracted entities
         }
       }
 
       setAnalyzingText(t('common.analyzing'));
       // Step 2: Analyze with Gemini
-      const analysisResult = await analyzeSymptoms(finalSymptoms, additional);
+      const analysisResult = await analyzeSymptoms(finalSymptoms, sanitizedAdditional);
 
       // Step 3: Save and Navigate
       const userId = getUserId();
@@ -82,7 +94,7 @@ export default function SymptomScreen() {
       navigate('/results', { state: { result: analysisResult, symptoms: finalSymptoms } });
 
     } catch (err) {
-      console.error(err);
+      logger.error('Error analyzing symptoms', err);
       alert(t('common.error'));
     } finally {
       setLoading(false);

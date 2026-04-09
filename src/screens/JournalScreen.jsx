@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { auth, saveJournalEntry, getJournalEntries, getJournalEntry } from '../services/firebaseService';
 import { generateWeeklySummary } from '../services/geminiService';
+import { logger } from '../utils/logger';
 
 const MOODS = [
   { emoji: '😊', label: 'Happy', value: 'happy' },
@@ -336,7 +337,7 @@ function AISummaryBanner({ entries }) {
       setSummary(s);
       setShown(true);
     } catch (e) {
-      console.error(e);
+      logger.error('Error generating summary', e);
     } finally {
       setLoading(false);
     }
@@ -463,7 +464,7 @@ export default function JournalScreen() {
       const data = await getJournalEntries(userId, monthKey);
       setEntries(data);
     } catch (e) {
-      console.error('Failed to load entries:', e);
+      logger.error('Failed to load entries:', e);
     } finally {
       setLoadingEntries(false);
     }

@@ -1,3 +1,6 @@
+import { getApiKey } from '../utils/apiConfig.js';
+import { logger } from '../utils/logger.js';
+import { API_TIMEOUTS } from '../config/constants.js';
 
 // Get user's current coordinates via browser geolocation
 export const getUserLocation = () => {
@@ -45,61 +48,69 @@ export const getLocationName = async (lat, lng) => {
 // Search nearby places by category
 export const searchNearbyPlaces = (map, location, category, radiusVal = 3000) => {
    return new Promise((resolve, reject) => {
-      if (!window.google || !window.google.maps) {
-         reject(new Error('Google Maps not loaded'));
-         return;
-      }
-
-      const service = new window.google.maps.places.PlacesService(map);
-
-      // Mappings based on user requirement
-      const searchConfig = {
-         'Gynecologist': { type: 'doctor', keyword: 'gynecologist' },
-         'Pharmacy': { type: 'pharmacy', keyword: 'pharmacy' },
-         'General Physician': { type: 'doctor', keyword: 'physician' },
-         'Diagnostic Lab': { type: 'hospital', keyword: 'diagnostic lab' },
-         'Women\'s Clinic': { type: 'hospital', keyword: 'women clinic' },
-         'Wellness Center': { type: 'spa', keyword: 'wellness' },
-         'Dentist': { type: 'dentist', keyword: 'dentist' },
-         'Eye Care': { type: 'doctor', keyword: 'ophthalmologist' }
-      };
-
-      const config = searchConfig[category] || searchConfig['Gynecologist'];
-
-      const request = {
-         location: new window.google.maps.LatLng(location.lat, location.lng),
-         radius: radiusVal, // logic handled by caller or default
-         keyword: config.keyword,
-         type: config.type
-      };
-
-      service.nearbySearch(request, (results, status) => {
-         if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-            // Format results to consistent shape
-            const formatted = results.map(place => ({
-               id: place.place_id,
-               name: place.name,
-               address: place.vicinity,
-               rating: place.rating || null,
-               totalRatings: place.user_ratings_total || 0,
-               isOpen: place.opening_hours?.isOpen() || null,
-               location: {
-                  lat: place.geometry.location.lat(),
-                  lng: place.geometry.location.lng()
-               },
-               types: place.types,
-               photo: place.photos?.[0]?.getUrl({ maxWidth: 400 }) || null,
-               placeId: place.place_id
-            }));
-            resolve(formatted);
-         } else if (status === 'ZERO_RESULTS') {
-            resolve([]);
-         } else {
-            // resolving empty on error to prevent crash, but logging
-            console.warn(`Places API status: ${status}`);
-            resolve([]);
+      try {
+         // Validate Google Maps API key is available
+         getApiKey('GOOGLE_MAPS');
+         
+         if (!window.google || !window.google.maps) {
+            reject(new Error('Google Maps not loaded'));
+            return;
          }
-      });
+
+         const service = new window.google.maps.places.PlacesService(map);
+
+         // Mappings based on user requirement
+         const searchConfig = {
+            'Gynecologist': { type: 'doctor', keyword: 'gynecologist' },
+            'Pharmacy': { type: 'pharmacy', keyword: 'pharmacy' },
+            'General Physician': { type: 'doctor', keyword: 'physician' },
+            'Diagnostic Lab': { type: 'hospital', keyword: 'diagnostic lab' },
+            'Women\'s Clinic': { type: 'hospital', keyword: 'women clinic' },
+            'Wellness Center': { type: 'spa', keyword: 'wellness' },
+            'Dentist': { type: 'dentist', keyword: 'dentist' },
+            'Eye Care': { type: 'doctor', keyword: 'ophthalmologist' }
+         };
+
+         const config = searchConfig[category] || searchConfig['Gynecologist'];
+
+         const request = {
+            location: new window.google.maps.LatLng(location.lat, location.lng),
+            radius: radiusVal,
+            keyword: config.keyword,
+            type: config.type
+         };
+
+         service.nearbySearch(request, (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+               const formatted = results.map(place => ({
+                  id: place.place_id,
+                  name: place.name,
+                  address: place.vicinity,
+                  rating: place.rating || null,
+                  totalRatings: place.user_ratings_total || 0,
+                  isOpen: place.opening_hours?.isOpen() || null,
+                  location: {
+                     lat: place.geometry.location.lat(),
+                     lng: place.geometry.location.lng()
+                  },
+                  types: place.types,
+                  photo: place.photos?.[0]?.getUrl({ maxWidth: 400 }) || null,
+                  placeId: place.place_id
+               }));
+               logger.log('Nearby places found', { category, count: formatted.length });
+               resolve(formatted);
+            } else if (status === 'ZERO_RESULTS') {
+               logger.log('No nearby places found', { category });
+               resolve([]);
+            } else {
+               logger.warn(`Places API status: ${status}`, { category });
+               resolve([]);
+            }
+         });
+      } catch (error) {
+         logger.error('Nearby places search failed', error);
+         reject(error);
+      }
    });
 };
 

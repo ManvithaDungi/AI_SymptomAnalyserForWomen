@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { RouterProvider, createBrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth'; // Import this
+import { useTranslation } from 'react-i18next';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import LoginScreen from './screens/LoginScreen'; // Import LoginScreen
@@ -16,7 +18,7 @@ import { auth } from './services/firebaseService'; // Import auth instance
 import AdminSeedScreen from './screens/AdminSeedScreen';
 import NearbyHelpScreen from './screens/NearbyHelpScreen';
 
-function AppLayout({ user, language, setLanguage, loading }) {
+function AppLayout({ user, loading }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -30,7 +32,7 @@ function AppLayout({ user, language, setLanguage, loading }) {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-text-primary">
-      {user && <Navbar language={language} setLanguage={setLanguage} />}
+      {user && <Navbar />}
       <main className="flex-grow pb-20 md:pb-0">
         <Outlet />
       </main>
@@ -44,7 +46,6 @@ function AppLayout({ user, language, setLanguage, loading }) {
 }
 
 export default function App() {
-  const [language, setLanguage] = useState('EN');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -61,19 +62,19 @@ export default function App() {
   const router = createBrowserRouter(
     [
       {
-        element: <AppLayout user={user} language={language} setLanguage={setLanguage} loading={loading} />,
+        element: <AppLayout user={user} loading={loading} />,
         children: [
           { path: '/', element: !user ? <LoginScreen /> : <Navigate to="/forum" /> },
-          { path: '/home', element: user ? <HomeScreen /> : <Navigate to="/" /> },
-          { path: '/forum', element: user ? <ForumScreen /> : <Navigate to="/" /> },
-          { path: '/forum/new', element: user ? <NewPostScreen /> : <Navigate to="/" /> },
-          { path: '/forum/:postId', element: user ? <ThreadScreen /> : <Navigate to="/" /> },
-          { path: '/symptoms', element: user ? <SymptomScreen /> : <Navigate to="/" /> },
-          { path: '/results', element: user ? <ResultsScreen /> : <Navigate to="/" /> },
-          { path: '/remedy', element: user ? <RemedyScreen /> : <Navigate to="/" /> },
-          { path: '/journal', element: user ? <JournalScreen /> : <Navigate to="/" /> },
-          { path: '/nearby', element: user ? <NearbyHelpScreen /> : <Navigate to="/" /> },
-          { path: '/admin-seed', element: <AdminSeedScreen /> },
+          { path: '/home', element: user ? <ErrorBoundary><HomeScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/forum', element: user ? <ErrorBoundary><ForumScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/forum/new', element: user ? <ErrorBoundary><NewPostScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/forum/:postId', element: user ? <ErrorBoundary><ThreadScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/symptoms', element: user ? <ErrorBoundary><SymptomScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/results', element: user ? <ErrorBoundary><ResultsScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/remedy', element: user ? <ErrorBoundary><RemedyScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/journal', element: user ? <ErrorBoundary><JournalScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/nearby', element: user ? <ErrorBoundary><NearbyHelpScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/admin-seed', element: <ErrorBoundary><AdminSeedScreen /></ErrorBoundary> },
         ]
       }
     ],
@@ -85,5 +86,9 @@ export default function App() {
     }
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  );
 }

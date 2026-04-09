@@ -1,35 +1,51 @@
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+import { getApiKey } from '../utils/apiConfig.js';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout.js';
+import { logger } from '../utils/logger.js';
+import { formatApiError, formatNetworkError } from '../utils/errorFormatter.js';
+import { API_TIMEOUTS } from '../config/constants.js';
+
 const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 const callGemini = async (prompt) => {
-  if (!API_KEY) throw new Error("Missing Gemini API Key in .env");
-
   try {
-    const response = await fetch(`${API_URL}?key=${API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      }),
-    });
+    const API_KEY = getApiKey('GEMINI');
+    const url = `${API_URL}?key=${API_KEY}`;
+
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        }),
+      },
+      API_TIMEOUTS.GEMINI,
+      2 // maxRetries
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error("Gemini API Error Details:", errorData);
-      throw new Error(`Gemini API Error: ${response.status} ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
+      logger.error('Gemini API Error Details', errorData);
+      throw new Error(`${response.status} ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const data = await response.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (!text) throw new Error("No response generated");
+    if (!text) throw new Error('No response generated');
 
     // Clean up potential markdown code blocks if the model wraps JSON
     const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleanText);
   } catch (error) {
-    console.error("Gemini AI Error:", error);
-    throw error;
+    const message = error.message || 'Unknown error';
+    if (message.includes('timeout') || message.includes('AbortError')) {
+      logger.error('Gemini request timeout', error);
+      throw new Error(formatNetworkError(error));
+    }
+    logger.error('Gemini AI failed', error);
+    throw new Error(formatApiError('Gemini', error));
   }
 };
 
@@ -116,10 +132,16 @@ export const validateRemedy = async (remedyName) => {
       "tip": "How to use safely."
     }
   `;
-  return callGemini(prompt);
+  try {
+    return await callGemini(prompt);
+  } catch (error) {
+    logger.error('Remedy validation failed', error);
+    throw error;
+  }
 };
 
 export const detectPattern = async (logs) => {
+  logger.log('Pattern detection called');
   // Placeholder for complex pattern detection
   return "Keep logging to unlock detailed patterns!";
 };

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import DisclaimerBanner from '../components/DisclaimerBanner';
 import { analyzeSymptoms } from '../services/geminiService';
 import { saveSymptomLog, getUserId } from '../services/firebaseService';
+import { logger } from '../utils/logger';
 
 function ConditionCard({ condition }) {
   const probColor = {
@@ -63,7 +64,7 @@ export default function ResultsScreen() {
         setSaved(true);
       }
     } catch (err) {
-      console.error('Analysis error:', err);
+      logger.error('Analysis error:', err);
       setError(err.message || 'Failed to analyze symptoms. Please check your Gemini API key in .env');
     } finally {
       setLoading(false);

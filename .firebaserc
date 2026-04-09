@@ -1,1 +1,7 @@
-{}
+{
+  "projects": {
+    "deploy": "women-ai-cd813"
+  },
+  "targets": {},
+  "etags": {}
+}

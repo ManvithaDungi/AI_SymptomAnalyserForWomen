@@ -4,6 +4,8 @@ import MapView from '../components/nearby/MapView';
 import PlaceCard from '../components/nearby/PlaceCard';
 import PlaceTypeSelector from '../components/nearby/PlaceTypeSelector';
 import { getUserLocation, getLocationName, searchNearbyPlaces, getDirectionsUrl, getDistance } from '../services/placesService';
+import { validateGoogleMapsKey } from '../utils/apiConfig';
+import { logger } from '../utils/logger';
 
 export default function NearbyHelpScreen() {
    const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -26,6 +28,14 @@ export default function NearbyHelpScreen() {
 
    // 0. Load Google Maps Script
    useEffect(() => {
+      // Validate Google Maps API key
+      try {
+         validateGoogleMapsKey();
+      } catch (err) {
+         setError(err.message);
+         return;
+      }
+
       if (window.google && window.google.maps) {
          setScriptLoaded(true);
          return;
@@ -59,12 +69,12 @@ export default function NearbyHelpScreen() {
                   if (mounted) setLocationName(name);
                }
             } catch (e) {
-               console.warn(e);
+               logger.warn('Error getting location name', e);
                if (mounted) setLocationName('Unknown Location');
             }
          })
          .catch((err) => {
-            console.error(err);
+            logger.error('Failed to get user location', err);
             if (mounted) {
                setError('Location permission denied. Map centered on Chennai.');
                // Default to Chennai
@@ -104,7 +114,7 @@ export default function NearbyHelpScreen() {
             setLoading(false);
          })
          .catch(err => {
-            console.error("Fetch places failed:", err);
+            logger.error("Fetch places failed:", err);
             if (mounted) {
                setError("Could not load places. Try again.");
                setLoading(false);

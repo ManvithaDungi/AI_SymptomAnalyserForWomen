@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DisclaimerBanner from '../components/DisclaimerBanner';
 import { validateRemedy } from '../services/geminiService';
+import { logger } from '../utils/logger';
 
 export default function RemedyScreen() {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ export default function RemedyScreen() {
       const data = await validateRemedy(remedy);
       setResult(data);
     } catch (error) {
-      console.error('Error validating remedy:', error);
+      logger.error('Error validating remedy:', error);
       alert('Error checking remedy. Please try again.');
     } finally {
       setLoading(false);

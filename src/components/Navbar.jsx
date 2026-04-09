@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../services/firebaseService';
 import LanguageSelector from './LanguageSelector';
+import { logger } from '../utils/logger';
 
 export default function Navbar() {
   const { t } = useTranslation();
@@ -14,7 +15,7 @@ export default function Navbar() {
       await signOut(auth);
       navigate('/');
     } catch (error) {
-      console.error("Error signing out:", error);
+      logger.error("Error signing out:", error);
     }
   };
 

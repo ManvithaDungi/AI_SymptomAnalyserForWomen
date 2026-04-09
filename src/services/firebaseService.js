@@ -14,7 +14,7 @@ import {
   getDoc,
   serverTimestamp,
   orderBy,
-  limit, // Added limit
+  limit,
   updateDoc,
   arrayUnion,
   arrayRemove,
@@ -22,6 +22,9 @@ import {
   runTransaction,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseConfig';
+import { getSecureAnonId } from '../utils/anonId.js';
+import { logger } from '../utils/logger.js';
+import { PAGINATION } from '../config/constants.js';
 
 export { auth };
 
@@ -30,9 +33,10 @@ export const initializeAuth = async () => {
     const result = await signInAnonymously(auth);
     const userId = result.user.uid;
     localStorage.setItem('userId', userId);
+    logger.log('Anonymous auth initialized', userId);
     return userId;
   } catch (error) {
-    console.error('Auth error:', error);
+    logger.error('Auth initialization failed', error);
     throw error;
   }
 };
@@ -51,9 +55,10 @@ export const signUpWithEmail = async (email, password) => {
     });
 
     localStorage.setItem('userId', user.uid);
+    logger.log('User signed up successfully', user.uid);
     return user;
   } catch (error) {
-    console.error("Sign up error:", error);
+    logger.error('Sign up failed', error);
     throw error;
   }
 };
@@ -63,9 +68,10 @@ export const loginWithEmail = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     localStorage.setItem('userId', user.uid);
+    logger.log('User logged in', user.uid);
     return user;
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error('Login failed', error);
     throw error;
   }
 };
@@ -82,8 +88,9 @@ export const saveSymptomLog = async (userId, symptoms, result) => {
       result,
       timestamp: serverTimestamp(),
     });
+    logger.log('Symptom log saved', { userId, symptomsCount: symptoms.length });
   } catch (error) {
-    console.error('Error saving symptom log:', error);
+    logger.error('Failed to save symptom log', error);
     throw error;
   }
 };
@@ -107,7 +114,7 @@ export const getForumPosts = async (topic = 'all', sortBy = 'recent', language =
       constraints.push(orderBy('upvotes', 'desc'));
     }
 
-    constraints.push(limit(20));
+    constraints.push(limit(PAGINATION.FORUM_POSTS_PER_PAGE));
 
     const q = query(base, ...constraints);
     const querySnapshot = await getDocs(q);
@@ -119,10 +126,10 @@ export const getForumPosts = async (topic = 'all', sortBy = 'recent', language =
   } catch (error) {
     // Provide user-friendly message while index is being created
     if (error.message && error.message.includes('requires an index')) {
-      console.warn('Firestore index is being created. This usually takes 2-5 minutes. Please refresh the page shortly.');
+      logger.warn('Firestore index is being created. This usually takes 2-5 minutes. Please refresh the page shortly.');
       return []; // Return empty array while index builds
     }
-    console.error('Error fetching forum posts:', error);
+    logger.error('Failed to fetch forum posts', error);
     throw error;
   }
 };
@@ -130,6 +137,8 @@ export const getForumPosts = async (topic = 'all', sortBy = 'recent', language =
 export const saveForumPost = async (postData) => {
   try {
     const language = localStorage.getItem('language') || 'en';
+    // Ensure approved is explicit boolean
+    const approved = Boolean(postData.approved) === true;
     await addDoc(collection(db, 'forum_posts'), {
       ...postData,
       language,
@@ -137,12 +146,13 @@ export const saveForumPost = async (postData) => {
       upvotes: postData.upvotes ?? 0,
       upvotedBy: postData.upvotedBy ?? [],
       commentCount: postData.commentCount ?? 0,
-      approved: postData.approved ?? false, // Default to false for moderation as per request, but keeping flexible
+      approved, // Explicit boolean validation
       isPinned: postData.isPinned ?? false,
       isExpertAnswered: postData.isExpertAnswered ?? false,
     });
+    logger.log('Forum post saved', { language, approved });
   } catch (error) {
-    console.error('Error saving forum post:', error);
+    logger.error('Failed to save forum post', error);
     throw error;
   }
 };
@@ -151,9 +161,10 @@ export const getForumPostById = async (postId) => {
   try {
     const snapshot = await getDoc(doc(db, 'forum_posts', postId));
     if (!snapshot.exists()) return null;
+    logger.log('Forum post retrieved', postId);
     return { id: snapshot.id, ...snapshot.data() };
   } catch (error) {
-    console.error('Error fetching forum post:', error);
+    logger.error('Failed to fetch forum post', error);
     throw error;
   }
 };
@@ -163,12 +174,14 @@ export const getPostComments = async (postId) => {
     const q = query(
       collection(db, 'forum_posts', postId, 'comments'),
       where('approved', '==', true),
-      orderBy('createdAt', 'asc')
+      orderBy('createdAt', 'asc'),
+      limit(PAGINATION.COMMENTS_PER_PAGE)
     );
     const snapshot = await getDocs(q);
+    logger.log('Comments retrieved', { postId, count: snapshot.docs.length });
     return snapshot.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() }));
   } catch (error) {
-    console.error('Error fetching comments:', error);
+    logger.error('Failed to fetch comments', error);
     throw error;
   }
 };
@@ -188,8 +201,9 @@ export const addPostComment = async (postId, commentData) => {
     await updateDoc(postRef, {
       commentCount: increment(1),
     });
+    logger.log('Comment added', { postId });
   } catch (error) {
-    console.error('Error adding comment:', error);
+    logger.error('Failed to add comment', error);
     throw error;
   }
 };
@@ -207,8 +221,9 @@ export const togglePostUpvote = async (postId, userId) => {
         upvotes: increment(hasUpvoted ? -1 : 1),
       });
     });
+    logger.log('Post upvote toggled', { postId, userId });
   } catch (error) {
-    console.error('Error toggling post upvote:', error);
+    logger.error('Failed to toggle post upvote', error);
     throw error;
   }
 };
@@ -226,18 +241,28 @@ export const toggleCommentUpvote = async (postId, commentId, userId) => {
         upvotes: increment(hasUpvoted ? -1 : 1),
       });
     });
+    logger.log('Comment upvote toggled', { postId, commentId, userId });
   } catch (error) {
-    console.error('Error toggling comment upvote:', error);
+    logger.error('Failed to toggle comment upvote', error);
     throw error;
   }
 };
 
-export const getAnonName = () => {
-  const existing = localStorage.getItem('anonName');
-  if (existing) return existing;
-  const newName = `Anon#${Math.floor(1000 + Math.random() * 9000)}`;
-  localStorage.setItem('anonName', newName);
-  return newName;
+/**
+ * Get secure anonymous ID for use in forum posts
+ * Uses browser fingerprinting and session storage for security
+ * @returns {Promise<string>} Secure anonymous ID
+ */
+export const getAnonName = async () => {
+  try {
+    const secureId = await getSecureAnonId();
+    logger.log('Secure anonymous ID retrieved');
+    return secureId;
+  } catch (error) {
+    logger.error('Failed to generate secure anonymous ID', error);
+    // Fallback to simple ID if secure method fails
+    return `Anon#${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+  }
 };
 
 // Journal Services
@@ -252,8 +277,9 @@ export const saveJournalEntry = async (userId, entryData) => {
       // Add createdAt if new (merge: true handles updates but we want dedicated field)
       createdAt: serverTimestamp()
     }, { merge: true });
+    logger.log('Journal entry saved', { userId, date });
   } catch (error) {
-    console.error('Error saving journal entry:', error);
+    logger.error('Failed to save journal entry', error);
     throw error;
   }
 };
@@ -261,25 +287,28 @@ export const saveJournalEntry = async (userId, entryData) => {
 export const getJournalEntries = async (userId, monthKey) => {
   // monthKey format: 'YYYY-MM'
   try {
-    // Simple query: get all entries for user, client-side filter by month if complex
-    // Or better: Use string comparison on date field (YYYY-MM-DD startsWith YYYY-MM)
-    const q = query(
-      collection(db, 'journal_entries'),
-      where('userId', '==', userId)
-    );
-    const snapshot = await getDocs(q);
-    const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    // Sort manualy (descending date)
-    all.sort((a, b) => b.date.localeCompare(a.date));
-
-    // Filter for specific month if provided
+    // Use proper Firestore range queries for date filtering
+    const constraints = [where('userId', '==', userId)];
+    
+    // If monthKey provided, add date range constraints
     if (monthKey) {
-      return all.filter(e => e.date.startsWith(monthKey));
+      const monthStart = `${monthKey}-00`;
+      const monthEnd = `${monthKey}-99`;
+      constraints.push(where('date', '>=', monthStart));
+      constraints.push(where('date', '<=', monthEnd));
     }
-    return all;
+    
+    constraints.push(orderBy('date', 'desc'));
+    constraints.push(limit(PAGINATION.JOURNAL_ENTRIES_PER_PAGE));
+    
+    const q = query(collection(db, 'journal_entries'), ...constraints);
+    const snapshot = await getDocs(q);
+    const entries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    logger.log('Journal entries retrieved', { userId, count: entries.length, monthKey });
+    return entries;
   } catch (error) {
-    console.error('Error fetching journal entries:', error);
+    logger.error('Failed to fetch journal entries', error);
     throw error;
   }
 };
@@ -288,10 +317,13 @@ export const getJournalEntry = async (userId, dateStr) => {
   try {
     const docId = `${userId}_${dateStr}`;
     const snap = await getDoc(doc(db, 'journal_entries', docId));
-    if (snap.exists()) return { id: snap.id, ...snap.data() };
+    if (snap.exists()) {
+      logger.log('Journal entry retrieved', { userId, dateStr });
+      return { id: snap.id, ...snap.data() };
+    }
     return null;
   } catch (error) {
-    console.error('Error fetching journal entry:', error);
+    logger.error('Failed to fetch journal entry', error);
     throw error;
   }
 };

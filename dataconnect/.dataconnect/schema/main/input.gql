@@ -39,7 +39,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `ForumPost`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`parentPostId` of type `UUID`
   """
@@ -47,7 +47,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `parentPostId` (✨ Generated from Field `ForumPost`.`parentPostId` of type `UUID`)
   """
-  parentPostId_expr: UUID_Expr
+  parentPostId_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`userId` of type `UUID!`
   """
@@ -55,15 +55,15 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `userId` (✨ Generated from Field `ForumPost`.`userId` of type `UUID!`)
   """
-  userId_expr: UUID_Expr
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`parentPost` of type `ForumPost`
   """
-  parentPost: ForumPost_Key
+  parentPost: ForumPost_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`user` of type `User!`
   """
-  user: User_Key
+  user: User_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`content` of type `String!`
   """
@@ -71,7 +71,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `content` (✨ Generated from Field `ForumPost`.`content` of type `String!`)
   """
-  content_expr: String_Expr
+  content_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`createdAt` of type `Timestamp!`
   """
@@ -79,15 +79,15 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `ForumPost`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_expr: Timestamp_Expr
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `ForumPost`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_time: Timestamp_Relative
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `ForumPost`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_update: [Timestamp_Update!]
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`isAnonymous` of type `Boolean`
   """
@@ -95,7 +95,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `isAnonymous` (✨ Generated from Field `ForumPost`.`isAnonymous` of type `Boolean`)
   """
-  isAnonymous_expr: Boolean_Expr
+  isAnonymous_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`title` of type `String!`
   """
@@ -103,7 +103,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `title` (✨ Generated from Field `ForumPost`.`title` of type `String!`)
   """
-  title_expr: String_Expr
+  title_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `ForumPost`.`topic` of type `String!`
   """
@@ -111,7 +111,7 @@ input ForumPost_Data {
   """
   ✨ `_expr` server value variant of `topic` (✨ Generated from Field `ForumPost`.`topic` of type `String!`)
   """
-  topic_expr: String_Expr
+  topic_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'ForumPost'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -263,7 +263,7 @@ input ForumPost_Key {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `ForumPost`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated list filter input type for table 'ForumPost'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -378,7 +378,7 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `HealthJournalEntry`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`userId` of type `UUID!`
   """
@@ -386,11 +386,11 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `userId` (✨ Generated from Field `HealthJournalEntry`.`userId` of type `UUID!`)
   """
-  userId_expr: UUID_Expr
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`user` of type `User!`
   """
-  user: User_Key
+  user: User_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`content` of type `String!`
   """
@@ -398,7 +398,7 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `content` (✨ Generated from Field `HealthJournalEntry`.`content` of type `String!`)
   """
-  content_expr: String_Expr
+  content_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`createdAt` of type `Timestamp!`
   """
@@ -406,15 +406,15 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `HealthJournalEntry`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_expr: Timestamp_Expr
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `HealthJournalEntry`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_time: Timestamp_Relative
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `HealthJournalEntry`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_update: [Timestamp_Update!]
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`entryDate` of type `Date!`
   """
@@ -422,15 +422,15 @@ input HealthJournalEntry_Data {
   """
   ✨ `_date` server value variant of `entryDate` (✨ Generated from Field `HealthJournalEntry`.`entryDate` of type `Date!`)
   """
-  entryDate_date: Date_Relative
+  entryDate_date: Date_Relative @fdc_forbiddenInVariables
   """
   ✨ `_expr` server value variant of `entryDate` (✨ Generated from Field `HealthJournalEntry`.`entryDate` of type `Date!`)
   """
-  entryDate_expr: Date_Expr
+  entryDate_expr: Date_Expr @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `entryDate` (✨ Generated from Field `HealthJournalEntry`.`entryDate` of type `Date!`)
   """
-  entryDate_update: [Date_Update!]
+  entryDate_update: [Date_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`mood` of type `String`
   """
@@ -438,7 +438,7 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `mood` (✨ Generated from Field `HealthJournalEntry`.`mood` of type `String`)
   """
-  mood_expr: String_Expr
+  mood_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`tags` of type `[String]`
   """
@@ -446,7 +446,7 @@ input HealthJournalEntry_Data {
   """
   ✨ `_update` server value variant of `tags` (✨ Generated from Field `HealthJournalEntry`.`tags` of type `[String]`)
   """
-  tags_update: [String_ListUpdate!]
+  tags_update: [String_ListUpdate!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `HealthJournalEntry`.`title` of type `String!`
   """
@@ -454,7 +454,7 @@ input HealthJournalEntry_Data {
   """
   ✨ `_expr` server value variant of `title` (✨ Generated from Field `HealthJournalEntry`.`title` of type `String!`)
   """
-  title_expr: String_Expr
+  title_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'HealthJournalEntry'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -602,7 +602,7 @@ input HealthJournalEntry_Key {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `HealthJournalEntry`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated list filter input type for table 'HealthJournalEntry'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -713,7 +713,7 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `SymptomLog`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`userId` of type `UUID!`
   """
@@ -721,11 +721,11 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `userId` (✨ Generated from Field `SymptomLog`.`userId` of type `UUID!`)
   """
-  userId_expr: UUID_Expr
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`user` of type `User!`
   """
-  user: User_Key
+  user: User_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`AIAnalysisResult` of type `String`
   """
@@ -733,7 +733,7 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `AIAnalysisResult` (✨ Generated from Field `SymptomLog`.`AIAnalysisResult` of type `String`)
   """
-  AIAnalysisResult_expr: String_Expr
+  AIAnalysisResult_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`createdAt` of type `Timestamp!`
   """
@@ -741,15 +741,15 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `SymptomLog`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_expr: Timestamp_Expr
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `SymptomLog`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_time: Timestamp_Relative
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `SymptomLog`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_update: [Timestamp_Update!]
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`logDate` of type `Date!`
   """
@@ -757,15 +757,15 @@ input SymptomLog_Data {
   """
   ✨ `_date` server value variant of `logDate` (✨ Generated from Field `SymptomLog`.`logDate` of type `Date!`)
   """
-  logDate_date: Date_Relative
+  logDate_date: Date_Relative @fdc_forbiddenInVariables
   """
   ✨ `_expr` server value variant of `logDate` (✨ Generated from Field `SymptomLog`.`logDate` of type `Date!`)
   """
-  logDate_expr: Date_Expr
+  logDate_expr: Date_Expr @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `logDate` (✨ Generated from Field `SymptomLog`.`logDate` of type `Date!`)
   """
-  logDate_update: [Date_Update!]
+  logDate_update: [Date_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`notes` of type `String`
   """
@@ -773,7 +773,7 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `notes` (✨ Generated from Field `SymptomLog`.`notes` of type `String`)
   """
-  notes_expr: String_Expr
+  notes_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`severity` of type `Int!`
   """
@@ -781,11 +781,11 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `severity` (✨ Generated from Field `SymptomLog`.`severity` of type `Int!`)
   """
-  severity_expr: Int_Expr
+  severity_expr: Int_Expr @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `severity` (✨ Generated from Field `SymptomLog`.`severity` of type `Int!`)
   """
-  severity_update: [Int_Update!]
+  severity_update: [Int_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `SymptomLog`.`symptomName` of type `String!`
   """
@@ -793,7 +793,7 @@ input SymptomLog_Data {
   """
   ✨ `_expr` server value variant of `symptomName` (✨ Generated from Field `SymptomLog`.`symptomName` of type `String!`)
   """
-  symptomName_expr: String_Expr
+  symptomName_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'SymptomLog'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -961,7 +961,7 @@ input SymptomLog_Key {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `SymptomLog`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated list filter input type for table 'SymptomLog'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -1096,7 +1096,7 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
   """
@@ -1104,15 +1104,15 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_expr: Timestamp_Expr
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_time: Timestamp_Relative
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_update: [Timestamp_Update!]
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`email` of type `String!`
   """
@@ -1120,7 +1120,7 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
   """
-  email_expr: String_Expr
+  email_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`hashedPassword` of type `String`
   """
@@ -1128,7 +1128,7 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `hashedPassword` (✨ Generated from Field `User`.`hashedPassword` of type `String`)
   """
-  hashedPassword_expr: String_Expr
+  hashedPassword_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`lastLoginAt` of type `Timestamp`
   """
@@ -1136,15 +1136,15 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `lastLoginAt` (✨ Generated from Field `User`.`lastLoginAt` of type `Timestamp`)
   """
-  lastLoginAt_expr: Timestamp_Expr
+  lastLoginAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `lastLoginAt` (✨ Generated from Field `User`.`lastLoginAt` of type `Timestamp`)
   """
-  lastLoginAt_time: Timestamp_Relative
+  lastLoginAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `lastLoginAt` (✨ Generated from Field `User`.`lastLoginAt` of type `Timestamp`)
   """
-  lastLoginAt_update: [Timestamp_Update!]
+  lastLoginAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
@@ -1152,7 +1152,7 @@ input User_Data {
   """
   ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
   """
-  username_expr: String_Expr
+  username_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -1296,7 +1296,7 @@ input User_Key {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -1395,7 +1395,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `VerifiedRemedy`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`category` of type `String!`
   """
@@ -1403,7 +1403,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `category` (✨ Generated from Field `VerifiedRemedy`.`category` of type `String!`)
   """
-  category_expr: String_Expr
+  category_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`createdAt` of type `Timestamp!`
   """
@@ -1411,15 +1411,15 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `VerifiedRemedy`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_expr: Timestamp_Expr
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
   ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `VerifiedRemedy`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_time: Timestamp_Relative
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `VerifiedRemedy`.`createdAt` of type `Timestamp!`)
   """
-  createdAt_update: [Timestamp_Update!]
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`description` of type `String!`
   """
@@ -1427,7 +1427,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `description` (✨ Generated from Field `VerifiedRemedy`.`description` of type `String!`)
   """
-  description_expr: String_Expr
+  description_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`ingredients` of type `String`
   """
@@ -1435,7 +1435,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `ingredients` (✨ Generated from Field `VerifiedRemedy`.`ingredients` of type `String`)
   """
-  ingredients_expr: String_Expr
+  ingredients_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`name` of type `String!`
   """
@@ -1443,7 +1443,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `name` (✨ Generated from Field `VerifiedRemedy`.`name` of type `String!`)
   """
-  name_expr: String_Expr
+  name_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`preparationInstructions` of type `String`
   """
@@ -1451,7 +1451,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `preparationInstructions` (✨ Generated from Field `VerifiedRemedy`.`preparationInstructions` of type `String`)
   """
-  preparationInstructions_expr: String_Expr
+  preparationInstructions_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `VerifiedRemedy`.`scientificEvidenceLink` of type `String`
   """
@@ -1459,7 +1459,7 @@ input VerifiedRemedy_Data {
   """
   ✨ `_expr` server value variant of `scientificEvidenceLink` (✨ Generated from Field `VerifiedRemedy`.`scientificEvidenceLink` of type `String`)
   """
-  scientificEvidenceLink_expr: String_Expr
+  scientificEvidenceLink_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'VerifiedRemedy'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -1599,7 +1599,7 @@ input VerifiedRemedy_Key {
   """
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `VerifiedRemedy`.`id` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated list filter input type for table 'VerifiedRemedy'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.

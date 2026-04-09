@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "moduleResolution": "nodenext",
     "noImplicitReturns": true,
@@ -13,6 +13,9 @@
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/genkit-sample.ts"
   ]
 }

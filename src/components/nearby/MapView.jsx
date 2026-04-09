@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import { logger } from '../../utils/logger';
 
 const MAP_STYLES = [
    { featureType: "all", elementType: "geometry", stylers: [{ saturation: -20 }, { lightness: 10 }] },
@@ -19,10 +20,10 @@ const MapView = ({ userLocation, places, onMarkerClick, activePlaceId, onMapLoad
    // Initialize Map
    useEffect(() => {
       if (!mapRef.current || !window.google) {
-         if (!window.google) console.warn("MapView: window.google missing");
+         if (!window.google) logger.warn("MapView: window.google missing");
          return;
       }
-      console.log("MapView: Initializing map...", { lat: userLocation?.lat, lng: userLocation?.lng });
+      logger.log("MapView: Initializing map...", { lat: userLocation?.lat, lng: userLocation?.lng });
 
       if (!mapInstanceRef.current) {
          mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {

@@ -3,6 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import ModerationBadge from './ModerationBadge';
 import ReactionBar from './ReactionBar';
+import { isValidImageUrl } from '../../utils/inputValidator';
+
+/**
+ * Sanitize HTML content to prevent XSS
+ * Removes all HTML tags by default, allows specific tags when needed
+ */
+const sanitizeHtml = (html, allowedTags = []) => {
+  if (!html) return '';
+  
+  if (allowedTags.length === 0) {
+    // Strip all HTML tags
+    return html
+      .replace(/<[^>]*>/g, '')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .trim();
+  }
+  
+  // Create a temporary element to parse HTML safely
+  const temp = document.createElement('div');
+  temp.textContent = html;
+  return temp.innerHTML;
+};
 
 export default function PostCard({ post, onReact, currentUserId }) {
    const navigate = useNavigate();
@@ -27,6 +50,12 @@ export default function PostCard({ post, onReact, currentUserId }) {
       const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
       return formatDistanceToNow(date, { addSuffix: true }).replace('about ', '');
    };
+
+   // Sanitize title (no HTML tags)
+   const sanitizedTitle = sanitizeHtml(post.title, []);
+   
+   // Sanitize content (allow some basic formatting tags)
+   const sanitizedContent = sanitizeHtml(post.content, ['b', 'i', 'em', 'strong', 'p', 'br']);
 
    return (
       <div className={`glass-card border-l-[3px] ${getTopicColor(post.topic)} ${post.isPinned ? 'ring-1 ring-primary/20' : ''} p-5 mb-4`}>
@@ -56,18 +85,25 @@ export default function PostCard({ post, onReact, currentUserId }) {
             className="cursor-pointer group"
          >
             <h3 className="text-text-primary text-base font-bold mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-               {post.title || 'Shared reflection'}
+               {sanitizedTitle || 'Shared reflection'}
             </h3>
 
-            {post.content && (
+            {sanitizedContent && (
                <p className="text-text-secondary text-sm leading-relaxed line-clamp-3 mb-3">
-                  {post.content}
+                  {sanitizedContent}
                </p>
             )}
 
-            {post.imageUrl && (
+            {post.imageUrl && isValidImageUrl(post.imageUrl) && (
                <div className="mb-3 overflow-hidden rounded-2xl border border-white/70">
-                  <img src={post.imageUrl} alt="Post" className="w-full h-36 object-cover" />
+                  <img 
+                     src={post.imageUrl} 
+                     alt="Post" 
+                     className="w-full h-36 object-cover" 
+                     onError={(e) => {
+                        e.target.style.display = 'none';
+                     }}
+                  />
                </div>
             )}
 

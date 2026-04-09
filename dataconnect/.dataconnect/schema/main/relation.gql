@@ -124,7 +124,7 @@ extend type ForumPost {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "ForumPost.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "ForumPost.id", purpose: ENTITY_ID)
 }
 extend type HealthJournalEntry {
   """
@@ -217,7 +217,7 @@ extend type HealthJournalEntry {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "HealthJournalEntry.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "HealthJournalEntry.id", purpose: ENTITY_ID)
 }
 extend type SymptomLog {
   """
@@ -345,7 +345,7 @@ extend type SymptomLog {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "SymptomLog.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "SymptomLog.id", purpose: ENTITY_ID)
 }
 extend type User {
   """
@@ -531,7 +531,7 @@ extend type User {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "User.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
 }
 extend type VerifiedRemedy {
   """
@@ -625,5 +625,5 @@ extend type VerifiedRemedy {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "VerifiedRemedy.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "VerifiedRemedy.id", purpose: ENTITY_ID)
 }

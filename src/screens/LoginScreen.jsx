@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { initializeAuth, loginWithEmail, signUpWithEmail } from '../services/firebaseService';
+import { logger } from '../utils/logger';
 
 export default function LoginScreen() {
    const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function LoginScreen() {
          }
          // Navigation handled by auth listener in App.jsx
       } catch (err) {
-         console.log(err.code);
+         logger.log('Login error code:', err.code);
          let msg = "Authentication failed";
          if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') msg = "No account found with this email";
          if (err.code === 'auth/wrong-password') msg = "Incorrect password";

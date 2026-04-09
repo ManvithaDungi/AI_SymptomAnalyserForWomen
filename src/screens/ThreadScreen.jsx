@@ -5,6 +5,7 @@ import ReactionBar from '../components/forum/ReactionBar';
 import CommentCard from '../components/forum/CommentCard';
 import { addPostComment, getAnonName, getForumPostById, getPostComments, getUserId, toggleCommentUpvote, togglePostUpvote } from '../services/firebaseService';
 import { moderateContent } from '../services/moderationService';
+import { logger } from '../utils/logger';
 
 export default function ThreadScreen() {
    const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function ThreadScreen() {
             setPost(postData);
             setComments(commentData);
          } catch (error) {
-            console.error('Failed to load thread', error);
+            logger.error('Failed to load thread', error);
          } finally {
             setLoading(false);
          }
@@ -65,7 +66,7 @@ export default function ThreadScreen() {
          setComments(updatedComments);
          setComment('');
       } catch (error) {
-         console.error('Failed to add comment', error);
+         logger.error('Failed to add comment', error);
          alert('Failed to add comment. Please try again.');
       } finally {
          setSubmitting(false);
