@@ -1,0 +1,121 @@
+/* === SAHACHARI UI REDESIGN PROMPT === */
+
+Redesign the entire Sahachari/Vaazhvu women's health app UI using 
+luxury glassmorphism with the following exact design system.
+
+/* --- PALETTE --- */
+--bg-deep:       #281822;  /* Kurobeni — page bg */
+--bg-surface:    #48192e;  /* BlackBerry — card base */
+--accent-gold:   #c59c79;  /* Copper Moon — CTA, borders */
+--accent-mauve:  #957083;  /* Meadow Flower — secondary */
+--text-primary:  #f5f0eb;  /* Ivory white */
+
+/* --- GLASS CARD RECIPE --- */
+background:        rgba(72, 25, 46, 0.45);
+backdrop-filter:   blur(20px) saturate(180%);
+border:            1px solid rgba(197, 156, 121, 0.2);
+border-radius:     20px;
+box-shadow:        0 8px 32px rgba(40, 24, 34, 0.6),
+                   inset 0 1px 0 rgba(197,156,121,0.12);
+
+/* --- TYPOGRAPHY --- */
+headings: Cormorant Garamond (serif, editorial)
+body:     Inter or DM Sans (clean, readable)
+labels:   DM Mono or Space Mono (techy contrast)
+
+/* --- BACKGROUNDS --- */
+Use radial gradient orbs behind cards:
+  radial-gradient at top-right: rgba(197,156,121, 0.08)
+  radial-gradient at bottom-left: rgba(149,112,131, 0.06)
+Add a very subtle noise texture overlay (3% opacity SVG noise)
+for that premium print-media grain.
+
+/* --- COMPONENT SPECS --- */
+
+NAVBAR:
+  Glass strip — blur(24px), copper bottom border 1px,
+  brand wordmark in Cormorant Garamond italic.
+  Nav links in DM Mono, uppercase, letter-spacing 2px.
+  Active state: copper underline + subtle glow.
+
+HERO SECTION:
+  Full-bleed bg with layered glass panels.
+  Large serif headline: "Your body. Your data. Your story."
+  Sub-copy in mauve. CTA button: glass + copper border,
+  hover fills with copper glow. Floating decorative
+  botanical SVG (hibiscus or lotus — muted gold line art).
+
+DASHBOARD CARDS (Symptom Insights, Journal, etc.):
+  Glass card with copper-tinted left accent border (3px).
+  Card header: Cormorant Garamond 18px semi-bold.
+  Metric numbers: 36px, copper color.
+  Micro-labels: DM Mono, mauve, uppercase 10px.
+  Hover: glass brightens slightly + copper border brightens.
+
+SYMPTOM SEVERITY BADGES:
+  Low    → glass card, mauve border, mauve text
+  Medium → glass card, copper border, copper text
+  High   → glass card, rose-red border (#c0506a), warm text
+
+AI ANALYSIS PANEL:
+  Deeper glass (blur 30px). Left-side vertical copper rule.
+  Response text in Georgia italic for the AI voice.
+  "Powered by Gemini" micro-label in DM Mono, 10px, mauve.
+
+COMMUNITY FORUM (Support Circle):
+  Each post: glass card. Author avatar: circular crop,
+  copper ring outline. Language pill: glass + mauve text.
+  Sentiment-safe posts get a subtle teal glass tint.
+  Reply thread indented with a mauve vertical line.
+
+REMEDIES LIBRARY:
+  Card grid. Each remedy card: glass with botanical
+  category icon (line art, copper). Evidence level shown
+  as a copper dot-scale (1–3 dots). Safety notes in
+  a nested glass chip with rose-red accent.
+
+JOURNAL / WELLNESS TRACKER:
+  Calendar grid — active days pulse with copper dot.
+  Mood timeline: SVG line chart, copper stroke,
+  plotted on a glass panel. Gradient fill below line:
+  copper to transparent.
+
+BUTTONS — 3 variants:
+  Primary:   filled copper (#c59c79), dark text, 
+             border-radius 50px, hover: +10% brightness
+  Secondary: glass + copper border, copper text,
+             hover: glass brightens
+  Ghost:     no border, mauve text, hover underline
+
+INPUTS:
+  glass background, copper bottom border only (1px),
+  focus: copper full border + inset glow.
+  Placeholder text in mauve, 13px italic.
+
+MODALS:
+  Deeper glass. Overlay: rgba(40,24,34, 0.75) blur(4px).
+  Header bar: copper gradient strip (2px top border).
+  Close button: mauve × icon, hover copper.
+
+LANGUAGE SELECTOR:
+  Horizontal pill row. Each language: glass pill,
+  mauve border. Selected: copper fill, dark text.
+
+/* --- ANIMATION GUIDELINES --- */
+Page transitions: fadeIn + translateY(8px), 300ms ease
+Card hover:       transform: translateY(-3px), 200ms
+Skeleton loaders: shimmer from BlackBerry → copper tint
+Loading spinner:  copper arc on glass circle
+
+/* --- RESPONSIVE / MOBILE --- */
+Cards stack to full-width below 640px.
+Navbar collapses to bottom tab bar (glass strip,
+copper active icon). Hero text scales to 28px.
+
+/* --- DESIGN INSPO REFERENCES --- */
+Glassmorphism: ui.glass, Dribbble "dark glass UI"
+Women creative: Vogue India digital, Nykaa app,
+                Flo Health, Clue app
+Luxury SaaS:    Linear.app, Vercel dark, Raycast
+
+/* === END PROMPT === */

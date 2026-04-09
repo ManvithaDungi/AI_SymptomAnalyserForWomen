@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { RouterProvider, createBrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth'; // Import this
 import { useTranslation } from 'react-i18next';
+import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
@@ -21,19 +22,19 @@ import NearbyHelpScreen from './screens/NearbyHelpScreen';
 function AppLayout({ user, loading }) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="flex items-center justify-center min-h-screen bg-glass-deep">
         <div className="text-center animate-pulse">
-          <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-xl font-bold text-primary tracking-wide">Sahachari</p>
+          <div className="w-16 h-16 border-4 border-accent-gold/20 border-t-accent-gold rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-xl font-bold text-text-primary tracking-wide">Sahachari</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-text-primary">
+    <div className="min-h-screen flex flex-col font-sans text-text-primary bg-glass-deep">
       {user && <Navbar />}
-      <main className="flex-grow pb-20 md:pb-0">
+      <main className="flex-grow pt-20 pb-20 md:pb-0">
         <Outlet />
       </main>
       {user && (
@@ -87,8 +88,10 @@ export default function App() {
   );
 
   return (
-    <ErrorBoundary>
-      <RouterProvider router={router} />
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }

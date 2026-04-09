@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../services/firebaseService';
 import LanguageSelector from './LanguageSelector';
+import ThemeToggle from './ThemeToggle';
+import { GlassButton } from './GlassUI';
 import { logger } from '../utils/logger';
+import { LogOut } from 'lucide-react';
 
 export default function Navbar() {
   const { t } = useTranslation();
@@ -28,41 +31,60 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full h-16 bg-[#F8F7FF]/85 backdrop-blur-lg border-b border-primary/10 transition-all duration-300">
+    <nav 
+      className="glass fixed top-0 z-50 w-full h-16 border-b border-accent-gold/30"
+      style={{ backdropFilter: 'blur(24px)' }}
+    >
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-        <div className="flex items-center gap-8">
-          <div className="flex items-baseline gap-2 cursor-pointer" onClick={() => navigate('/forum')}>
-            <h1 className="text-2xl font-bold text-primary tracking-tight">Sahachari</h1>
-            <span className="text-sm font-medium text-text-secondary">సహచరి</span>
-          </div>
-
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <button
-                key={link.path}
-                onClick={() => navigate(link.path)}
-                className={`text-sm font-semibold transition-colors duration-200 ${location.pathname === link.path
-                  ? 'text-primary'
-                  : 'text-text-secondary hover:text-primary'
-                  }`}
-              >
-                {link.name}
-              </button>
-            ))}
-          </div>
+        {/* Logo & Brand */}
+        <div 
+          className="flex items-baseline gap-2 cursor-pointer hover:text-accent-gold transition-colors"
+          onClick={() => navigate('/forum')}
+        >
+          <h1 className="text-2xl font-serif font-bold text-text-primary italic tracking-tight">
+            Sahachari
+          </h1>
+          <span className="text-xs font-mono text-text-secondary letter-spacing-1">
+            సహచరి
+          </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <button
+              key={link.path}
+              onClick={() => navigate(link.path)}
+              className={`font-mono text-xs uppercase letter-spacing-1 transition-all pb-2 border-b-2 ${
+                location.pathname === link.path
+                  ? 'text-accent-gold border-accent-gold'
+                  : 'text-accent-mauve border-transparent hover:text-accent-gold'
+              }`}
+              style={
+                location.pathname === link.path
+                  ? { textShadow: '0 0 12px rgba(197, 156, 121, 0.4)' }
+                  : {}
+              }
+            >
+              {link.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           <LanguageSelector />
 
-          <button
+          <GlassButton
+            variant="ghost"
+            size="sm"
+            icon={LogOut}
             onClick={handleLogout}
-            className="text-text-secondary hover:text-danger p-2 transition-colors text-sm font-medium"
             title={t('common.logout')}
           >
-            {t('common.logout')}
-          </button>
+            <span className="hidden sm:inline">{t('common.logout')}</span>
+          </GlassButton>
         </div>
       </div>
     </nav>
