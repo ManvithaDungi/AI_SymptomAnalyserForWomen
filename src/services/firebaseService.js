@@ -327,3 +327,134 @@ export const getJournalEntry = async (userId, dateStr) => {
     throw error;
   }
 };
+
+export const getRemedies = async (category = 'all') => {
+  try {
+    const constraints = [];
+    if (category && category !== 'all' && category !== 'All') {
+      constraints.push(where('category', '==', category));
+    }
+    constraints.push(orderBy('name', 'asc'));
+    constraints.push(limit(50));
+    const q = query(collection(db, 'remedies'), ...constraints);
+    const snapshot = await getDocs(q);
+    const remedies = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    logger.log('Remedies fetched', { category, count: remedies.length });
+    return remedies;
+  } catch (error) {
+    logger.error('Failed to fetch remedies', error);
+    return [];
+  }
+};
+
+export const flagForumPost = async (postId, userId, reason) => {
+  try {
+    await addDoc(collection(db, 'flagged_posts'), {
+      postId,
+      userId,
+      reason,
+      timestamp: serverTimestamp(),
+      status: 'pending',
+      resolved: false
+    });
+    logger.log('Post flagged', { postId, userId });
+  } catch (error) {
+    logger.error('Failed to flag post', error);
+    throw error;
+  }
+};
+
+// Moderation Services
+export const getFlaggedPosts = async (filter = 'all') => {
+  try {
+    let q;
+    if (filter === 'all') {
+      q = query(collection(db, 'flagged_posts'), orderBy('timestamp', 'desc'));
+    } else if (filter === 'pending') {
+      q = query(
+        collection(db, 'flagged_posts'),
+        where('resolved', '==', false),
+        orderBy('timestamp', 'desc')
+      );
+    } else if (filter === 'approved') {
+      q = query(
+        collection(db, 'flagged_posts'),
+        where('resolved', '==', true),
+        where('resolution', '==', 'approved'),
+        orderBy('timestamp', 'desc')
+      );
+    } else if (filter === 'removed') {
+      q = query(
+        collection(db, 'flagged_posts'),
+        where('resolved', '==', true),
+        where('resolution', '==', 'removed'),
+        orderBy('timestamp', 'desc')
+      );
+    }
+    
+    const snapshot = await getDocs(q);
+    const flaggedPosts = await Promise.all(
+      snapshot.docs.map(async (flagDoc) => {
+        const flagData = flagDoc.data();
+        const post = await getForumPostById(flagData.postId);
+        return {
+          id: flagDoc.id,
+          ...flagData,
+          post: post || { title: 'Post not found' }
+        };
+      })
+    );
+    logger.log('Flagged posts retrieved', { filter, count: flaggedPosts.length });
+    return flaggedPosts;
+  } catch (error) {
+    logger.error('Failed to fetch flagged posts', error);
+    return [];
+  }
+};
+
+export const resolveFlaggedPost = async (flagId, resolution) => {
+  try {
+    await updateDoc(doc(db, 'flagged_posts', flagId), {
+      resolved: true,
+      resolution,
+      resolvedAt: serverTimestamp()
+    });
+    logger.log('Flag resolved', { flagId, resolution });
+  } catch (error) {
+    logger.error('Failed to resolve flag', error);
+    throw error;
+  }
+};
+
+// Streak & User Preference Services
+export const saveStreakData = async (userId, streakData) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      streakData: {
+        current: streakData.current,
+        best: streakData.best,
+        lastUpdated: serverTimestamp()
+      }
+    });
+    logger.log('Streak data saved', { userId, current: streakData.current });
+  } catch (error) {
+    logger.error('Failed to save streak data', error);
+    throw error;
+  }
+};
+
+export const loadStreakData = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists() && userDoc.data().streakData) {
+      logger.log('Streak data loaded', { userId });
+      return userDoc.data().streakData;
+    }
+    return { current: 0, best: 0 };
+  } catch (error) {
+    logger.error('Failed to load streak data', error);
+    return { current: 0, best: 0 };
+  }
+};

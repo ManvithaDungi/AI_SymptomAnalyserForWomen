@@ -1,7 +1,7 @@
 import { Sun, Heart, Download, FileText, Download as FileJson } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { auth, db } from '../services/firebaseService';
+import { auth, db, loadStreakData, saveStreakData } from '../services/firebaseService';
 import { doc, getDoc } from 'firebase/firestore';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -18,17 +18,14 @@ export default function JournalScreen() {
   const [showExportModal, setShowExportModal] = useState(false);
 
   useEffect(() => {
-    loadStreakData();
+    loadStreakDataFromFirebase();
   }, []);
 
-  const loadStreakData = async () => {
+  const loadStreakDataFromFirebase = async () => {
     try {
       if (!auth.currentUser) return;
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists() && userDoc.data().streakData) {
-        setStreakData(userDoc.data().streakData);
-      }
+      const data = await loadStreakData(auth.currentUser.uid);
+      setStreakData(data);
     } catch (error) {
       console.error('Error loading streak data:', error);
     }

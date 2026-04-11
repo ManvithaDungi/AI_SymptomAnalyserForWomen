@@ -1,36 +1,24 @@
 import { Check, Trash2, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { auth } from '../services/firebaseService';
+import { auth, getFlaggedPosts, resolveFlaggedPost } from '../services/firebaseService';
 import { useNavigate } from 'react-router-dom';
 
 export default function ModerationScreen() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [filter, setFilter] = useState('all');
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      author: 'User123',
-      content: 'This post contains inappropriate content',
-      flagCount: 3,
-      hfScore: 0.87,
-      geminiVerdict: 'Toxicity Risk: High',
-      status: 'flagged'
-    },
-    {
-      id: 2,
-      author: 'User456',
-      content: 'This post is waiting for review',
-      flagCount: 1,
-      hfScore: 0.32,
-      geminiVerdict: 'Misinformation Risk: Medium',
-      status: 'pending'
-    }
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAdminStatus();
   }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadFlaggedPosts();
+    }
+  }, [isAdmin, filter]);
 
   const checkAdminStatus = async () => {
     try {
@@ -51,14 +39,36 @@ export default function ModerationScreen() {
     }
   };
 
-  const filteredPosts = filter === 'all' ? posts : posts.filter(p => p.status === filter);
-
-  const handleApprove = (postId) => {
-    setPosts(prev => prev.map(p => p.id === postId ? {...p, status: 'approved'} : p));
+  const loadFlaggedPosts = async () => {
+    try {
+      setLoading(true);
+      const flaggedPosts = await getFlaggedPosts(filter);
+      setPosts(flaggedPosts);
+    } catch (error) {
+      console.error('Error loading flagged posts:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRemove = (postId) => {
-    setPosts(prev => prev.map(p => p.id === postId ? {...p, status: 'removed'} : p));
+  const filteredPosts = posts;
+
+  const handleApprove = async (flagId) => {
+    try {
+      await resolveFlaggedPost(flagId, 'approved');
+      setPosts(prev => prev.filter(p => p.id !== flagId));
+    } catch (error) {
+      console.error('Error approving post:', error);
+    }
+  };
+
+  const handleRemove = async (flagId) => {
+    try {
+      await resolveFlaggedPost(flagId, 'removed');
+      setPosts(prev => prev.filter(p => p.id !== flagId));
+    } catch (error) {
+      console.error('Error removing post:', error);
+    }
   };
 
   if (!isAdmin) {
@@ -80,7 +90,7 @@ export default function ModerationScreen() {
         </header>
 
         <div className="flex gap-3 flex-wrap">
-          {['all', 'flagged', 'pending'].map(f => (
+          {['all', 'pending', 'approved', 'removed'].map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -95,52 +105,58 @@ export default function ModerationScreen() {
           ))}
         </div>
 
+        {loading ? (
+          <div className="glass-card p-8 text-center">
+            <p className="text-ivory/60">Loading flagged posts...</p>
+          </div>
+        ) : (
         <div className="space-y-6">
-          {filteredPosts.map(post => (
-            <div key={post.id} className="glass-card p-6 sm:p-8 space-y-6 border border-copper/20">
+          {filteredPosts.map(flagRecord => (
+            <div key={flagRecord.id} className="glass-card p-6 sm:p-8 space-y-6 border border-copper/20">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-lg font-serif">{post.author}</h3>
-                  <p className="text-sm text-ivory/60 mt-1">Flagged by: {post.flagCount} users</p>
+                  <h3 className="text-lg font-serif">{flagRecord.post?.author || 'Anonymous'}</h3>
+                  <p className="text-sm text-ivory/60 mt-1">Flagged for: {flagRecord.reason}</p>
+                  <p className="text-xs text-ivory/40 mt-1">Flag ID: {flagRecord.id}</p>
                 </div>
                 <span className={`text-xs font-mono uppercase tracking-widest px-3 py-1 rounded-full ${
-                  post.status === 'flagged' ? 'bg-rose/20 text-rose' : 'bg-mauve/20 text-mauve'
+                  flagRecord.resolved ? 'bg-teal/20 text-teal' : 'bg-rose/20 text-rose'
                 }`}>
-                  {post.status}
+                  {flagRecord.resolved ? flagRecord.resolution || 'Resolved' : 'Pending'}
                 </span>
               </div>
 
-              <p className="text-ivory/80 leading-relaxed text-base">{post.content}</p>
+              <p className="text-ivory/80 leading-relaxed text-base">{flagRecord.post?.content || 'Post content not available'}</p>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="glass-card p-4 border border-rose/30 rounded-lg">
-                  <p className="text-xs text-ivory/60 font-mono uppercase mb-1">HuggingFace Score</p>
-                  <p className={`text-lg font-mono font-bold ${
-                    post.hfScore > 0.7 ? 'text-rose' : 'text-copper'
-                  }`}>
-                    Toxicity: {(post.hfScore * 100).toFixed(0)}%
+                <div className="glass-card p-4 border border-copper/30 rounded-lg">
+                  <p className="text-xs text-ivory/60 font-mono uppercase mb-1">Flagged At</p>
+                  <p className="text-sm text-copper">
+                    {flagRecord.timestamp ? new Date(flagRecord.timestamp.toDate()).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
                 <div className="glass-card p-4 border border-copper/30 rounded-lg">
-                  <p className="text-xs text-ivory/60 font-mono uppercase mb-1">Gemini Verdict</p>
-                  <p className="text-sm text-copper">{post.geminiVerdict}</p>
+                  <p className="text-xs text-ivory/60 font-mono uppercase mb-1">Resolution</p>
+                  <p className="text-sm text-copper">{flagRecord.resolution || 'Pending Review'}</p>
                 </div>
               </div>
 
+              {!flagRecord.resolved && (
               <div className="flex gap-3">
                 <button
-                  onClick={() => handleApprove(post.id)}
+                  onClick={() => handleApprove(flagRecord.id)}
                   className="flex items-center gap-2 px-4 py-2 bg-teal/20 text-teal border border-teal/50 rounded-lg hover:bg-teal/30 transition-colors font-mono text-sm uppercase"
                 >
                   <Check size={16} /> Approve
                 </button>
                 <button
-                  onClick={() => handleRemove(post.id)}
+                  onClick={() => handleRemove(flagRecord.id)}
                   className="flex items-center gap-2 px-4 py-2 bg-rose/20 text-rose border border-rose/50 rounded-lg hover:bg-rose/30 transition-colors font-mono text-sm uppercase"
                 >
                   <Trash2 size={16} /> Remove
                 </button>
               </div>
+              )}
             </div>
           ))}
 
@@ -151,6 +167,7 @@ export default function ModerationScreen() {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
