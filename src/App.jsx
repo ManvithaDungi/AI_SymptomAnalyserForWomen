@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { RouterProvider, createBrowserRouter, Routes, Route, Navigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { useEffect, useState, lazy, Suspense } from 'react';
+import { RouterProvider, createBrowserRouter, Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import OfflineNotification from './components/OfflineNotification';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import SymptomScreen from './screens/SymptomScreen';
@@ -14,11 +15,15 @@ import NewPostScreen from './screens/NewPostScreen';
 import RemedyScreen from './screens/RemedyScreen';
 import JournalScreen from './screens/JournalScreen';
 import NearbyHelpScreen from './screens/NearbyHelpScreen';
-import AdminSeedScreen from './screens/AdminSeedScreen';
-import SahachariJournalScreen from './screens/SahachariJournalScreen';
-import SahachariCommunityScreen from './screens/SahachariCommunityScreen';
+import DiscoverScreen from './screens/DiscoverScreen';
+import ModerationScreen from './screens/ModerationScreen';
+import LandingScreen from './screens/LandingScreen';
+
+// Dev-only admin screen - only imported in development
+const AdminSeedScreen = import.meta.env.DEV ? lazy(() => import('./screens/AdminSeedScreen')) : null;
+
 import { auth } from './services/firebaseService';
-import { Heart, BookOpen, MessageSquare, Wind, BarChart3, Map, LogOut, Menu, X } from 'lucide-react';
+import { Heart, BookOpen, MessageSquare, Wind, Map, Compass, LogOut, Menu, X } from 'lucide-react';
 
 function Navbar({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,10 +34,8 @@ function Navbar({ user }) {
     { label: 'Community', href: '/forum', icon: MessageSquare },
     { label: 'Symptoms', href: '/symptoms', icon: Heart },
     { label: 'Remedies', href: '/remedy', icon: Wind },
-    { label: 'SA Remedies', href: '/sahachari-remedies', icon: Wind },
-    { label: 'SA Community', href: '/sahachari-community', icon: MessageSquare },
+    { label: 'Discover', href: '/discover', icon: Compass },
     { label: 'Journal', href: '/journal', icon: BookOpen },
-    { label: 'SA Journal', href: '/sahachari-journal', icon: BookOpen },
     { label: 'Nearby', href: '/nearby', icon: Map },
   ];
 
@@ -128,10 +131,10 @@ function MobileNav({ user }) {
 
   const navItems = [
     { label: 'Health', href: '/home', icon: Heart },
-    { label: 'Sahachari', href: '/sahachari-home', icon: BookOpen },
     { label: 'Community', href: '/forum', icon: MessageSquare },
     { label: 'Symptoms', href: '/symptoms', icon: Heart },
     { label: 'Remedies', href: '/remedy', icon: Wind },
+    { label: 'Discover', href: '/discover', icon: Compass },
     { label: 'Journal', href: '/journal', icon: BookOpen },
     { label: 'Nearby', href: '/nearby', icon: Map },
   ];
@@ -175,6 +178,7 @@ function AppLayout({ user, loading }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-kurobeni text-ivory">
+      <OfflineNotification />
       {user && <Navbar user={user} />}
       <main className="flex-grow pt-20 pb-24 md:pb-0 overflow-y-auto">
         <Outlet />
@@ -206,19 +210,20 @@ export default function App() {
       {
         element: <AppLayout user={user} loading={loading} />,
         children: [
-          { path: '/', element: !user ? <LoginScreen /> : <Navigate to="/forum" /> },
+          { path: '/', element: !user ? <LandingScreen /> : <Navigate to="/forum" /> },
+          { path: '/login', element: !user ? <LoginScreen /> : <Navigate to="/forum" /> },
           { path: '/home', element: user ? <ErrorBoundary><HomeScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/sahachari-community', element: user ? <ErrorBoundary><SahachariCommunityScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/sahachari-journal', element: user ? <ErrorBoundary><SahachariJournalScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/forum', element: user ? <ErrorBoundary><ForumScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/forum/new', element: user ? <ErrorBoundary><NewPostScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/forum/:postId', element: user ? <ErrorBoundary><ThreadScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/symptoms', element: user ? <ErrorBoundary><SymptomScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/results', element: user ? <ErrorBoundary><ResultsScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/remedy', element: user ? <ErrorBoundary><RemedyScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/discover', element: user ? <ErrorBoundary><DiscoverScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/journal', element: user ? <ErrorBoundary><JournalScreen /></ErrorBoundary> : <Navigate to="/" /> },
           { path: '/nearby', element: user ? <ErrorBoundary><NearbyHelpScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/admin-seed', element: <ErrorBoundary><AdminSeedScreen /></ErrorBoundary> },
+          { path: '/admin/moderation', element: user ? <ErrorBoundary><ModerationScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          ...(import.meta.env.DEV && AdminSeedScreen ? [{ path: '/admin-seed', element: <ErrorBoundary><Suspense fallback={<div>Loading...</div>}><AdminSeedScreen /></Suspense></ErrorBoundary> }] : []),
         ]
       }
     ],

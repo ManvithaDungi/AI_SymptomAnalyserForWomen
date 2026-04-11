@@ -26,7 +26,7 @@ import { getSecureAnonId } from '../utils/anonId.js';
 import { logger } from '../utils/logger.js';
 import { PAGINATION } from '../config/constants.js';
 
-export { auth };
+export { auth, db };
 
 export const initializeAuth = async () => {
   try {

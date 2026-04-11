@@ -13,12 +13,21 @@ service cloud.firestore {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
       
+      // Allow admins to update moderation status
+      allow update: if request.auth.token.admin == true && 
+                       request.resource.data.status != null;
+      
       // Comments subcollection
       match /comments/{commentId} {
         allow read: if request.auth != null;
         allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
         allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
       }
+    }
+
+    // Admin seed data - only admins can write
+    match /adminSeed/{doc} {
+      allow read, write: if request.auth.token.admin == true;
     }
 
     // Remedies library - public read access
@@ -32,9 +41,25 @@ service cloud.firestore {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
     }
 
+    // Cycle data - users can read/write their own
+    match /cycleData/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Streak data - users can read/write their own
+    match /streakData/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Pattern data - users can read/write their own
+    match /patterns/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
     // Default deny all
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
+

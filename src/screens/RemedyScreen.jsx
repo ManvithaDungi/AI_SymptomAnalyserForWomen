@@ -17,54 +17,56 @@ export default function RemedyScreen() {
   ];
 
   return (
-    <div className="space-y-8 pb-24">
-      <header className="space-y-2">
-        <h1 className="text-5xl font-serif italic">Remedies Library</h1>
-        <p className="text-ivory/60 font-light">Natural solutions for your unique rhythm.</p>
-      </header>
+    <div className="min-h-screen bg-kurobeni px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto space-y-8 pb-24">
+        <header className="space-y-2">
+          <h1 className="text-4xl sm:text-5xl font-serif italic">Remedies Library</h1>
+          <p className="text-ivory/60 font-light">Natural solutions for your unique rhythm.</p>
+        </header>
 
-      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-        {categories.map((cat) => (
-          <button 
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-6 py-2 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+        <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {categories.map((cat) => (
+            <button 
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 sm:px-6 py-2 rounded-full font-mono text-[8px] sm:text-[10px] uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
               activeCategory === cat 
                 ? 'bg-copper text-kurobeni' 
                 : 'bg-blackberry/40 text-ivory/60 border border-copper/20'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {remedies.map((remedy, i) => (
-          <div 
-            key={remedy.title}
-            className="glass-card overflow-hidden group cursor-pointer"
-          >
-            <div className="h-48 overflow-hidden">
-              <img 
-                src={remedy.image} 
-                alt={remedy.title} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div className="p-6 space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-copper">{remedy.category}</span>
-                <span className="text-ivory/40 text-xs">{remedy.time}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {remedies.map((remedy, i) => (
+            <div 
+              key={remedy.title}
+              className="glass-card overflow-hidden group cursor-pointer"
+            >
+              <div className="h-40 sm:h-48 overflow-hidden">
+                <img 
+                  src={remedy.image} 
+                  alt={remedy.title} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
               </div>
-              <h3 className="text-xl font-serif italic">{remedy.title}</h3>
-              <button className="text-copper font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
-                Learn More <ChevronRight size={14} />
-              </button>
+              <div className="p-4 sm:p-6 space-y-2 sm:space-y-3">
+                <div className="flex justify-between items-center gap-2">
+                  <span className="font-mono text-[8px] sm:text-[10px] uppercase tracking-widest text-copper truncate">{remedy.category}</span>
+                  <span className="text-ivory/40 text-xs flex-shrink-0">{remedy.time}</span>
+                </div>
+                <h3 className="text-base sm:text-xl font-serif italic line-clamp-2">{remedy.title}</h3>
+                <button className="text-copper font-mono text-[8px] sm:text-[10px] uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Learn More <ChevronRight size={12} className="sm:w-3.5 sm:h-3.5" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

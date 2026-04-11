@@ -134,12 +134,12 @@ export default function NearbyHelpScreen() {
    }
 
    return (
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden bg-kurobeni relative z-0">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-80px)] sm:h-[calc(100vh-64px)] overflow-hidden bg-kurobeni relative z-0">
 
          {/* LEFT PANEL: MAP (Top on mobile) */}
-         <div className="w-full lg:w-[58%] h-[40vh] lg:h-full relative z-10 order-1 lg:order-1">
+         <div className="w-full lg:w-[58%] h-[35vh] sm:h-[40vh] lg:h-full relative z-10 order-1 lg:order-1">
             {!scriptLoaded ? (
-               <div className="flex flex-col items-center justify-center h-full text-ivory/70">
+               <div className="flex flex-col items-center justify-center h-full text-ivory/70 text-sm sm:text-base">
                   <div className="w-8 h-8 border-4 border-copper/30 border-t-copper rounded-full animate-spin mb-2"></div>
                   <p>Loading Map...</p>
                   {!import.meta.env.VITE_GOOGLE_MAPS_KEY && <p className="text-rose text-xs mt-1">Missing VITE_GOOGLE_MAPS_KEY</p>}
