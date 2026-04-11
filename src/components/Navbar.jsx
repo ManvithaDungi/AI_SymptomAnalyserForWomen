@@ -6,7 +6,7 @@ import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
 import { GlassButton } from './GlassUI';
 import { logger } from '../utils/logger';
-import { LogOut } from 'lucide-react';
+import { LogOut, Search } from 'lucide-react';
 
 export default function Navbar() {
   const { t } = useTranslation();
@@ -32,60 +32,54 @@ export default function Navbar() {
 
   return (
     <nav 
-      className="glass fixed top-0 z-50 w-full h-16 border-b border-accent-gold/30"
-      style={{ backdropFilter: 'blur(24px)' }}
+      className="glass-nav px-6 py-4 flex items-center justify-between"
     >
-      <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-        {/* Logo & Brand */}
+      <div className="flex-1">
         <div 
           className="flex items-baseline gap-2 cursor-pointer hover:text-accent-gold transition-colors"
           onClick={() => navigate('/forum')}
         >
-          <h1 className="text-2xl font-serif font-bold text-text-primary italic tracking-tight">
+          <h1 className="text-2xl font-serif font-bold text-ivory italic tracking-tight">
             Sahachari
           </h1>
-          <span className="text-xs font-mono text-text-secondary letter-spacing-1">
+          <span className="text-xs font-mono text-text-secondary tracking-wider">
             సహచరి
           </span>
         </div>
+      </div>
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <button
-              key={link.path}
-              onClick={() => navigate(link.path)}
-              className={`font-mono text-xs uppercase letter-spacing-1 transition-all pb-2 border-b-2 ${
-                location.pathname === link.path
-                  ? 'text-accent-gold border-accent-gold'
-                  : 'text-accent-mauve border-transparent hover:text-accent-gold'
-              }`}
-              style={
-                location.pathname === link.path
-                  ? { textShadow: '0 0 12px rgba(197, 156, 121, 0.4)' }
-                  : {}
-              }
-            >
-              {link.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <LanguageSelector />
-
-          <GlassButton
-            variant="ghost"
-            size="sm"
-            icon={LogOut}
-            onClick={handleLogout}
-            title={t('common.logout')}
+      {/* Desktop Navigation Links */}
+      <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
+        {navLinks.map((link) => (
+          <button
+            key={link.path}
+            onClick={() => navigate(link.path)}
+            className={`nav-link ${
+              location.pathname === link.path ? 'text-accent-gold' : ''
+            }`}
           >
-            <span className="hidden sm:inline">{t('common.logout')}</span>
-          </GlassButton>
-        </div>
+            {link.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-4 flex-1 justify-end">
+        <button className="p-2 text-ivory/60 hover:text-accent-gold transition-colors">
+          <Search size={20} />
+        </button>
+        <ThemeToggle />
+        <LanguageSelector />
+
+        <GlassButton
+          variant="ghost"
+          size="sm"
+          icon={LogOut}
+          onClick={handleLogout}
+          title={t('common.logout')}
+        >
+          <span className="hidden sm:inline text-xs">{t('common.logout')}</span>
+        </GlassButton>
       </div>
     </nav>
   );

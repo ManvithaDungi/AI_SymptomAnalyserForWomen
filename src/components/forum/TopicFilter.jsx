@@ -16,8 +16,8 @@ export default function TopicFilter({ activeTopic, setActiveTopic }) {
                key={topic.id}
                onClick={() => setActiveTopic(topic.id)}
                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${activeTopic === topic.id
-                     ? 'bg-primary text-white shadow-md shadow-primary/20'
-                     : 'bg-[#F8F7FF] text-text-secondary border border-primary/10 hover:border-primary/30 hover:bg-white'
+                     ? 'bg-accent-gold text-kurobeni shadow-md shadow-accent-gold/20'
+                     : 'glass text-text-secondary border border-accent-gold/10 hover:border-accent-gold/30 hover:bg-blackberry/40'
                   }`}
             >
                {topic.label}

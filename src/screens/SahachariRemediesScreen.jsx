@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function RemedyScreen() {
+export default function SahachariRemediesScreen() {
   const { t } = useTranslation();
   const categories = ['All', 'Herbal', 'Movement', 'Nutrition', 'Mindfulness'];
   const [activeCategory, setActiveCategory] = useState('All');

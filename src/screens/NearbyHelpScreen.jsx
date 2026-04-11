@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
+import { Map } from 'lucide-react';
 import MapView from '../components/nearby/MapView';
 import PlaceCard from '../components/nearby/PlaceCard';
 import PlaceTypeSelector from '../components/nearby/PlaceTypeSelector';
@@ -9,26 +10,21 @@ import { logger } from '../utils/logger';
 
 export default function NearbyHelpScreen() {
    const [scriptLoaded, setScriptLoaded] = useState(false);
-   const [userLocation, setUserLocation] = useState(null); // { lat, lng }
+   const [userLocation, setUserLocation] = useState(null);
    const [locationName, setLocationName] = useState('Locating...');
    const [places, setPlaces] = useState([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
 
-   // Filters
    const [selectedType, setSelectedType] = useState('Gynecologist');
-   const [radius, setRadius] = useState(3000); // meters
-
-   // Selection
+   const [radius, setRadius] = useState(3000);
    const [selectedPlaceId, setSelectedPlaceId] = useState(null);
-   // We need the map instance to use PlacesService.
    const [mapInstance, setMapInstance] = useState(null);
 
    const listRef = useRef(null);
 
-   // 0. Load Google Maps Script
+   // Load Google Maps Script
    useEffect(() => {
-      // Validate Google Maps API key
       try {
          validateGoogleMapsKey();
       } catch (err) {
@@ -55,7 +51,7 @@ export default function NearbyHelpScreen() {
       document.head.appendChild(script);
    }, []);
 
-   // 1. Get User Location on Mount (only after script loads optionally, but independent actually)
+   // Get User Location
    useEffect(() => {
       let mounted = true;
       getUserLocation()
@@ -63,7 +59,6 @@ export default function NearbyHelpScreen() {
             if (!mounted) return;
             setUserLocation(loc);
             try {
-               // We need google maps for geocoder
                if (window.google) {
                   const name = await getLocationName(loc.lat, loc.lng);
                   if (mounted) setLocationName(name);
@@ -139,43 +134,32 @@ export default function NearbyHelpScreen() {
    }
 
    return (
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden bg-[#F8F7FF] animate-fade-in relative z-0">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden bg-kurobeni relative z-0">
 
          {/* LEFT PANEL: MAP (Top on mobile) */}
-         <div className="w-full lg:w-[58%] h-[40vh] lg:h-full relative shadow-[inset_-8px_0_16px_rgba(109,91,208,0.06)] z-10 order-1 lg:order-1">
+         <div className="w-full lg:w-[58%] h-[40vh] lg:h-full relative z-10 order-1 lg:order-1">
             {!scriptLoaded ? (
-               <div className="flex flex-col items-center justify-center h-full text-text-secondary">
-                  <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-2"></div>
+               <div className="flex flex-col items-center justify-center h-full text-ivory/70">
+                  <div className="w-8 h-8 border-4 border-copper/30 border-t-copper rounded-full animate-spin mb-2"></div>
                   <p>Loading Map...</p>
-                  {!import.meta.env.VITE_GOOGLE_MAPS_KEY && <p className="text-red-500 text-xs mt-1">Missing VITE_GOOGLE_MAPS_KEY</p>}
+                  {!import.meta.env.VITE_GOOGLE_MAPS_KEY && <p className="text-rose text-xs mt-1">Missing VITE_GOOGLE_MAPS_KEY</p>}
                </div>
             ) : (
                <MapView
                   userLocation={userLocation}
                   places={places}
                   activePlaceId={selectedPlaceId}
-                  // We need to modify MapView to accept onMapLoad? 
-                  // I haven't added onMapLoad to MapView prop definition in previous step!
-                  // I will assume I can fix MapView or MapView exposes ref.
-                  // Actually, I need to Update MapView to expose onMapLoad.
-                  // WAIT: access map instance via ref or callback.
-                  // Since I can't easily change MapView right now without another tool call, 
-                  // I'll check if MapView can just export the map instance ref?
-                  // MapView.jsx: has `mapInstanceRef`. I can modify it to call `onMapLoad` prop if exists.
                   onMarkerClick={(place) => handlePlaceSelect(place.id)}
-                  // Passing onMapLoad implies MapView uses it. I will update MapView in next step if needed.
-                  // Note: MapView logic in Step 864 didn't use `onMapLoad`.
-                  // I MUST update MapView to support this.
                   onMapLoad={handleMapLoad}
                />
             )}
          </div>
 
          {/* RIGHT PANEL: LIST (Bottom on mobile) */}
-         <div className="w-full lg:w-[42%] flex-1 lg:h-full overflow-y-auto bg-[#F8F7FF] flex flex-col relative z-20 order-2 lg:order-2" ref={listRef}>
+         <div className="w-full lg:w-[42%] flex-1 lg:h-full overflow-y-auto bg-kurobeni flex flex-col relative z-20 order-2 lg:order-2" ref={listRef}>
 
             {/* Header Section */}
-            <div className="sticky top-0 bg-[#F8F7FF]/90 backdrop-blur-md z-30 px-5 pt-5 pb-2 border-b border-primary/5">
+            <div className="sticky top-0 glass-nav z-30 px-6 pt-6 pb-4 border-b border-copper/10">
                <div className="flex justify-between items-start mb-4">
                   <div>
                      <h1 className="text-xl font-bold text-text-primary">Nearby Help</h1>

@@ -8,7 +8,7 @@ export default function ReactionBar({ post, onReact, onComment, onShare, current
          <div className="flex items-center gap-4">
             <button
                onClick={() => onReact(post.id, !isReacted)}
-               className={`flex items-center gap-1.5 text-xs font-medium transition-all duration-200 group ${isReacted ? 'text-primary' : 'text-text-secondary hover:text-primary'
+               className={`flex items-center gap-1.5 text-xs font-medium transition-all duration-200 group ${isReacted ? 'text-accent-gold' : 'text-text-secondary hover:text-accent-gold'
                   }`}
             >
                <span className={`text-base transition-transform duration-300 ${isReacted ? 'scale-110' : 'group-hover:scale-110'}`}>
@@ -22,7 +22,7 @@ export default function ReactionBar({ post, onReact, onComment, onShare, current
 
             <button
                onClick={() => onComment(post.id)}
-               className="flex items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-primary transition-colors group"
+               className="flex items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-accent-gold transition-colors group"
             >
                <span className="text-base group-hover:scale-110 transition-transform duration-200">💬</span>
                <span>{commentCount}</span>
@@ -32,7 +32,7 @@ export default function ReactionBar({ post, onReact, onComment, onShare, current
 
          <button
             onClick={() => onShare(post.id)}
-            className="text-text-secondary hover:text-primary transition-colors p-1"
+            className="text-text-secondary hover:text-accent-gold transition-colors p-1"
             title="Share Post"
          >
             <span className="text-base">🔗</span>

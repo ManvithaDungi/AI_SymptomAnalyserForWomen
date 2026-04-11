@@ -7,23 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* Use CSS variables - will be overridden by data-theme */
-        'glass-deep': 'var(--bg-deep)',
-        'glass-surface': 'var(--bg-surface)',
-        'accent-gold': 'var(--accent-gold)',
-        'accent-mauve': 'var(--accent-mauve)',
-        'text-primary': 'var(--text-primary)',
-        'text-secondary': 'var(--text-secondary)',
-        'text-tertiary': 'var(--text-tertiary)',
-        'accent-rose': 'var(--accent-rose)',
-        'accent-teal': 'var(--accent-teal)',
+        /* Sahachari Design System */
+        'kurobeni': '#281822',
+        'blackberry': '#48192e',
+        'copper': '#c59c79',
+        'meadow': '#957083',
+        'ivory': '#f5f0eb',
+        'rose': '#c0506a',
+        'teal': '#4a8a7f',
         /* Legacy colors for backward compatibility */
-        'background': 'var(--bg-deep)',
-        'primary': 'var(--accent-gold)',
-        'secondary': 'var(--accent-mauve)',
-        'accent': 'var(--accent-rose)',
-        'danger': 'var(--accent-rose)',
-        'warning': 'var(--accent-gold)',
+        'glass-deep': '#281822',
+        'glass-surface': '#48192e',
+        'accent-gold': '#c59c79',
+        'accent-mauve': '#957083',
+        'text-primary': '#f5f0eb',
+        'text-secondary': '#f5f0eb',
+        'text-tertiary': '#f5f0eb',
+        'accent-rose': '#c0506a',
+        'accent-teal': '#4a8a7f',
+        /* Legacy colors for backward compatibility */
+        'background': '#281822',
+        'primary': '#c59c79',
+        'secondary': '#957083',
+        'accent': '#c0506a',
+        'danger': '#c0506a',
+        'warning': '#c59c79',
       },
       fontFamily: {
         'serif': ['"Cormorant Garamond"', 'serif'],

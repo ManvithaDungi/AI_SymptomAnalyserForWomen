@@ -1,7 +1,7 @@
 import { Plus, Heart, MessageSquare, Bookmark, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function ForumScreen() {
+export default function SahachariCommunityScreen() {
   const { t } = useTranslation();
   const posts = [
     { 

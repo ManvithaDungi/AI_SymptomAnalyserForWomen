@@ -1,7 +1,7 @@
 import { Sun, Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function JournalScreen() {
+export default function SahachariJournalScreen() {
   const { t } = useTranslation();
 
   return (

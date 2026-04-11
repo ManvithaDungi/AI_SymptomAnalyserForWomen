@@ -36,7 +36,7 @@ export default function ForumPostCard({ post }) {
   };
 
   return (
-    <div className="glass-card p-5 mb-4 border-l-[3px] border-l-primary group hover:bg-white/80 transition-all duration-300">
+    <div className="glass-card p-5 mb-4 border-l-[3px] border-l-accent-gold group hover:shadow-glass-hover transition-all duration-300">
       <div className="flex justify-between items-start gap-3 mb-4">
         <div className="flex items-center gap-3">
           <span className="px-2.5 py-1 rounded-md bg-surface border border-primary/10 text-xs font-bold text-text-secondary uppercase tracking-tight">
@@ -48,7 +48,7 @@ export default function ForumPostCard({ post }) {
         </div>
         <span className="text-xs text-text-secondary font-medium">{formatTime(post.timestamp)}</span>
       </div>
-      <p className="text-text-primary text-base mb-4 leading-relaxed font-medium">{post.content}</p>
+      <p className="text-text-secondary text-base mb-4 leading-relaxed font-medium">{post.content}</p>
       <button
         onClick={handleHeart}
         className={`flex items-center gap-1.5 text-sm font-bold transition-all px-3 py-1.5 rounded-full ${liked ? 'text-danger bg-danger/10' : 'text-text-secondary hover:bg-danger/5 hover:text-danger'

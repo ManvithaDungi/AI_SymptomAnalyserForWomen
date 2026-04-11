@@ -10,11 +10,11 @@ export default function CommentCard({ comment, onReact, currentUserId }) {
       <div className="glass-card p-4">
          <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
-               <span className="bg-primary/5 text-text-secondary text-xs font-medium px-2 py-1 rounded-md">
+               <span className="bg-accent-gold/5 text-text-secondary text-xs font-medium px-2 py-1 rounded-md">
                   {comment.anonName || 'Anon'}
                </span>
                {comment.isExpertComment && (
-                  <span className="text-xs bg-white/70 text-text-secondary px-2 py-0.5 rounded-full border border-primary/10">
+                  <span className="text-xs glass text-text-secondary px-2 py-0.5 rounded-full border border-accent-gold/10">
                      Expert
                   </span>
                )}
@@ -25,7 +25,7 @@ export default function CommentCard({ comment, onReact, currentUserId }) {
          <div className="flex items-center justify-between mt-3">
             <button
                onClick={() => onReact(comment.id, !isReacted)}
-               className={`flex items-center gap-1.5 text-xs font-medium transition-all duration-200 ${isReacted ? 'text-primary' : 'text-text-secondary hover:text-primary'}`}
+               className={`flex items-center gap-1.5 text-xs font-medium transition-all duration-200 ${isReacted ? 'text-accent-gold' : 'text-text-secondary hover:text-accent-gold'}`}
             >
                <span className={`text-base transition-transform duration-300 ${isReacted ? 'scale-110' : ''}`}>
                   {isReacted ? '💜' : '🤍'}
