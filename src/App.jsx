@@ -15,7 +15,6 @@ import NewPostScreen from './screens/NewPostScreen';
 import RemedyScreen from './screens/RemedyScreen';
 import JournalScreen from './screens/JournalScreen';
 import NearbyHelpScreen from './screens/NearbyHelpScreen';
-import DiscoverScreen from './screens/DiscoverScreen';
 import ModerationScreen from './screens/ModerationScreen';
 import LandingScreen from './screens/LandingScreen';
 
@@ -23,7 +22,7 @@ import LandingScreen from './screens/LandingScreen';
 const AdminSeedScreen = import.meta.env.DEV ? lazy(() => import('./screens/AdminSeedScreen')) : null;
 
 import { auth } from './services/firebaseService';
-import { Heart, BookOpen, MessageSquare, Wind, Map, Compass, LogOut, Menu, X } from 'lucide-react';
+import { Heart, BookOpen, MessageSquare, Wind, Map, LogOut, Menu, X } from 'lucide-react';
 
 function Navbar({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +33,6 @@ function Navbar({ user }) {
     { label: 'Community', href: '/forum', icon: MessageSquare },
     { label: 'Symptoms', href: '/symptoms', icon: Heart },
     { label: 'Remedies', href: '/remedy', icon: Wind },
-    { label: 'Discover', href: '/discover', icon: Compass },
     { label: 'Journal', href: '/journal', icon: BookOpen },
     { label: 'Nearby', href: '/nearby', icon: Map },
   ];
@@ -134,7 +132,6 @@ function MobileNav({ user }) {
     { label: 'Community', href: '/forum', icon: MessageSquare },
     { label: 'Symptoms', href: '/symptoms', icon: Heart },
     { label: 'Remedies', href: '/remedy', icon: Wind },
-    { label: 'Discover', href: '/discover', icon: Compass },
     { label: 'Journal', href: '/journal', icon: BookOpen },
     { label: 'Nearby', href: '/nearby', icon: Map },
   ];
@@ -152,7 +149,7 @@ function MobileNav({ user }) {
             className={`flex flex-col items-center gap-1 flex-1 py-2 rounded-lg transition-all ${
               isActive(item.href)
                 ? 'text-copper'
-                : 'text-ivory/40 hover:text-ivory/60'
+                : 'text-ivory/60 hover:text-ivory/70'
             }`}
           >
             <Icon className="w-5 h-5" />
@@ -210,19 +207,18 @@ export default function App() {
       {
         element: <AppLayout user={user} loading={loading} />,
         children: [
-          { path: '/', element: !user ? <LandingScreen /> : <Navigate to="/forum" /> },
-          { path: '/login', element: !user ? <LoginScreen /> : <Navigate to="/forum" /> },
-          { path: '/home', element: user ? <ErrorBoundary><HomeScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/forum', element: user ? <ErrorBoundary><ForumScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/forum/new', element: user ? <ErrorBoundary><NewPostScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/forum/:postId', element: user ? <ErrorBoundary><ThreadScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/symptoms', element: user ? <ErrorBoundary><SymptomScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/results', element: user ? <ErrorBoundary><ResultsScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/remedy', element: user ? <ErrorBoundary><RemedyScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/discover', element: user ? <ErrorBoundary><DiscoverScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/journal', element: user ? <ErrorBoundary><JournalScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/nearby', element: user ? <ErrorBoundary><NearbyHelpScreen /></ErrorBoundary> : <Navigate to="/" /> },
-          { path: '/admin/moderation', element: user ? <ErrorBoundary><ModerationScreen /></ErrorBoundary> : <Navigate to="/" /> },
+          { path: '/', element: !user ? <LoginScreen /> : <Navigate to="/home" /> },
+          { path: '/login', element: !user ? <LoginScreen /> : <Navigate to="/home" /> },
+          { path: '/home', element: user ? <ErrorBoundary><HomeScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/forum', element: user ? <ErrorBoundary><ForumScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/forum/new', element: user ? <ErrorBoundary><NewPostScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/forum/:postId', element: user ? <ErrorBoundary><ThreadScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/symptoms', element: user ? <ErrorBoundary><SymptomScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/results', element: user ? <ErrorBoundary><ResultsScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/remedy', element: user ? <ErrorBoundary><RemedyScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/journal', element: user ? <ErrorBoundary><JournalScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/nearby', element: user ? <ErrorBoundary><NearbyHelpScreen /></ErrorBoundary> : <Navigate to="/login" /> },
+          { path: '/admin/moderation', element: user ? <ErrorBoundary><ModerationScreen /></ErrorBoundary> : <Navigate to="/login" /> },
           ...(import.meta.env.DEV && AdminSeedScreen ? [{ path: '/admin-seed', element: <ErrorBoundary><Suspense fallback={<div>Loading...</div>}><AdminSeedScreen /></Suspense></ErrorBoundary> }] : []),
         ]
       }

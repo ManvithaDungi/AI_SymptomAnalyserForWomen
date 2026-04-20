@@ -41,7 +41,7 @@ export default function HomeScreen() {
         <div className="flex justify-between items-end">
           <div className="space-y-1 sm:space-y-2">
             <h2 className="text-3xl sm:text-4xl font-serif italic">Daily Rituals</h2>
-            <p className="text-ivory/40 font-light text-sm sm:text-base">Small acts of self-devotion for today.</p>
+            <p className="text-ivory/60 font-light text-sm sm:text-base">Small acts of self-devotion for today.</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">

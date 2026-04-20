@@ -155,7 +155,7 @@ export default function JournalScreen() {
                 className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-widest flex items-center gap-2 ${
                   milestone.unlocked
                     ? 'bg-copper/20 border border-copper/50 text-copper'
-                    : 'bg-ivory/5 border border-ivory/20 text-ivory/40'
+                    : 'bg-ivory/5 border border-ivory/20 text-ivory/60'
                 }`}
               >
                 {milestone.unlocked ? '✓' : '🔒'} {milestone.label}
@@ -269,10 +269,10 @@ export default function JournalScreen() {
 
           <div className="flex justify-between items-center">
             <div className="flex gap-2 sm:gap-4">
-              <button className="p-2 sm:p-3 bg-ivory/5 rounded-lg sm:rounded-xl text-ivory/40 hover:text-copper transition-colors">
+              <button className="p-2 sm:p-3 bg-ivory/5 rounded-lg sm:rounded-xl text-ivory/60 hover:text-copper transition-colors">
                 <Sun size={18} className="sm:w-5 sm:h-5" />
               </button>
-              <button className="p-2 sm:p-3 bg-ivory/5 rounded-lg sm:rounded-xl text-ivory/40 hover:text-rose transition-colors">
+              <button className="p-2 sm:p-3 bg-ivory/5 rounded-lg sm:rounded-xl text-ivory/60 hover:text-rose transition-colors">
                 <Heart size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>

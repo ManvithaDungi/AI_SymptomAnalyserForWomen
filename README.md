@@ -26,11 +26,15 @@ A privacy-first women's health companion with AI-backed symptom analysis, multil
   - Gemini safety API (contextual misinformation check)
 - **Threaded Architecture:** Parent posts with nested replies, lightweight emoji reactions
 - **Real-time Updates:** Cloud Firestore listeners for instant comment notifications
+- **Flag & Moderation:** Community reporting system with admin moderation dashboard
 
-### [BookOpen] Wellness Journal & Geolocation
+### [BookOpen] Wellness Journal
 - **Temporal Analytics:** Track symptom patterns, mood trends, and health metrics
-- **Nearby Healthcare Discovery:** Google Places API integration for nearest pharmacies, clinics, hospitals
-- **Geofencing:** Location-based alerts for health services within configurable radius
+- **Personal Health Tracking:** Log daily wellness entries and insights
+
+### [Map] Nearby Healthcare Discovery
+- **Geolocation:** Google Places API integration for nearest pharmacies, clinics, hospitals
+- **Location-Based Services:** Find healthcare providers within configurable radius
 
 ## [Blocks] Tech Stack
 
@@ -62,6 +66,39 @@ A privacy-first women's health companion with AI-backed symptom analysis, multil
 - **Deployment:** Firebase Hosting CLI (auto-triggered on main branch)
 
 ## [Rocket] Run Locally (Step by Step)
+
+### App Routes & Navigation
+
+**Authentication Flow:**
+1. App opens → User sees **LoginScreen** (`/` or `/login`)
+2. After successful login → Redirected to **HomeScreen** (`/home`)
+3. All other routes require authentication
+4. Logout clears session and returns to login
+
+**Available Routes After Login:**
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | LoginScreen | Landing/login page |
+| `/login` | LoginScreen | Explicit login route |
+| `/home` | HomeScreen | Main dashboard with health insights |
+| `/symptoms` | SymptomScreen | Symptom checker form |
+| `/results` | ResultsScreen | AI analysis results |
+| `/forum` | ForumScreen | Community forum posts listing |
+| `/forum/new` | NewPostScreen | Create new forum post |
+| `/forum/:postId` | ThreadScreen | Individual forum thread with comments |
+| `/remedy` | RemedyScreen | Remedies library & search |
+| `/journal` | JournalScreen | Personal wellness journal |
+| `/nearby` | NearbyHelpScreen | Nearby healthcare providers (Google Places API) |
+| `/admin/moderation` | ModerationScreen | Admin: Review flagged posts (requires auth) |
+| `/admin-seed` | AdminSeedScreen | Admin: Seed Firestore database (dev only) |
+
+**Navigation Bar Items:**
+- Health (→ `/home`)
+- Community (→ `/forum`)
+- Symptoms (→ `/symptoms`)
+- Remedies (→ `/remedy`)
+- Journal (→ `/journal`)
+- Nearby (→ `/nearby`)
 
 ### Prerequisites
 - Node.js 18+ (LTS recommended)
@@ -199,17 +236,36 @@ npm run test:run    # Single run (CI mode)
 ├── app/                       # Next.js app directory (legacy)
 ├── components/
 │   ├── ui/                    # shadcn/ui components
-│   └── theme-provider.tsx     # Tailwind theme config
+│   ├── forum/                 # Forum-related components (PostCard, ModerationBadge, etc.)
+│   ├── nearby/                # Nearby healthcare components
+│   ├── theme-provider.tsx     # Tailwind theme config
+│   ├── ErrorBoundary.jsx      # Error handling wrapper
+│   ├── OfflineNotification.jsx # Network status indicator
+│   └── ...                    # Other UI components
 ├── functions/                 # Firebase Cloud Functions
 ├── hooks/                     # Custom React hooks
 ├── src/
-│   ├── App.jsx               # Root component
+│   ├── App.jsx               # Root component with routing
 │   ├── main.jsx              # Entry point
-│   ├── components/           # Feature components
+│   ├── screens/
+│   │   ├── LoginScreen.jsx           # Authentication entry point
+│   │   ├── HomeScreen.jsx            # Main dashboard after login
+│   │   ├── SymptomScreen.jsx         # Symptom checker input
+│   │   ├── ResultsScreen.jsx         # AI analysis results
+│   │   ├── ForumScreen.jsx           # Community forum listing
+│   │   ├── ThreadScreen.jsx          # Individual forum thread/post
+│   │   ├── NewPostScreen.jsx         # Create new forum post
+│   │   ├── RemedyScreen.jsx          # Remedies library search
+│   │   ├── JournalScreen.jsx         # Wellness journal entries
+│   │   ├── NearbyHelpScreen.jsx      # Healthcare provider discovery
+│   │   ├── ModerationScreen.jsx      # Admin moderation dashboard
+│   │   └── AdminSeedScreen.jsx       # Admin database seeding (dev only)
+│   ├── components/           # Reusable UI & feature components
 │   ├── firebase/             # Firebase SDK setup
-│   ├── services/             # API/business logic
-│   ├── locales/              # i18n translations
-│   └── data/                 # Static data, fixtures
+│   ├── services/             # API calls & business logic
+│   ├── locales/              # i18n translations (EN, TA, TE, ML, KN, HI)
+│   ├── context/              # React context providers
+│   └── data/                 # Static data, fixtures, seed data
 ├── dataconnect/              # Firebase Data Connect schema
 ├── firestore.rules           # Firestore Security Rules
 ├── storage.rules             # Storage Security Rules

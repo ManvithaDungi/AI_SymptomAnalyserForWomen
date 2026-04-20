@@ -8,24 +8,51 @@ import { saveSymptomLog, getUserId } from '../services/firebaseService';
 import { logger } from '../utils/logger';
 
 function ConditionCard({ condition }) {
-  const probConfig = {
-    High: { color: 'rose', bgColor: 'rose/10', borderColor: 'rose/30', width: 'w-4/5' },
-    Medium: { color: 'copper', bgColor: 'copper/10', borderColor: 'copper/30', width: 'w-1/2' },
-    Low: { color: 'teal', bgColor: 'teal/10', borderColor: 'teal/30', width: 'w-1/4' },
+  // Static mapping of probability levels to class names
+  const CONFIG_MAP = {
+    High: {
+      textClass: 'text-rose',
+      bgClass: 'bg-rose/10',
+      borderClass: 'border-rose/30',
+      progressClass: 'bg-rose',
+      width: 'w-4/5',
+      icon: AlertCircle,
+      label: 'HIGH RISK',
+    },
+    Medium: {
+      textClass: 'text-copper',
+      bgClass: 'bg-copper/10',
+      borderClass: 'border-copper/30',
+      progressClass: 'bg-copper',
+      width: 'w-1/2',
+      icon: Clock,
+      label: 'MEDIUM RISK',
+    },
+    Low: {
+      textClass: 'text-teal',
+      bgClass: 'bg-teal/10',
+      borderClass: 'border-teal/30',
+      progressClass: 'bg-teal',
+      width: 'w-1/4',
+      icon: CheckCircle,
+      label: 'LOW RISK',
+    },
   };
 
-  const config = probConfig[condition.probability] || probConfig.Low;
+  const config = CONFIG_MAP[condition.probability] || CONFIG_MAP.Low;
+  const IconComponent = config.icon;
 
   return (
-    <div className={`glass-card p-6 border border-${config.borderColor}`}>
+    <div className={`glass-card p-6 border ${config.borderClass}`}>
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-serif italic text-ivory">{condition.name}</h3>
-        <span className={`text-xs font-mono uppercase tracking-widest px-3 py-1 rounded border border-${config.borderColor} text-${config.color}`}>
-          {condition.probability}
-        </span>
+        <div className={`flex items-center gap-2 px-3 py-1 rounded border ${config.borderClass} ${config.textClass}`}>
+          <IconComponent size={14} className="flex-shrink-0" />
+          <span className="text-xs font-mono uppercase tracking-widest">{config.label}</span>
+        </div>
       </div>
       <div className="w-full bg-blackberry/40 rounded-full h-2 mb-4">
-        <div className={`h-2 rounded-full transition-all duration-1000 bg-${config.color} ${config.width}`} />
+        <div className={`h-2 rounded-full transition-all duration-1000 ${config.progressClass} ${config.width}`} />
       </div>
       <p className="text-ivory/70 text-sm leading-relaxed">{condition.description}</p>
     </div>
@@ -73,19 +100,22 @@ export default function ResultsScreen() {
   const urgencyConfig = {
     'Immediately': {
       icon: AlertCircle,
-      color: 'rose',
+      textClass: 'text-rose',
+      borderClass: 'border-rose/30',
       title: 'Seek medical attention immediately',
       desc: 'Your symptoms may need urgent care. Please see a doctor today.',
     },
     'Within a week': {
       icon: Clock,
-      color: 'copper',
+      textClass: 'text-copper',
+      borderClass: 'border-copper/30',
       title: 'Consult a doctor within a week',
       desc: 'Your symptoms warrant a medical consultation soon.',
     },
     'Monitor symptoms': {
       icon: CheckCircle,
-      color: 'teal',
+      textClass: 'text-teal',
+      borderClass: 'border-teal/30',
       title: 'Monitor your symptoms',
       desc: 'Continue self-care and track any changes.',
     },
@@ -166,10 +196,10 @@ export default function ResultsScreen() {
 
         {/* Urgency Banner */}
         {urgency && (
-          <div className={`glass-card border border-${uc.color}/30 p-6 mb-8 flex items-start gap-4`}>
-            <UrgencyIcon className={`w-6 h-6 text-${uc.color} flex-shrink-0 mt-1`} />
+          <div className={`glass-card border ${uc.borderClass} p-6 mb-8 flex items-start gap-4`}>
+            <UrgencyIcon className={`w-6 h-6 ${uc.textClass} flex-shrink-0 mt-1`} />
             <div>
-              <h3 className={`font-serif italic text-lg mb-1 text-${uc.color}`}>{uc.title}</h3>
+              <h3 className={`font-serif italic text-lg mb-1 ${uc.textClass}`}>{uc.title}</h3>
               <p className={`text-sm text-ivory/70`}>{uc.desc}</p>
             </div>
           </div>

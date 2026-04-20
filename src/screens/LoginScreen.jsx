@@ -118,7 +118,7 @@ export default function LoginScreen() {
                      value={email}
                      onChange={(e) => setEmail(e.target.value)}
                      placeholder="name@example.com"
-                     className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/40 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
+                     className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/60 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
                      required
                   />
                </div>
@@ -137,7 +137,7 @@ export default function LoginScreen() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/40 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
+                        className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/60 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
                         required
                      />
                      <button
@@ -159,7 +159,7 @@ export default function LoginScreen() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/40 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
+                        className="w-full px-5 py-3 bg-blackberry/30 border border-copper/20 rounded-lg text-ivory placeholder:text-ivory/60 focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-all"
                         required
                      />
                   </div>

@@ -99,7 +99,7 @@ export default function CyclePhaseWheel({ cycleData, selectedDay }) {
                     ? 'bg-copper text-kurobeni font-semibold ring-2 ring-copper'
                     : isPast
                     ? 'bg-blackberry/40 text-ivory/60 border border-copper/20'
-                    : 'bg-blackberry/20 text-ivory/40 border border-copper/10'
+                    : 'bg-blackberry/20 text-ivory/60 border border-copper/10'
                 }`}
                 style={
                   !isToday && dayPhase

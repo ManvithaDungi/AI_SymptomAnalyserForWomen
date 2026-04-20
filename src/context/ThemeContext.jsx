@@ -12,7 +12,9 @@ export const ThemeProvider = ({ children }) => {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
     }
-    return 'dark'; // default to dark
+    // Respect system preference as fallback
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return isDarkMode ? 'dark' : 'light';
   });
 
   const [mounted, setMounted] = useState(false);
@@ -20,8 +22,15 @@ export const ThemeProvider = ({ children }) => {
   // Apply theme immediately on mount and whenever theme changes
   useEffect(() => {
     const html = document.documentElement;
-    html.setAttribute('data-theme', theme);
-    document.body.setAttribute('data-theme', theme);
+    
+    if (theme === 'dark') {
+      html.classList.add('dark');
+      html.classList.remove('light');
+    } else {
+      html.classList.add('light');
+      html.classList.remove('dark');
+    }
+    
     localStorage.setItem('theme', theme);
     setMounted(true);
   }, [theme]);

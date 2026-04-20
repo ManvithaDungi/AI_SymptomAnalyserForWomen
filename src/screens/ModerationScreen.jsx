@@ -117,7 +117,7 @@ export default function ModerationScreen() {
                 <div>
                   <h3 className="text-lg font-serif">{flagRecord.post?.author || 'Anonymous'}</h3>
                   <p className="text-sm text-ivory/60 mt-1">Flagged for: {flagRecord.reason}</p>
-                  <p className="text-xs text-ivory/40 mt-1">Flag ID: {flagRecord.id}</p>
+                  <p className="text-xs text-ivory/60 mt-1">Flag ID: {flagRecord.id}</p>
                 </div>
                 <span className={`text-xs font-mono uppercase tracking-widest px-3 py-1 rounded-full ${
                   flagRecord.resolved ? 'bg-teal/20 text-teal' : 'bg-rose/20 text-rose'

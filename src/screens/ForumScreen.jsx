@@ -147,17 +147,17 @@ export default function ForumScreen() {
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-serif italic text-sm sm:text-lg truncate">{post.anonName || post.author}</h4>
-                      <span className="text-xs text-ivory/40">{post.time || new Date().toLocaleDateString()}</span>
+                      <span className="text-xs text-ivory/60">{post.time || new Date().toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div className="flex gap-2 sm:gap-4 flex-shrink-0">
-                    <button className="text-ivory/40 hover:text-copper transition-colors"><Bookmark size={16} className="sm:w-5 sm:h-5" /></button>
+                    <button className="text-ivory/60 hover:text-copper transition-colors"><Bookmark size={16} className="sm:w-5 sm:h-5" /></button>
                     <button 
                       onClick={() => {
                         setFlaggedPostId(post.id);
                         setShowFlagModal(true);
                       }}
-                      className="text-ivory/40 hover:text-rose transition-colors"
+                      className="text-ivory/60 hover:text-rose transition-colors"
                     >
                       <Flag size={16} className="sm:w-5 sm:h-5" />
                     </button>
@@ -190,7 +190,7 @@ export default function ForumScreen() {
           <div className="glass-card p-6 sm:p-8 max-w-md w-full rounded-2xl space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-serif text-rose">Report Post</h2>
-              <button onClick={() => setShowFlagModal(false)} className="text-ivory/40 hover:text-ivory">
+              <button onClick={() => setShowFlagModal(false)} className="text-ivory/60 hover:text-ivory">
                 <X size={24} />
               </button>
             </div>
@@ -203,7 +203,7 @@ export default function ForumScreen() {
               value={flagReason}
               onChange={(e) => setFlagReason(e.target.value)}
               placeholder="Describe why you're reporting this post..."
-              className="w-full bg-blackberry/40 border border-copper/20 rounded-lg p-3 text-ivory placeholder-ivory/30 focus:outline-none focus:border-copper/60 resize-none h-24"
+              className="w-full bg-blackberry/40 border border-copper/20 rounded-lg p-3 text-ivory placeholder-ivory/60 focus:outline-none focus:border-copper/60 resize-none h-24"
             />
 
             <div className="flex gap-3">

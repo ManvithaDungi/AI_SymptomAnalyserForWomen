@@ -10,7 +10,7 @@ import { db } from '../firebase/firebaseConfig';
 // So path is correct relative to src/scripts/seedForum.js? 
 // No, src/scripts/../firebase/firebaseConfig is src/firebase/firebaseConfig. Correct.
 
-import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, Timestamp, getDocs } from 'firebase/firestore';
 
 const mockPosts = [
 
@@ -328,6 +328,17 @@ export const seedAllPosts = async () => {
    const logs = [];
    console.log('Seeding forum posts...');
    logs.push('Seeding multilingual forum posts...');
+
+   // Check if posts already exist to prevent duplicates
+   const postsRef = collection(db, 'forum_posts');
+   const postsSnapshot = await getDocs(postsRef);
+   
+   if (!postsSnapshot.empty) {
+      const message = `Skipping multilingual posts (${postsSnapshot.size} posts already exist).`;
+      console.log(message);
+      logs.push(message);
+      return logs;
+   }
 
    for (const post of mockPosts) {
       await addDoc(collection(db, 'forum_posts'), {
