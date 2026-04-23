@@ -25,6 +25,7 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getSecureAnonId } from '../utils/anonId.js';
 import { logger } from '../utils/logger.js';
 import { PAGINATION } from '../config/constants.js';
+import { rateLimiter } from '../utils/rateLimiter.ts';
 
 export { auth, db };
 
@@ -97,6 +98,10 @@ export const saveSymptomLog = async (userId, symptoms, result) => {
 
 export const getForumPosts = async (topic = 'all', sortBy = 'recent', language = 'en') => {
   try {
+    // Apply client-side rate limiting
+    const userId = getUserId();
+    rateLimiter.checkLimit(userId);
+
     const base = collection(db, 'forum_posts');
 
     const constraints = [
@@ -171,6 +176,10 @@ export const getForumPostById = async (postId) => {
 
 export const getPostComments = async (postId) => {
   try {
+    // Apply client-side rate limiting
+    const userId = getUserId();
+    rateLimiter.checkLimit(userId);
+
     const q = query(
       collection(db, 'forum_posts', postId, 'comments'),
       where('approved', '==', true),
@@ -287,6 +296,9 @@ export const saveJournalEntry = async (userId, entryData) => {
 export const getJournalEntries = async (userId, monthKey) => {
   // monthKey format: 'YYYY-MM'
   try {
+    // Apply client-side rate limiting
+    rateLimiter.checkLimit(userId);
+
     // Use proper Firestore range queries for date filtering
     const constraints = [where('userId', '==', userId)];
     
@@ -330,12 +342,16 @@ export const getJournalEntry = async (userId, dateStr) => {
 
 export const getRemedies = async (category = 'all') => {
   try {
+    // Apply client-side rate limiting
+    const userId = getUserId();
+    rateLimiter.checkLimit(userId);
+
     const constraints = [];
     if (category && category !== 'all' && category !== 'All') {
       constraints.push(where('category', '==', category));
     }
     constraints.push(orderBy('name', 'asc'));
-    constraints.push(limit(50));
+    constraints.push(limit(30)); // Enforce limit for remedies
     const q = query(collection(db, 'remedies'), ...constraints);
     const snapshot = await getDocs(q);
     const remedies = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -367,28 +383,35 @@ export const flagForumPost = async (postId, userId, reason) => {
 // Moderation Services
 export const getFlaggedPosts = async (filter = 'all') => {
   try {
+    // Apply client-side rate limiting (admin only endpoint)
+    const userId = getUserId();
+    rateLimiter.checkLimit(userId);
+
     let q;
     if (filter === 'all') {
-      q = query(collection(db, 'flagged_posts'), orderBy('timestamp', 'desc'));
+      q = query(collection(db, 'flagged_posts'), orderBy('timestamp', 'desc'), limit(20));
     } else if (filter === 'pending') {
       q = query(
         collection(db, 'flagged_posts'),
         where('resolved', '==', false),
-        orderBy('timestamp', 'desc')
+        orderBy('timestamp', 'desc'),
+        limit(20)
       );
     } else if (filter === 'approved') {
       q = query(
         collection(db, 'flagged_posts'),
         where('resolved', '==', true),
         where('resolution', '==', 'approved'),
-        orderBy('timestamp', 'desc')
+        orderBy('timestamp', 'desc'),
+        limit(20)
       );
     } else if (filter === 'removed') {
       q = query(
         collection(db, 'flagged_posts'),
         where('resolved', '==', true),
         where('resolution', '==', 'removed'),
-        orderBy('timestamp', 'desc')
+        orderBy('timestamp', 'desc'),
+        limit(20)
       );
     }
     

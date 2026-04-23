@@ -1,24 +1,22 @@
 import { Check, Trash2, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { auth, getFlaggedPosts, resolveFlaggedPost } from '../services/firebaseService';
+import { auth } from '../services/firebaseService';
+import { useFlaggedPosts } from '../hooks/queries/useFlaggedPosts';
+import { useResolveFlaggedPost } from '../hooks/mutations/useResolveFlaggedPost';
 import { useNavigate } from 'react-router-dom';
 
 export default function ModerationScreen() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [filter, setFilter] = useState('all');
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // Use React Query hooks for flagged posts
+  const { data: posts = [], isLoading: loading } = useFlaggedPosts(filter);
+  const resolvePost = useResolveFlaggedPost();
 
   useEffect(() => {
     checkAdminStatus();
   }, []);
-
-  useEffect(() => {
-    if (isAdmin) {
-      loadFlaggedPosts();
-    }
-  }, [isAdmin, filter]);
 
   const checkAdminStatus = async () => {
     try {
@@ -39,24 +37,9 @@ export default function ModerationScreen() {
     }
   };
 
-  const loadFlaggedPosts = async () => {
-    try {
-      setLoading(true);
-      const flaggedPosts = await getFlaggedPosts(filter);
-      setPosts(flaggedPosts);
-    } catch (error) {
-      console.error('Error loading flagged posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredPosts = posts;
-
   const handleApprove = async (flagId) => {
     try {
-      await resolveFlaggedPost(flagId, 'approved');
-      setPosts(prev => prev.filter(p => p.id !== flagId));
+      await resolvePost.mutateAsync({ flagId, resolution: 'approved' });
     } catch (error) {
       console.error('Error approving post:', error);
     }
@@ -64,8 +47,7 @@ export default function ModerationScreen() {
 
   const handleRemove = async (flagId) => {
     try {
-      await resolveFlaggedPost(flagId, 'removed');
-      setPosts(prev => prev.filter(p => p.id !== flagId));
+      await resolvePost.mutateAsync({ flagId, resolution: 'removed' });
     } catch (error) {
       console.error('Error removing post:', error);
     }
@@ -85,7 +67,7 @@ export default function ModerationScreen() {
         <header>
           <h1 className="text-4xl sm:text-5xl font-serif italic text-copper">Moderation Queue</h1>
           <p className="text-sm uppercase font-mono tracking-widest text-copper mt-2">
-            {filteredPosts.length} POSTS AWAITING REVIEW
+            {posts.length} POSTS AWAITING REVIEW
           </p>
         </header>
 
@@ -111,7 +93,7 @@ export default function ModerationScreen() {
           </div>
         ) : (
         <div className="space-y-6">
-          {filteredPosts.map(flagRecord => (
+          {posts.map(flagRecord => (
             <div key={flagRecord.id} className="glass-card p-6 sm:p-8 space-y-6 border border-copper/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -160,7 +142,7 @@ export default function ModerationScreen() {
             </div>
           ))}
 
-          {filteredPosts.length === 0 && (
+          {posts.length === 0 && (
             <div className="glass-card p-8 text-center space-y-2">
               <AlertCircle className="w-12 h-12 text-copper/40 mx-auto" />
               <p className="text-ivory/60">No posts to review</p>

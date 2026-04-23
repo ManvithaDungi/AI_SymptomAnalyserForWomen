@@ -1,7 +1,8 @@
 import { Plus, Heart, MessageSquare, Bookmark, Share2, Flag, AlertCircle, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
-import { getForumPosts, getUserId, flagForumPost } from '../services/firebaseService';
+import { useState } from 'react';
+import { getUserId, flagForumPost } from '../services/firebaseService';
+import { useForumPosts } from '../hooks/queries/useForumPosts';
 import { logger } from '../utils/logger';
 
 export default function ForumScreen() {
@@ -9,28 +10,10 @@ export default function ForumScreen() {
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [flaggedPostId, setFlaggedPostId] = useState(null);
   const [flagReason, setFlagReason] = useState('');
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [flagSubmitting, setFlagSubmitting] = useState(false);
-  const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      const forumPosts = await getForumPosts('all', 'recent');
-      setPosts(forumPosts);
-    } catch (err) {
-      logger.error('Failed to fetch forum posts:', err);
-      setError('Failed to load posts. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use React Query hook for fetching forum posts
+  const { data: posts = [], isLoading: loading, error } = useForumPosts('all', 'recent');
 
   const handleSubmitFlag = async () => {
     if (!flagReason.trim()) {
@@ -107,10 +90,7 @@ export default function ForumScreen() {
           </div>
         ) : error ? (
           <div className="glass-card p-6 border border-rose/30 bg-rose/5">
-            <p className="text-rose">{error}</p>
-            <button onClick={fetchPosts} className="mt-4 px-4 py-2 bg-rose/20 text-rose rounded-lg hover:bg-rose/30 transition-colors">
-              Try Again
-            </button>
+            <p className="text-rose">Failed to load posts. Please try again.</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="glass-card p-8 text-center">

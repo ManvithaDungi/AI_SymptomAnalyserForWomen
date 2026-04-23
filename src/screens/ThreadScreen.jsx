@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ModerationBadge from '../components/forum/ModerationBadge';
 import ReactionBar from '../components/forum/ReactionBar';
 import CommentCard from '../components/forum/CommentCard';
-import { addPostComment, getAnonName, getForumPostById, getPostComments, getUserId, toggleCommentUpvote, togglePostUpvote } from '../services/firebaseService';
+import { addPostComment, getAnonName, getUserId, toggleCommentUpvote, togglePostUpvote } from '../services/firebaseService';
+import { useForumThread } from '../hooks/queries/useForumThread';
 import { moderateContent } from '../services/moderationService';
 import { logger } from '../utils/logger';
 
@@ -11,31 +12,24 @@ export default function ThreadScreen() {
    const navigate = useNavigate();
    const { postId } = useParams();
    const location = useLocation();
-   const [post, setPost] = useState(location.state?.post || null);
-   const [comments, setComments] = useState([]);
-   const [loading, setLoading] = useState(true);
    const [comment, setComment] = useState('');
    const [submitting, setSubmitting] = useState(false);
+   const [post, setPost] = useState(location.state?.post || null);
+   const [comments, setComments] = useState([]);
    const currentUserId = useMemo(() => getUserId(), []);
 
-   useEffect(() => {
-      const load = async () => {
-         setLoading(true);
-         try {
-            const [postData, commentData] = await Promise.all([
-               post ? Promise.resolve(post) : getForumPostById(postId),
-               getPostComments(postId)
-            ]);
-            setPost(postData);
-            setComments(commentData);
-         } catch (error) {
-            logger.error('Failed to load thread', error);
-         } finally {
-            setLoading(false);
-         }
-      };
-      load();
-   }, [postId]);
+   // Use React Query hook for fetching forum thread data
+   const { data: threadData, isLoading: loading } = useForumThread(postId);
+
+   // Update post and comments when hook data changes
+   if (threadData && threadData.post) {
+      if (post?.id !== threadData.post.id) {
+         setPost(threadData.post);
+      }
+      if (JSON.stringify(comments) !== JSON.stringify(threadData.comments || [])) {
+         setComments(threadData.comments || []);
+      }
+   }
 
    const handleSubmitComment = async () => {
       if (!comment.trim()) return;
@@ -47,7 +41,7 @@ export default function ThreadScreen() {
             return;
          }
          const userId = getUserId();
-         const anonName = getAnonName();
+         const anonName = await getAnonName();
          await addPostComment(postId, {
             userId,
             anonName,
@@ -62,8 +56,8 @@ export default function ThreadScreen() {
             upvotedBy: [],
             isExpertComment: false
          });
-         const updatedComments = await getPostComments(postId);
-         setComments(updatedComments);
+         // Refetch thread data via React Query
+         // The hook will automatically refetch when the component re-mounts or when cache is invalidated
          setComment('');
       } catch (error) {
          logger.error('Failed to add comment', error);

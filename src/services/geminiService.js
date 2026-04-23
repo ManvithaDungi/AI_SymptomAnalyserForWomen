@@ -49,6 +49,47 @@ const callGemini = async (prompt) => {
   }
 };
 
+const callGeminiText = async (prompt) => {
+  try {
+    const API_KEY = getApiKey('GEMINI');
+    const url = `${API_URL}?key=${API_KEY}`;
+
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      },
+      API_TIMEOUTS.GEMINI,
+      2
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      logger.error('Gemini API Error Details', errorData);
+      throw new Error(`${response.status} ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) throw new Error('No response generated');
+
+    return text.replace(/```json/g, '').replace(/```/g, '').trim();
+  } catch (error) {
+    const message = error.message || 'Unknown error';
+    if (message.includes('timeout') || message.includes('AbortError')) {
+      logger.error('Gemini request timeout', error);
+      throw new Error(formatNetworkError(error));
+    }
+    logger.error('Gemini AI failed', error);
+    throw new Error(formatApiError('Gemini', error));
+  }
+};
+
 const getLanguageName = () => {
   const map = {
     en: 'English',
@@ -138,6 +179,38 @@ export const validateRemedy = async (remedyName) => {
     logger.error('Remedy validation failed', error);
     throw error;
   }
+};
+
+export const chatRemedyAssistant = async (message, context = {}) => {
+  const languageMap = {
+    en: 'English',
+    ta: 'Tamil',
+    hi: 'Hindi',
+    ml: 'Malayalam',
+    te: 'Telugu',
+    kn: 'Kannada'
+  };
+  const language = languageMap[localStorage.getItem('language')] || 'English';
+
+  const prompt = `
+You are Sahachari, a warm evidence-based women's health assistant for India.
+Answer in ${language}. If the user writes in Tamil, Hindi, Telugu, Kannada, or Malayalam, respond naturally in that language.
+
+Focus on hormones, nutrition, mental health, menstrual health, and culturally familiar remedies.
+Use local food names when helpful, explain if something is evidence-based, and gently flag unsafe advice.
+Do not give a diagnosis. Encourage medical care for severe, persistent, or alarming symptoms.
+
+Context:
+- Current remedy category: ${context.category || 'general'}
+- Local foods/remedies to mention if relevant: ragi, amla, jeera, ginger, turmeric, curry leaves, coconut water
+
+User message:
+${message}
+
+Reply in a short, helpful chat style with 2-5 concise paragraphs or bullet points.
+`;
+
+  return callGeminiText(prompt);
 };
 
 export const detectPattern = async (logs) => {
